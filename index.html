@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .bg-full {
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        .judul {
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Vollkorn', serif;
+            font-size: 2rem;
+            font-style: normal;
+        }
+        .judul2 {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            font-family: 'Karla', sans-serif;
+            font-size: 1rem;
+            font-style: normal;
+            font-weight: 300;
+            line-height: normal;
+        }
+        .card-title {
+            font-family: 'Karla', serif;
+            font-size: 1rem;
+            font-style: normal;
+            font-weight: 700;
+        }
+        .card-content {
+            font-family: 'Karla', serif;
+            font-size: 0.875rem;
+            font-style: normal;
+            font-weight: 300;
+        }
+        .button-card {
+            font-family: 'Karla', serif;
+            font-size: 0.8rem;
+            display: flex;
+            padding: 0.5rem 1.2rem;
+            justify-content: center;
+            align-items: center;
+            border-radius: 2rem;
+            background: #EC652A;
+            color: white;
+        }
+        footer {
+            font-family: 'Karla', serif;
+            margin-top: 2rem;
+            display: flex;
+            width: 100%;
+            padding: 0.375rem 0;
+            justify-content: center;
+            align-items: center;
+            gap: 0.625rem;
+        }
+        .card{
+            display: flex;
+            width: 200px;
+            padding: 40px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            /* gap: 16px; */
+            border-radius: 16px;
+            border: 2px solid #F4F4F4;
+            background: var(--putih, #FFF);
+            box-shadow: 0px 6px 8px 0px rgba(0, 0, 0, 0.10);
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@300&family=Vollkorn:wght@700&display=swap" rel="stylesheet">
+    <title>Welcome Page</title>
+</head>
+<body>
+    <!-- Container dengan latar belakang gambar -->
+    <div class="bg-full bg-center flex flex-col justify-center items-center relative" style="background-image: url('https://www.jagoanhosting.com/wp-content/uploads/2023/08/BGHERO.png');">
+        <!-- Logo di atas card -->
+        <div class="logo">
+            <img src="https://www.jagoanhosting.com/wp-content/uploads/2023/05/Logo-JH-Next-Level-2023-2048x643-1.webp" class="mt-20" alt="" width="70">
+        </div>
+        <h2 class="judul"><span class="text-orange-600">Halo,</span> Selamat Anda telah menjadi <br>
+            bagian dari <span class="text-orange-600">Jagoan Hosting</span> Indonesia. </h2>
+        <p class="judul2">Yuk mulai kelola layananmu dan mulai dengan :</p>
+        <!-- Card Container -->
+        <div class="flex flex-wrap justify-center gap-4">
+            <!-- Card 1 -->
+            <div class="bg-white shadow-lg p-4 rounded-lg m-2 w-48 card">
+                <img src="https://www.jagoanhosting.com/wp-content/uploads/2023/08/login-cpanel.png" class="m-2" alt="" width="48" height="58">
+                <h2 class="card-title text-lg font-semibold mb-1">Login ke Panel</h2>
+                <p class="card-content">Anda dapat login ke panel hosting melalui link atau member area</p><br>
+                <a href="https://www.jagoanhosting.com/tutorial/cpanel/login-ke-cpanel" rel="nofollow" class="button-card mt-2">Cara Login Panel</a>
+            </div>
+            <!-- Card 2 -->
+            <div class="bg-white shadow-lg p-4 rounded-lg m-2 w-48 card">
+                <img src="https://www.jagoanhosting.com/wp-content/uploads/2023/08/install-ssl.png" class="m-2" alt="" width="48" height="58">
+                <h2 class="card-title text-lg font-semibold mb-1">Install SSL</h2>
+                <p class="card-content">SSL akan auto aktif, namun Anda dapat aktivasi lebih cepat dengan cara berikut</p>
+                <a href="https://www.jagoanhosting.com/tutorial/tutorial/aktivasi-ssl" rel="nofollow" class="button-card mt-2">Cara Install SSL</a>
+            </div>
+            <!-- Card 3 -->
+            <div class="bg-white shadow-lg p-4 rounded-lg m-2 w-48 card">
+                <img src="https://www.jagoanhosting.com/wp-content/uploads/2023/08/install-wordpress.png" class="m-2" alt="" width="48" height="58">
+                <h2 class="card-title text-lg font-semibold mb-1">Install WordPress</h2>
+                <p class="card-content">Selanjutnya Anda dapat melakukan instalasi / upload file aplikasi website </p>
+                <a href="https://www.jagoanhosting.com/tutorial/wordpress/cara-install-wordpress-melalui-softaculous" rel="nofollow" class="button-card mt-2">Cara Install WP</a>
+            </div>
+            <!-- Card 4 -->
+            <div class="bg-white shadow-lg p-4 rounded-lg m-2 w-48 card">
+                <img src="https://www.jagoanhosting.com/wp-content/uploads/2023/08/customer-suppor.png" class="m-2" alt="" width="48" height="58">
+                <h2 class="card-title text-lg font-semibold mb-1">Customer Support</h2>
+                <p class="card-content">Jika butuh bantuan Anda juga dapat menghubungi tim support kapanpun</p>
+                <a href="https://wa.me/6281216383220" class="button-card mt-2">Hubungi Support</a>
+            </div>
+        </div>
+    </div>
+    <footer>
+        Copyright © 2023 Jagoan Hosting.
+    </footer>
+</body>
+</html>

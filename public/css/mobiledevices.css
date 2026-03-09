@@ -1,0 +1,399 @@
+@media (max-width: 767px) {
+    .banner .owl-dots {
+        text-align: center;
+        position: relative;
+        top: -250px;
+        ;
+        display: none;
+        margin-top: 20px;
+    }
+    .banner button.owl-dot {
+        width: 9px;
+        height: 9px;
+        display: none;
+        background: #ffffff !important;
+        border-radius: 50%;
+        margin-right: 10px;
+        opacity: 0.5;
+    }
+    .upper-button {
+        padding-top: 5px;
+        text-align: center;
+    }
+    .upper-texlight {
+        padding-top: 15px;
+        text-align: center;
+    }
+    .product-size-image {
+        padding-top: 10px;
+        width: 50%!important;
+    }
+    .mobile-product {
+        width: 50%;
+        padding-right: 0px;
+        padding-left: 0px;
+        padding-top: 1px;
+    }
+    .product-text {
+        color: #000000;
+        font-size: 13px;
+        font-weight: 500;
+    }
+    .product-text:hover {
+        color: #008641;
+        font-size: 13px;
+        font-weight: 500;
+    }
+    .header-inner .header-inner-nav .nav li a {
+        color: #008641;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 5px;
+    }
+    .header-inner .header-inner-nav .nav li a.active {
+        background: #008641;
+        color: white;
+    }
+    .header-inner .header-inner-nav .nav li a:hover {
+        color: #ffffff;
+        padding: 6px 14px;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 5px;
+        border-radius: 0px!important;
+    }
+    .product-button {
+        border-top-right-radius: 0px!important;
+        border-top-left-radius: 0px!important;
+        border-bottom-right-radius: 0px!important;
+        border-bottom-left-radius: 0px!important;
+    }
+    .header-page-img-mobile {
+        max-width: 30%!important;
+    }
+    .header-page-top {
+        padding-top: 20px;
+    }
+    /* Image Section Shadow */
+    .pt-bannerform {
+        padding-top: 30px;
+    }
+    .bannerform {
+        position: relative;
+        top: -10px;
+        padding-bottom: 10px;
+        box-shadow: 1px 0px 15px 0px rgb(2 2 2 / 25%);
+    }
+    .mobile-no-image-left {
+        padding-top: 400px!important;
+    }
+    .image-text-left-container {
+        padding-top: 40px;
+    }
+    .image-text-right-container {
+        padding-top: 40px;
+    }
+    /* Image association */
+    .green-background-banner {
+        background-repeat: no-repeat!important;
+        background-position: right 0px bottom -10px !important;
+        background-size: 200px!important;
+    }
+    .space-size-image-mobile {
+        padding: 15% 0!important;
+        padding-bottom: 30px!important;
+    }
+    .space-size-container-mobile {
+        padding-top: 1%;
+        padding-bottom: 30px!important;
+    }
+    .center-pad-asssociation {
+        padding-top: 30px;
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+    .gms-container {
+        padding: 10px;
+        border-radius: 0!important;
+    }
+    .mobile-desk-container-event {
+        padding: 10px;
+    }
+    .mobile-button-event {
+        position: relative;
+        left: 20px;
+    }
+    .mobile-text-event {
+        position: relative;
+        left: 20px;
+        top: 20px;
+    }
+    .top-menu-button-nav {
+        top: -30%;
+        left: -6%;
+    }
+    .card-post {
+        padding-right: 0px!important;
+        padding-left: 0px!important;
+    }
+    .imagetext-institution {
+        font-size: 22px;
+        text-align: left!important;
+        top: 70px;
+        left: 15px;
+        position: relative;
+    }
+    .cl-block-stock-right {
+        padding: 15px!important;
+    }
+    .cl-block-stock-left {
+        padding: 15px!important;
+    }
+    .border-guttern {
+        height: 180px;
+        width: 5px;
+        position: absolute;
+        right: 0;
+        visibility: hidden;
+        top: 100px;
+        border-radius: 99px;
+        background: #2a252533;
+    }
+    .padding-left-none {
+        padding: 0px;
+    }
+    .padding-right-none {
+        padding: 0px;
+    }
+    .image-chick {
+        position: absolute;
+        bottom: -11%;
+        float: right;
+        right: 0;
+        height: 100px;
+    }
+    .image-chat {
+        position: absolute;
+        max-height: 120px;
+        float: right;
+        right: 7%;
+        top: 50%;
+    }
+    .banner-block-mediumcontent {
+        display: block;
+        position: relative;
+        box-shadow: inset 0 -80px 50px -10px #0000009e;
+        height: 200px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        width: 100%;
+        background-position: center!important;
+        background-repeat: no-repeat!important;
+        -moz-background-size: !important;
+        background-size: cover!important;
+        color: #fff;
+    }
+    .banner-block-mediumcontent p {
+        padding-left: 10px;
+    }
+    .button-left-banner {
+        left: 20px!important;
+        position: absolute;
+        bottom: 30px;
+    }
+    .button-left-banner .tag {
+        position: absolute;
+        top: 0;
+        right: 0;
+        max-width: 100px;
+        max-height: 80px;
+    }
+    .mobile-div-quicklinks {
+        max-width: 113px;
+    }
+    .mobile-image-width {
+        width: 100%!important;
+    }
+    .mobile-text-home {
+        font-size: 15px;
+    }
+    .product-nav {
+        padding-bottom: 10px !important;
+        position: absolute !important;
+        top: 27%;
+    }
+    .header-inner .header-inner-nav {
+        padding: 10px 0;
+        background: white;
+    }
+    #productsect {
+        padding: 0px;
+        background: white;
+        border-radius: 10px;
+    }
+    .for-mobile-text {
+        display: unset;
+    }
+    .for-mobile-text-hidden {
+        display: none;
+    }
+    .hidden-footer-mobile {
+        display: none;
+    }
+    .font-size-blok-4 {
+        font-size: 16px!important;
+        text-align: left!important;
+    }
+    .telur-ayam-kampung {
+        background-size: 90%!important;
+        background-position: center!important;
+    }
+    .farming-pad-bottom {
+        padding-bottom: 20px!important;
+    }
+    .w-25-n {
+        width: 100%!important;
+    }
+    /* Video Stylesheet */
+    #outer {
+        width: 100%;
+        display: block;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        min-height: 30vh;
+    }
+    /* Telur Home */
+    .farming-img {
+        background-size: 35%!important;
+        background-position: center!important;
+    }
+    .farming-card {
+        width: 100%;
+        height: 150px;
+        top:0px!important;
+    }
+    .mobile-video-banner {
+        top: 0;
+        left: 0;
+        z-index: -2;
+        object-fit: cover;
+    }
+    
+    .for-mobiledesktop-overview-text-upright  {
+        position:absolute;
+        left:5%;
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+        }
+
+    .h-800-text-upright {
+        height:1000px;
+    }
+    
+    .product-imagego {
+        height: 110px;
+        width: 110px;
+        cursor: pointer;
+        border-radius: 15px;
+        background-size: cover!important;
+        background-position: center!important;
+    }
+    
+    .form-control-job {
+    border: 1px solid #f6f6f6;
+    border-radius: 15px!important;
+    height: 48px;
+    padding: 40px 20px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    font-size: 15px;
+    font-weight: 500;
+    background: #ffffff;
+    color: #5e5e5e;
+    border-radius: 5px;
+    background-clip: inherit !important;
+    }
+    
+    
+    
+    .img-go-map {
+    max-width:100%!important;
+    }
+    
+    
+    .job-posted {
+    position: absolute;
+    float: right;
+    right: 0;
+    bottom: 15px;
+    top:unset;
+    
+    }
+
+    .jobs-info-positions {
+    position: relative;
+    top: -40px;
+    }
+
+    .image-postingan {
+        height: 200px!important;
+        background-repeat: no-repeat!important;
+        background-size: cover!important;
+        margin-bottom: 40px!important;
+        background-position: center!important;
+        margin: 5px;
+        border-radius: 10px;
+    }
+    
+    .mobile-chicken {
+        height: 230px!important;
+    }
+
+}
+
+
+
+/*Laptop Screen Header*/
+
+/* Desktops and laptops ----------- */
+@media only screen 
+and (min-width : 1224px) {
+    
+    
+    .navbar .navbar-nav .nav-link {
+        padding: 10px 10px;
+    }
+    
+    .navbar .navbar-nav .nav-link {
+        font-weight: 600;
+        font-size: 15px;
+        padding: 10px 16px 10px;
+        margin-right: 0px;
+        color: #008641;
+        text-transform: capitalize;
+    }
+
+    
+}
+
+/* Desktops and laptops ----------- */
+@media only screen 
+and (min-width : 1500px) {
+    
+    
+    .navbar .navbar-nav .nav-link {
+        padding: 10px 10px;
+    }
+    
+    .navbar .navbar-nav .nav-link {
+        font-weight: 600;
+        font-size: 17px;
+        padding: 10px 16px 10px;
+        margin-right: 15px;
+        color: #008641;
+        text-transform: capitalize;
+    }
+
+    
+}
