@@ -5,7 +5,7 @@
                 <i class="fas fa-align-left"></i>
             </button>
             <a class="navbar-brand" href="{{url("")}}">
-                <img class="img-fluid" src="{{ asset('images/saap/logo-text.png') }}" alt="Sido Agung Agro Prima" title="Sido Agung Agro Prima">
+                <img class="img-fluid" src="{{ asset('images/saf/logo-text-small.png') }}" alt="PT. Sidoagung Farm" title="PT. Sidoagung Farm">
             </a>
             <div class="navbar-collapse collapse" id="navbar_main">
                 <ul class="nav navbar-nav ml-auto mr-5">
@@ -16,7 +16,7 @@
                         <a href="{{ route('csr.news') }}" class="nav-link">Berita & CSR</a>
                     </li>
                     <li class="nav-item ">
-                        <a href="{{route('products')}}" class="nav-link">Produk Pakan</a>
+                        <a href="https://www.product.sidoagungfarm.com/" class="nav-link" target="_blank" rel="noopener noreferrer">Produk Pakan</a>
                     </li>
                     <li class="nav-item ">
                         <a href="{{route('we.career')}}" class="nav-link">Karir</a>

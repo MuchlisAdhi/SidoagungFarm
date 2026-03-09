@@ -20,7 +20,7 @@
                     <div class="section-title mb-3 pt-4">
                         <h2 class="text-white"> Produk Perusahaan</h2>
                     </div>
-                    <p class="text-white">PT. Sido Agung Agro Prima menyediakan Produk Pakan Ternak Berkualitas Tinggi. Produk unggulan kami, yaitu Sido Agung Feed yang telah menjadi pilihan utama bagi peternak unggas di tanah air karena dinilai sangat cocok dengan pola budidaya dan iklim di Indonesia.</p>
+                    <p class="text-white">PT. Sidoagung Farm menyediakan Produk Pakan Ternak Berkualitas Tinggi. Produk unggulan kami, yaitu Sido Agung Feed yang telah menjadi pilihan utama bagi peternak unggas di tanah air karena dinilai sangat cocok dengan pola budidaya dan iklim di Indonesia.</p>
                 </div>
 
             </div>

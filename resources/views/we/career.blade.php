@@ -9,7 +9,7 @@
          <div class="section-title mb-3 pt-3">
            <h2 class="text-white">Bergabung Bersama Kami</h2>
          </div>
-         <p class="text-white">Di PT. Sido Agung Agro Prima, Kami Menyediakan Lingkungan Kerja Yang Sehat, Hangat Dan Membangun. Anda Bisa mengembangkan Karir Anda Bersama Kami Dalam Kenyamanan Yang Kompetitif.</p>
+         <p class="text-white">Di PT. Sidoagung Farm, Kami Menyediakan Lingkungan Kerja Yang Sehat, Hangat Dan Membangun. Anda Bisa mengembangkan Karir Anda Bersama Kami Dalam Kenyamanan Yang Kompetitif.</p>
        </div>
      </div>
    </div>

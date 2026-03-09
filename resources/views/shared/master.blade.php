@@ -8,13 +8,13 @@
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 		<meta name="author" content="Sido Agung Group"/>	
-		<meta name="description" content="Sido Agung Agro Prima Official"/>
-		<meta name="keywords" content="Sido Agung Group, Sido Agung Agro Prima, Sidoagung Foods Processing, Sido Agung Farm, Sidosari Multi Farm, Asia Pangan Utama">	
+		<meta name="description" content="PT. Sidoagung Farm Official"/>
+		<meta name="keywords" content="Sido Agung Group, Sidoagung Farm, Sidoagung Foods Processing, Sido Agung Farm, Sidosari Multi Farm, Asia Pangan Utama">	
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
       <meta name="csrf-token" content="{{ csrf_token() }}" />
-      <title>PT. Sido Agung Agro Prima &#8211; &quot;Menjadi tuan rumah di negeri sendiri&quot;</title>
-      <link rel="shortcut icon" href="{{ asset('images/saap/favicon.png')}}" />
+      <title>PT. Sidoagung Farm &#8211; &quot;Menjadi tuan rumah di negeri sendiri&quot;</title>
+      <link rel="shortcut icon" href="{{ asset('images/saf/favicon.png')}}" />
       <link rel="stylesheet" href="{{ asset('css/googleapis.css?family=Archivo:400,500,600,700&amp;display=swap')}}">
       <link rel="stylesheet" href="{{ asset('css/font-awesome/all.min.css') }}" />
       <link rel="stylesheet" href="{{ asset('css/flaticon/flaticon.css') }}" />

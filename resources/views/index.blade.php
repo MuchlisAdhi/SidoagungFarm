@@ -231,17 +231,17 @@
         $slides = [
             [
                 'title' => "Kapasitas",
-                'content'   => "Feedmill milik Sido Agung Agro Prima memiliki kapasitas 25.000 ton per bulan, hal ini menjadi komitmen kami untuk melakukan pemenuhan kebutuhan pakan di Indonesia. Distribusi ke seluruh bagian pulau Jawa dan sekitarnya yang terus kami perluas demi menjangkau lebih jauh.",
+                'content'   => "Feedmill milik PT. Sidoagung Farm memiliki kapasitas 25.000 ton per bulan, hal ini menjadi komitmen kami untuk melakukan pemenuhan kebutuhan pakan di Indonesia. Distribusi ke seluruh bagian pulau Jawa dan sekitarnya yang terus kami perluas demi menjangkau lebih jauh.",
                 'image' => asset('images/saap/capacity.png')
             ],
             [
                 'title' => "Kemitraan",
-                'content'   => "Sido Agung Agro Prima menyediakan program kemitraan dan pendampingan bagi para peternak. Sebagai upaya kami untuk keberhasilan bersama peternak akan menerima kontrol dan pendampingan dari Petugas Penyuluh Lapangan, selanjutnya juga seminar terkait kesehatan hewan ternak dan manajemen kandang dari dokter hewan.",
+                'content'   => "PT. Sidoagung Farm menyediakan program kemitraan dan pendampingan bagi para peternak. Sebagai upaya kami untuk keberhasilan bersama peternak akan menerima kontrol dan pendampingan dari Petugas Penyuluh Lapangan, selanjutnya juga seminar terkait kesehatan hewan ternak dan manajemen kandang dari dokter hewan.",
                 'image' => asset('images/saap/partnership.png')
             ],
             [
                 'title' => "Kualitas",
-                'content'   => "Standar kualitas yang Sido Agung Agro Prima terapkan pada tiap produk, membuat kami percaya akan manfaat dari produk-produk kami. Kualitas stabil dan produk yang konsisten.",
+                'content'   => "Standar kualitas yang PT. Sidoagung Farm terapkan pada tiap produk, membuat kami percaya akan manfaat dari produk-produk kami. Kualitas stabil dan produk yang konsisten.",
                 'image' => asset('images/saap/quality.png')
             ],
         ];
@@ -332,7 +332,7 @@
     </section>
 
     <section class="header-inner header-inner-menu h-700 "
-        style="background-image: url('{{asset('images/saap/footer-bg.png')}}');">
+        style="background-image: url('{{asset('images/saf/bg-office.jpeg')}}');">
         <div class="container">
             <div class="row d-flex justify-content-center">
                 <div class="col-md-8 header-innermenu-height"></div>

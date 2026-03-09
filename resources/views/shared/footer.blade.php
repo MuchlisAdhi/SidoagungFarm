@@ -5,8 +5,8 @@
                 <a href="{{ url('') }}">
                     <img class="img-fluid mb-4" 
                         src="{{ asset('images/saap/logo-text-white.png') }}" 
-                        alt="Sido Agung Agro Prima"
-                        title="Sido Agung Agro Prima"
+                        alt="PT. Sidoagung Farm"
+                        title="PT. Sidoagung Farm"
                         style="width: 200px;">
                 </a>
             </div>
@@ -18,7 +18,7 @@
                     <ul class="list-unstyled mb-0">
                         <li><a href="{{ route('about-us') }}#about-us" class="text-white font-weight-bold p-1" style="font-size: 14px">Tentang Kami</a></li>
                         <li><a href="{{ route('csr.news') }}" class="text-white font-weight-bold p-1" style="font-size: 14px">Berita & CSR</a></li>
-                        <li><a href="{{ route('products') }}" class="text-white font-weight-bold p-1" style="font-size: 14px">Produk Pakan</a></li>
+                        <li><a href="https://www.product.sidoagungfarm.com/" class="text-white font-weight-bold p-1" style="font-size: 14px" target="_blank" rel="noopener noreferrer">Produk Pakan</a></li>
                     </ul>
                 </div>
             </div>
@@ -34,21 +34,21 @@
 
         <div class="row mt-4">
             <div class="col-12 text-center">
-                <a href="mailto:contact@sidoagungagunggroup.com" class="text-white">
+                <a href="mailto:contact@sidoagungfarm.com" class="text-white">
                     <span class="">
-                        <i class="fas fa-mail-bulk"></i> &nbsp; info@sidoagungfeed.com
+                        <i class="fas fa-mail-bulk"></i> &nbsp; info@sidoagungfarm.com
                     </span>
                 </a>
 
                 <br />
-                <a href="tel:+6282125998700" class="text-white">
+                <a href="tel:+62933301257" class="text-white">
                     <span class="">
-                        <i class="fas fa-phone"></i> &nbsp;(+62) 821-2599-8700
+                        <i class="fas fa-phone"></i> &nbsp;(+6293) 3301257
                     </span>
                 </a>
                 <br />
                 <span class="text-white">
-                    Jl. Raya Cirebon  - Losari KM.16, Desa Bendungan, Kec. Pangenan, Cirebon, Jawa Barat
+                    Jl. Magelang - Purworejo KM 10,5 Desa Sidoagung, Kec. Tempuran, Kab. Magelang, Jawa Tengah, Indonesia
                 </span>
             </div>
         </div>
@@ -56,7 +56,7 @@
         <div class="row mt-4">
             <div class="col-12 text-center">
                 <span class="text-white" style="font-size: 11px;">
-                    <p class="mb-0">©Copyright {{ now()->year }} <a href="{{ url('') }}" class="text-white"><strong>PT. Sido Agung Agro Prima</strong></a>
+                    <p class="mb-0">©Copyright {{ now()->year }} <a href="{{ url('') }}" class="text-white"><strong>PT. Sidoagung Farm</strong></a>
                     
                     All Rights Reserved.
                 </p>
@@ -73,7 +73,7 @@
                         <img class="img-fluid mb-4" src="{{ asset('images/saap/logo-text-white.png') }}" alt="logo"
                             style="width: 200px;">
                     </a>
-                    <p class="mb-2">Jl. H. Hasan Arif Sukaseneng, Kec. Banyuresmi Garut, Jawa Barat Indonesia</p>
+                    <p class="mb-2">Jl. Magelang - Purworejo KM 10,5 Desa Sidoagung, Kec. Tempuran, Kab. Magelang, Jawa Tengah, Indonesia</p>
                     <br>
                     <a href="{{ route('we.summary') }}" class="btn btn-primary mt-2 mb-5" id="btnHubungiKami">
                         <strong> Hubungi Kami </strong>

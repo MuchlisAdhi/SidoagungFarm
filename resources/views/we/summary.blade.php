@@ -9,7 +9,7 @@
                     <div class="section-title mb-3 pt-3">
                         <h2 class="text-white">Hubungi Kami</h2>
                     </div>
-                    <p class="text-white">Sebagai Bagian Dari Layanan Konsumen PT. Sido Agung Agro Prima, Kami
+                    <p class="text-white">Sebagai Bagian Dari Layanan Konsumen PT. Sidoagung Farm, Kami
                         Membuka Kanal - Kanal Komunikasi Yang Dapat Dengan Mudah Diakses.</p>
                 </div>
             </div>

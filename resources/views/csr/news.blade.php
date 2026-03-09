@@ -10,7 +10,7 @@
             <div class="row justify-content-center background-sidoagung" style="border-radius: 25px;">
                 <div class="col-lg-12 pb-lg-0">
                     <div class="section-title mb-3 pt-3 text-center">
-                        <h2 class="text-white">Berita & CSR Seputar Sido Agung Agro Prima</h2>
+                        <h2 class="text-white">Berita & CSR Seputar PT. Sidoagung Farm</h2>
                     </div>
                 </div>
             </div>

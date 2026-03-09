@@ -8,7 +8,7 @@
         id="about-us">
         <div class="container ">
             <div class="row">
-                <span class="h4 text-white">Sekilas Sido Agung Agro Prima</span>
+                <span class="h4 text-white">Sekilas Sido PT. Sidoagung Farm</span>
             </div>
         </div>
     </section>
@@ -18,26 +18,25 @@
             <div class="row mt-5">
                 <div class="col-lg-6">
                     <p class="mb-md-4 mb-2 text-justify">
-                        Sido Agung Agro Prima adalah bagian dari perusahaan Sido Agung Group yang bergerak di bidang
-                        peternakan unggas terintegrasi. Usaha peternakan Sido Agung Group dimulai pada tahun 1982 dan terus
+                        Sidoagung Farm adalah bagian dari perusahaan Sido Agung Group yang bergerak di bidang 
+                        peternakan unggas terintegrasi. Usaha peternakan Sido Agung Group dimulai pada tahun 1982 dan terus 
                         berkembang hingga saat ini.
                         <br /><br />
-                        Seiring dengan usaha peternakan yang terus berkembang, pada tahun 2015 Sido Agung Group melakukan
-                        pengembangan usaha dengan mendirikan Sido Agung Agro Prima di Cirebon yang bergerak dalam bidang
+                        Seiring dengan usaha peternakan yang terus berkembang, pada tahun 2018 Sido Agung Group melakukan 
+                        pengembangan usaha dengan mendirikan Sidoagung Farm di Magelang yang bergerak dalam bidang 
                         produksi pakan ternak.
                         <br /><br />
-                        Dengan kapasitas produksi sebesar 20.000 ton/bulan, Sido Agung Agro Prima berkomitmen untuk menjaga
-                        dan terus meningkatkan kualitas produk. Program kemitraan dan budidaya juga menjadi salah satu
+                        Dengan kapasitas produksi sebesar 25.000 ton/bulan, Sidoagung Farm berkomitmen untuk menjaga 
+                        dan terus meningkatkan kualitas produk. Program kemitraan dan budidaya juga menjadi salah satu 
                         komitmen dalam hal kebermanfaatan bagi masyarakat khususnya para peternak.
-
                     </p>
                 </div>
                 <div class="col-lg-1">
                     &nbsp;
                 </div>
                 <div class="col-lg-5">
-                    <img class="img-gms mt-xl-n4" src="{{ asset('images/saap/about-front-radius.png') }}"
-                        alt="Sido Agung Aro Prima" style="">
+                    <img class="img-gms mt-xl-n4" src="{{ asset('images/saf/bg-office.jpeg') }}"
+                        alt="Sidoagung Farm" style="">
                 </div>
             </div>
         </div>
