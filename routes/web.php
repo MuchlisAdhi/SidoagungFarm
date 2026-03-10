@@ -20,7 +20,10 @@ use App\Http\Controllers\Admin\{
     FeedbackController,
     NewsController,
     TestimoniController,
-    ResepController
+    ResepController,
+    EmailConfigController,
+    TicketController,
+    EmailLogController
 };
 
 use App\Http\Controllers\Admin\CSR\{
@@ -123,7 +126,7 @@ Route::prefix("wongelek")->group(function (){
             Route::prefix("pertanyaan")->name(".pertanyaan")->group(function(){
                 Route::get("/", "faqList");
                 Route::get("/get", "faqGet");
-                Route::get("/replied", "faqReplied");
+                Route::match(["get", "post"], "/replied", "faqReplied");
             });
             Route::prefix("mitra")->name(".mitra")->group(function(){
                 Route::get("/", "mitraList");
@@ -199,9 +202,27 @@ Route::prefix("wongelek")->group(function (){
             Route::get("/delete/{id}", "delete");
             Route::get("/publish/{id}", "publish");
         });
+
+        Route::controller(TicketController::class)->prefix("ticket")->name(".ticket")->group(function(){
+            Route::get("/", "list");
+            Route::get("/show/{id}", "show");
+            Route::post("/update/{id}", "update");
+        });
+
+        Route::controller(EmailConfigController::class)->prefix("email-config")->name(".email-config")->group(function(){
+            Route::get("/", "list");
+            Route::get("/add", "add");
+            Route::get("/edit/{id}", "edit");
+            Route::get("/form", "form");
+            Route::post("/save", "save");
+            Route::get("/delete/{id}", "delete");
+            Route::get("/activate/{id}", "activate");
+        });
+
+        Route::controller(EmailLogController::class)->prefix("email-log")->name(".email-log")->group(function(){
+            Route::get("/", "list");
+            Route::get("/show/{id}", "show");
+        });
         
     });
 });
-
-
-

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Jobs\TicketingJob;
 use App\Models\{
     Career,
     CareerApply,
@@ -13,6 +13,7 @@ use App\Models\{
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Enums\TicketStatus;
 
 class WeController extends Controller
 {
@@ -22,16 +23,33 @@ class WeController extends Controller
 
     public function question()
     {
+        request()->validate([
+            'formName' => ['required', 'string', 'max:255'],
+            'formEmail' => ['required', 'email', 'max:255'],
+            'formPhone' => ['required', 'string', 'max:30'],
+            'formType' => ['required', 'in:Produk,Kemitraan,Karir'],
+            'formDescription' => ['required', 'string', 'max:2000'],
+        ]);
+
         $form = [
             'name'  => request()->input("formName"),
             'email'  => request()->input("formEmail"),
+            'phone'  => request()->input("formPhone"),
             'qtype'  => request()->input("formType"),
             'description'  => request()->input("formDescription"),
+            'ticket_status' => TicketStatus::New->value,
         ];
 
-        ClientQuestion2::create($form);
+        $question = ClientQuestion2::create($form);
 
-        return back()->with("success", "Pertanyaan telah kami terima. Terima Kasih.");
+        TicketingJob::dispatchSync('q2', (string) $question->id);
+        $question->refresh();
+        $ticketNo = (string) ($question->ticket_no ?: '-');
+
+        return back()->with(
+            "success",
+            "Pertanyaan telah kami terima. Terima kasih. Nomor tiket Anda: {$ticketNo}"
+        );
     }
 
     public function joinAsPartner()

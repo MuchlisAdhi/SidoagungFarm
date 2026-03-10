@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\SaveTestimoniRequest;
 use Illuminate\Support\Str;
 use App\Models\Testimoni;
 use App\Models\Media;
+use App\Services\ImageOptimizationService;
 
 class TestimoniController extends Controller
 {
@@ -17,30 +18,31 @@ class TestimoniController extends Controller
         ]);
     }
 
-    public function save()
+    public function save(SaveTestimoniRequest $request)
     {
-        $name = request()->input("formName");
-        $title = request()->input("formTitle");
-        $testimoni = request()->input("formTestimoni");
-        $image = request()->file("image");
+        $validated = $request->validated();
+        $image = $request->file("image");
 
         $imageId = Str::uuid();
         $ext = strtolower($image->getClientOriginalExtension());
+        $mimeType = $image->getClientMimeType() ?: $image->getMimeType();
 
         if($image->move(app_path("Uploads"), $path = $imageId . "." . $ext))
         {
+            app(ImageOptimizationService::class)->optimize(app_path("Uploads/" . $path), $ext);
+
             Media::create([
                 'mediaId' => $imageId,
-                'mediaType' => $_FILES['image']['type'],
+                'mediaType' => $mimeType,
                 'mediaExt' => $ext,
                 'resultPath' => $path
             ]);
 
             Testimoni::create([
                 'photo'   => $imageId,
-                'name' => $name,
-                'title' => $title,
-                'testimoni'   => $testimoni
+                'name' => $validated['formName'],
+                'title' => $validated['formTitle'],
+                'testimoni'   => $validated['formTestimoni'],
             ]);
 
             session()->flash("success", "Berhasil Menyimpan Testimoni.");

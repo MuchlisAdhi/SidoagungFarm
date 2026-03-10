@@ -14,7 +14,7 @@ class AddBanner extends Migration
     public function up()
     {
         Schema::create('banners', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('mode')->nullable();
             $table->string('title')->nullable();
             $table->string('mediaId')->nullable();

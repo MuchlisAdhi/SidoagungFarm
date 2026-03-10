@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SaveUserRequest;
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class AdminController extends Controller
@@ -59,44 +59,26 @@ class AdminController extends Controller
         ]);
     }
 
-    public function save()
+    public function save(SaveUserRequest $request)
     {
-        $validate = Validator::make(request()->all(), [
-            'fullname'  => "required",
-            'email'     => "required|email"
-        ]);
-
-        if($validate->fails())
-        {
-            return response()->json([
-                'code'  => 0,
-                'msg'   => $validate->errors()->first(),
-                'data'  => []
-            ]);
-        }
-
-        if(!request()->input('id') && !request()->input('pass'))
-            return response()->json([
-                'code'  => 0,
-                'msg'   => "Password tidak boleh kosong",
-                'data'  => []
-            ]);
+        $validated = $request->validated();
 
         $form = [
-            'name'  => request()->input('fullname'),
-            'email' => request()->input('email')
+            'name'  => $validated['fullname'],
+            'email' => $validated['email'],
         ];
 
-        if($pass = request()->input("pass"))
+        $pass = $validated['pass'] ?? null;
+        if($pass)
             $form['password'] = bcrypt($pass);
 
-        if(request()->input("id"))
+        if(! empty($validated['id']))
         {
-            User::where('id', decrypt(request()->input("id")))->update($form);
+            User::where('id', decrypt($validated['id']))->update($form);
         }else{
             User::create([
-                'name' => request()->input('fullname'),
-                'email' => request()->input('email'),
+                'name' => $validated['fullname'],
+                'email' => $validated['email'],
                 'email_verified_at' => now(),
                 'password' => bcrypt($pass),
                 'remember_token' => Str::random(10),

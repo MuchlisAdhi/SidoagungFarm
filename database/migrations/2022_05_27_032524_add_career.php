@@ -14,7 +14,7 @@ class AddCareer extends Migration
     public function up()
     {
         Schema::create('career', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('position')->nullable();
             $table->string('location')->nullable();
             $table->text('description')->nullable();

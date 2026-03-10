@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin\CSR;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\SaveCsrRequest;
 use App\Models\CSR;
 use App\Models\Media;
+use App\Services\ImageOptimizationService;
 use Illuminate\Support\Str;
 
 class SafetyController extends Controller
@@ -48,37 +49,43 @@ class SafetyController extends Controller
         return view("admin.csr.safety-form", ['rs' => $find]);
     }
 
-    public function save()
+    public function save(SaveCsrRequest $request)
     {
+        $validated = $request->validated();
         $id = null;
         $mode = $this->mode;
         if(session()->has("safetyKey"))
             $id = session()->get("safetyKey");
 
         $form = [
-            'title'  => request()->input("formTitle"),
+            'title'  => $validated['formTitle'],
             'mode' => $mode,
-            'releasedate'  => request()->input("formPostedOn"),
-            'content'  => request()->input("formContent"),
-            'publish'  => request()->input("formPublish") == "on" ? 1 : 0,
+            'releasedate'  => $validated['formPostedOn'],
+            'content'  => $validated['formContent'] ?? null,
+            'publish'  => ($validated['formPublish'] ?? null) == "on" ? 1 : 0,
         ];
 
-        $image = request()->file("formThumbnail");
-
-        $imageId = Str::uuid();
-        $ext = strtolower($image->getClientOriginalExtension());
+        $image = $request->file("formThumbnail");
 
         try {
-            if($image->move(app_path("Uploads"), $path = $imageId . "." . $ext))
+            if($image)
             {
-                Media::create([
-                    'mediaId' => $imageId,
-                    'mediaType' => $_FILES['formThumbnail']['type'],
-                    'mediaExt' => $ext,
-                    'resultPath' => $path
-                ]);
+                $imageId = Str::uuid();
+                $ext = strtolower($image->getClientOriginalExtension());
+                $mimeType = $image->getClientMimeType() ?: $image->getMimeType();
+                if($image->move(app_path("Uploads"), $path = $imageId . "." . $ext))
+                {
+                    app(ImageOptimizationService::class)->optimize(app_path("Uploads/" . $path), $ext);
 
-                $form['thumbnail'] = $imageId;
+                    Media::create([
+                        'mediaId' => $imageId,
+                        'mediaType' => $mimeType,
+                        'mediaExt' => $ext,
+                        'resultPath' => $path
+                    ]);
+
+                    $form['thumbnail'] = $imageId;
+                }
             }
 
             if($id)

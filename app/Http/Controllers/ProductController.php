@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Jobs\TicketingJob;
 use App\Models\{
     Product,
     ClientQuestion
 };
+use App\Enums\TicketStatus;
+
 class ProductController extends Controller
 {
     public function index() {
@@ -67,13 +69,17 @@ class ProductController extends Controller
                 'data'  => []
             ]);
 
-        ClientQuestion::create([
-            'productid' => decrypt(request()->input("productId")),
+        $productId = decrypt(request()->input("productId"));
+        $question = ClientQuestion::create([
+            'productid' => $productId,
             'name' => request()->input("name"),
             'email' => request()->input("email"),
             'phone' => request()->input("phone"),
-            'description' => request()->input("desc")
+            'description' => request()->input("desc"),
+            'ticket_status' => TicketStatus::New->value,
         ]);
+
+        TicketingJob::dispatchSync('q1', (string) $question->id);
 
         return response()->json([
             'code'  => 200,

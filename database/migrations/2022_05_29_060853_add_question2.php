@@ -14,7 +14,7 @@ class AddQuestion2 extends Migration
     public function up()
     {
         Schema::create('clientquestion2', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('qtype')->nullable();
             $table->string('name')->nullable();
             $table->string('email')->nullable();

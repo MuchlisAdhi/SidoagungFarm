@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\SaveProductRequest;
 use App\Models\Product;
 use App\Models\Media;
+use App\Services\ImageOptimizationService;
 use Illuminate\Support\Str;
 
 class AdminProductController extends Controller
@@ -23,37 +24,36 @@ class AdminProductController extends Controller
         return response()->json(Product::where("id", $id)->first());
     }
 
-    public function save()
+    public function save(SaveProductRequest $request)
     {
-        $title = request()->input("title");
-        $category = request()->input("category");
-        $publish = request()->input("publish");
-        $desc = request()->input("description");
-        $image = request()->file("image");
+        $validated = $request->validated();
+        $image = $request->file("image");
 
-        $id = request()->input("id");
+        $id = $validated['id'] ?? null;
         if($id)
             $id = decrypt($id);
 
         $form = [
-            'title' => $title,
-            'category' => $category,
-            'publish'   => $publish,
-            'description' => $desc
+            'title' => $validated['title'],
+            'category' => $validated['category'] ?? '',
+            'publish'   => (int) ($validated['publish'] ?? 0),
+            'description' => $validated['description'],
         ];
 
         $imageId = "";
-        //return response()->json($_FILES);
-        if($_FILES['image']['size'] ?? 0 > 0) 
+        if($image)
         {
             $imageId = Str::uuid();
             $ext = strtolower($image->getClientOriginalExtension());
+            $mimeType = $image->getClientMimeType() ?: $image->getMimeType();
 
             if($image->move(app_path("Uploads"), $path = $imageId . "." . $ext))
             {
+                app(ImageOptimizationService::class)->optimize(app_path("Uploads/" . $path), $ext);
+
                 Media::create([
                     'mediaId' => $imageId,
-                    'mediaType' => $_FILES['image']['type'],
+                    'mediaType' => $mimeType,
                     'mediaExt' => $ext,
                     'resultPath' => $path
                 ]);
@@ -75,12 +75,6 @@ class AdminProductController extends Controller
         return response()->json([
             'code'  => 200,
             'msg'   => "",
-            'data'  => []
-        ]);
-        
-        return response()->json([
-            'code'  => 0,
-            'msg'   => "Gagal menyimpan Form",
             'data'  => []
         ]);
     }

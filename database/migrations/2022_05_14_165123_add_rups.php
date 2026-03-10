@@ -14,7 +14,7 @@ class AddRups extends Migration
     public function up()
     {
         Schema::create('rups', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('eventname')->nullable();
             $table->string('eventyear')->nullable();
             $table->string('documents')->nullable();

@@ -14,7 +14,7 @@ class AddTableResep extends Migration
     public function up()
     {
         Schema::create('resep', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('title')->nullable();
             $table->string('thumbnail')->nullable();
             $table->string('releasedate')->nullable();

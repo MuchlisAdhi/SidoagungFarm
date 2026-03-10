@@ -3,14 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\RejectApplicantRequest;
+use App\Http\Requests\Admin\ReplyFaqRequest;
+use App\Jobs\NotificationJob;
+use App\Jobs\TicketingJob;
 use App\Models\{
     ClientQuestion,
     ClientQuestion2,
+    Ticket,
+    Product,
     JoinAsPartner,
     Career,
     CareerApply
 };
+use App\Services\TicketNumberService;
+use App\Enums\TicketStatus;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -80,12 +87,13 @@ class FeedbackController extends Controller
         ]);
     }
 
-    public function rejectApp()
+    public function rejectApp(RejectApplicantRequest $request)
     {
-        $id = decrypt(request()->input("id"));
+        $validated = $request->validated();
+        $id = decrypt($validated['id']);
         CareerApply::where('id', $id)->update([
             'isapprove' => 0,
-            'rejectreason'  => request()->input("reason")
+            'rejectreason'  => $validated['reason'],
         ]);
         return response()->json([
             'code' => 200,
@@ -101,8 +109,11 @@ class FeedbackController extends Controller
             DB::raw("clientquestion.name"),
             DB::raw("clientquestion.email"),
             DB::raw("clientquestion.phone"),
+            DB::raw("clientquestion.ticket_no"),
             DB::raw("clientquestion.replied"),
+            DB::raw("clientquestion.ticket_status"),
             DB::raw("clientquestion.description"),
+            DB::raw("clientquestion.response_message"),
             DB::raw("clientquestion.created_at"),
             DB::raw("product.title"),
             DB::raw("product.category"),
@@ -116,8 +127,11 @@ class FeedbackController extends Controller
             "name",
             "email",
             "phone",
+            "ticket_no",
             "replied",
+            "ticket_status",
             "description",
+            "response_message",
             "created_at",
             DB::raw("'' as title"),
             DB::raw("qtype as category"),
@@ -143,8 +157,11 @@ class FeedbackController extends Controller
             DB::raw("clientquestion.name"),
             DB::raw("clientquestion.email"),
             DB::raw("clientquestion.phone"),
+            DB::raw("clientquestion.ticket_no"),
             DB::raw("clientquestion.replied"),
+            DB::raw("clientquestion.ticket_status"),
             DB::raw("clientquestion.description"),
+            DB::raw("clientquestion.response_message"),
             DB::raw("product.title"),
             DB::raw("product.category")
         )->leftJoin("product", function($join){
@@ -158,11 +175,38 @@ class FeedbackController extends Controller
                 "name",
                 "email",
                 "phone",
+                "ticket_no",
                 "replied",
+                "ticket_status",
                 "description",
+                "response_message",
                 DB::raw("'' as title"),
                 DB::raw("qtype as category")
             )->where('id', $id)->first();
+        }
+
+        if ($find && ($find->ticket_status ?? TicketStatus::New->value) === TicketStatus::New->value) {
+            if ($mode === 'q1') {
+                ClientQuestion::where('id', $id)->update([
+                    'ticket_status' => TicketStatus::Open->value,
+                ]);
+
+                Ticket::where('question_mode', 'q1')
+                    ->where('question_id', $id)
+                    ->update(['status' => TicketStatus::Open->value]);
+            }
+
+            if ($mode === 'q2') {
+                ClientQuestion2::where('id', $id)->update([
+                    'ticket_status' => TicketStatus::Open->value,
+                ]);
+
+                Ticket::where('question_mode', 'q2')
+                    ->where('question_id', $id)
+                    ->update(['status' => TicketStatus::Open->value]);
+            }
+
+            $find->ticket_status = TicketStatus::Open->value;
         }
 
         return response()->json([
@@ -172,23 +216,109 @@ class FeedbackController extends Controller
         ]);
     }
 
-    public function faqReplied()
+    public function faqReplied(ReplyFaqRequest $request)
     {
-        $id = request()->query("id", "");
-        $mode = request()->query("mode", "");
+        $validated = $request->validated();
+        $mode = $validated['mode'];
+        $response = trim((string) $validated['response']);
 
-        $id = $id ? decrypt($id) : "";
+        try {
+            $id = decrypt($validated['id']);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'code' => 422,
+                'msg' => 'Request tidak valid.',
+            ], 422);
+        }
 
-        if($mode == 'q1')
-            ClientQuestion::where('id', $id)->update([
-                "replied" => 1
+        $questionModel = $mode === 'q1' ? ClientQuestion::class : ClientQuestion2::class;
+        $question = $questionModel::where('id', $id)->first();
+        if (! $question) {
+            return response()->json(['code' => 404, 'msg' => 'Data tidak ditemukan.'], 404);
+        }
+
+        TicketingJob::dispatchSync($mode, (string) $question->id);
+        $question->refresh();
+
+        $payload = [
+            "replied" => 1,
+            "response_message" => $response,
+            "responded_at" => now(),
+            "ticket_status" => TicketStatus::Responded->value,
+        ];
+        if (! $question->ticket_no) {
+            $payload['ticket_no'] = app(TicketNumberService::class)
+                ->generateForModel(Ticket::class, 'SAF', 'ticket_number');
+        }
+
+        $questionModel::where('id', $question->id)->update($payload);
+        $question->refresh();
+
+        $ticket = Ticket::where('question_mode', $mode)
+            ->where('question_id', $question->id)
+            ->first();
+
+        if (! $ticket) {
+            $ticketNo = (string) ($question->ticket_no ?: app(TicketNumberService::class)
+                ->generateForModel(Ticket::class, 'SAF', 'ticket_number'));
+
+            $subject = $mode === 'q2'
+                ? (string) ($question->qtype ?: 'Website Inquiry')
+                : 'Product Inquiry';
+
+            if ($mode === 'q1') {
+                $product = Product::where('id', $question->productid)->first();
+                if ($product?->title) {
+                    $subject = $product->title;
+                    if ($product->category) {
+                        $subject .= ' (' . $product->category . ')';
+                    }
+                }
+            }
+
+            $ticket = Ticket::create([
+                'ticket_number' => $ticketNo,
+                'question_mode' => $mode,
+                'question_id' => $question->id,
+                'subject' => $subject,
+                'message' => $question->description ?: '-',
+                'requester_name' => $question->name,
+                'requester_email' => $question->email,
+                'requester_phone' => $question->phone,
+                'status' => TicketStatus::Responded->value,
+                'priority' => 'normal',
+                'channel' => 'website',
+                'response_message' => $response,
+                'responded_at' => now(),
             ]);
-
-        if($mode == 'q2')
-            ClientQuestion2::where('id', $id)->update([
-                "replied" => 1
+        } else {
+            $ticket->update([
+                'status' => TicketStatus::Responded->value,
+                'response_message' => $response,
+                'responded_at' => now(),
             ]);
-        return response()->json([]);
+        }
+
+        $warning = "";
+        if ($question && $question->email) {
+            try {
+                NotificationJob::dispatch(
+                    notificationType: 'ticket-responded',
+                    questionMode: $mode,
+                    questionId: (string) $question->id,
+                    ticketId: $ticket?->id
+                );
+            } catch (\Throwable $th) {
+                report($th);
+                $warning = " Jawaban tersimpan, tetapi email gagal dikirim.";
+            }
+        }
+
+        return response()->json([
+            'code' => 200,
+            'msg' => "Jawaban berhasil dikirim." . $warning,
+            'data' => [],
+        ]);
     }
 
     public function mitraList()

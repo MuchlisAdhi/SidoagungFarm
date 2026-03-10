@@ -5,6 +5,7 @@
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <title>PT. Sidoagung Farm</title>
       <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+      <link rel="shortcut icon" href="{{ asset('images/saf/favicon.png') }}">
       <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
       <link rel="stylesheet" href="{{ asset('fonts/font-awesome/css/font-awesome.min.css') }}">
       <link rel="stylesheet" href="{{ asset('fonts/ionicons/ionicons.min.css') }}">
@@ -132,7 +133,8 @@
                               // [ 'url' => url($base . '/feedback/sistem'), 'title'  => "Sistem Whistleblowing" ],
                               [ 'url' => url($base . '/feedback/karir'), 'title'  => "Karir" ],
                               [ 'url' => url($base . '/feedback/pertanyaan'), 'title'  => "Pertanyaan" ],
-                              [ 'url' => url($base . '/feedback/mitra'), 'title'  => "Menjadi Mitra" ]
+                              [ 'url' => url($base . '/feedback/mitra'), 'title'  => "Menjadi Mitra" ],
+                              [ 'url' => url($base . '/ticket'), 'title'  => "Tickets" ]
                            ]
                         ],
                         [
@@ -144,6 +146,14 @@
                            'url' => url($base . '/users'),
                            'title'  => "Users",
                            'childs' => []
+                        ],
+                        [
+                           'url' => "",
+                           'title'  => "Config",
+                           'childs' => [
+                              [ 'url' => url($base . '/email-log'), 'title'  => "Email Logs" ],
+                              [ 'url' => url($base . '/email-config'), 'title'  => "Email Config" ]
+                           ]
                         ]
                      ];
                   @endphp

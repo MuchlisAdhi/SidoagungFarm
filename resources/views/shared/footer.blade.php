@@ -4,7 +4,7 @@
             <div class="col col-lg-2 text-center">
                 <a href="{{ url('') }}">
                     <img class="img-fluid mb-4" 
-                        src="{{ asset('images/saap/logo-text-white.png') }}" 
+                        src="{{ asset('images/saf/logo-text-white.png') }}" 
                         alt="PT. Sidoagung Farm"
                         title="PT. Sidoagung Farm"
                         style="width: 200px;">
@@ -70,7 +70,7 @@
             <div class="col-lg-3 col-md-12">
                 <div class="footer-contact-info">
                     <a href="{{ url('') }}">
-                        <img class="img-fluid mb-4" src="{{ asset('images/saap/logo-text-white.png') }}" alt="logo"
+                        <img class="img-fluid mb-4" src="{{ asset('images/saf/logo-text-white.png') }}" alt="logo"
                             style="width: 200px;">
                     </a>
                     <p class="mb-2">Jl. Magelang - Purworejo KM 10,5 Desa Sidoagung, Kec. Tempuran, Kab. Magelang, Jawa Tengah, Indonesia</p>

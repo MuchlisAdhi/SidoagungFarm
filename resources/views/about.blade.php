@@ -43,7 +43,7 @@
     </section>
 
     <section class="pt-4 pb-3"
-        style="background-image: url('{{ asset('images/saap/green-radius-left.png') }}'); background-size:100% 75px; background-repeat: no-repeat;"
+        style="background-image: url('{{ asset('images/saf/green-radius-left.png') }}'); background-size:100% 75px; background-repeat: no-repeat;"
         id="manajemen">
         <div class="container ">
             <div class="row">

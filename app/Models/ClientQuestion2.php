@@ -2,14 +2,20 @@
 
 namespace App\Models;
 
+use App\Enums\TicketStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class ClientQuestion2 extends Model
+class ClientQuestion2 extends BaseModel
 {
     use HasFactory;
 
     protected $table = 'clientquestion2';
 
     protected $guarded = [];
+
+    protected $casts = [
+        'replied' => 'boolean',
+        'responded_at' => 'datetime',
+        'ticket_status' => TicketStatus::class,
+    ];
 }

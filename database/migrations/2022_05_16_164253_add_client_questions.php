@@ -14,8 +14,8 @@ class AddClientQuestions extends Migration
     public function up()
     {
         Schema::create('clientquestion', function (Blueprint $table) {
-            $table->id();
-            $table->string('productid')->nullable();
+            $table->uuid('id')->primary();
+            $table->uuid('productid')->nullable();
             $table->string('name')->nullable();
             $table->string('email')->nullable();
             $table->string('phone')->nullable();

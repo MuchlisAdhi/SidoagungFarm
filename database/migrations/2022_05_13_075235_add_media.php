@@ -14,7 +14,7 @@ class AddMedia extends Migration
     public function up()
     {
         Schema::create('medias', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('mediaId')->nullable();
             $table->string('mediaType')->nullable();
             $table->string('mediaExt')->nullable();

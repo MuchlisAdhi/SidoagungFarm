@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\SaveCareerRequest;
 
 use App\Models\Career;
 use Carbon\Carbon;
@@ -57,20 +57,21 @@ class CareerController extends Controller
         return view("admin.career.form", ['rs' => $find]);
     }
 
-    public function save()
+    public function save(SaveCareerRequest $request)
     {
+        $validated = $request->validated();
         $id = null;
         if(session()->has("careerKey"))
             $id = session()->get("careerKey");
 
         $form = [
-            'position'  => request()->input("formPosition"),
-            'location'  => request()->input("formLocation"),
-            'description'  => request()->input("formDescription"),
-            'qualification'  => request()->input("formQualification"),
-            'postedon'  => request()->input("formPostedOn"),
-            'closingdate'  => request()->input("formClosingDate"),
-            'publish'  => request()->input("formPublish") == "on" ? 1 : 0,
+            'position'  => $validated['formPosition'],
+            'location'  => $validated['formLocation'],
+            'description'  => $validated['formDescription'] ?? null,
+            'qualification'  => $validated['formQualification'] ?? null,
+            'postedon'  => $validated['formPostedOn'],
+            'closingdate'  => $validated['formClosingDate'],
+            'publish'  => ($validated['formPublish'] ?? null) == "on" ? 1 : 0,
         ];
 
         try {

@@ -3,26 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\Admin\LoginRequest;
 
 class AuthController extends Controller
 {
-    public function login()
+    public function login(LoginRequest $request)
     {
-        if(request()->isMethod("post"))
+        if($request->isMethod("post"))
         {
-            $validator = Validator::make(request()->all(), [
-                "email" => "required",
-                "password"  => "required"
-            ]);
-
-            if($validator->fails())
-            {
-                session()->flash("error", $validator->errors()->first());
-                return redirect()->route("login");
-            }
-
-            $cred = request()->only('email', 'password');
+            $cred = $request->validated();
             if(auth()->attempt($cred))
                 return redirect()->route("admin.main");
             else

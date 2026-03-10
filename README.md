@@ -25,6 +25,9 @@ Landing page company profile + panel admin berbasis Laravel.
   - Home banner & banner menu
   - Produk
   - Feedback (karir, pertanyaan, mitra)
+  - Ticketing (list + response)
+  - Email Config (SMTP master)
+  - Email Logs (list + detail error)
   - Karir
   - CSR (env, safety, sosial)
   - News
@@ -80,6 +83,18 @@ Seeder `UserSeeder` membuat akun admin:
 - Password: `123Empat`
 
 Ganti kredensial ini untuk environment non-development.
+
+## Konfigurasi Notifikasi Email Admin
+
+Agar notifikasi ticket baru terkirim ke admin (dan tidak gagal ke alamat `no-reply`), pastikan salah satu ini diisi:
+
+1. Field `Admin Recipient Email` di menu `Email Config` (disimpan di kolom `report` pada konfigurasi SMTP aktif).
+2. Variable `.env` `ADMIN_NOTIFICATION_EMAIL` (akan override field `Admin Recipient Email` jika diisi).
+
+Catatan:
+
+- Jangan gunakan alamat `no-reply@...` sebagai penerima notifikasi admin jika mailbox tersebut memang tidak menerima incoming email.
+- Setelah ubah `.env`, jalankan `php artisan optimize:clear`.
 
 ## Dokumentasi Routes
 
@@ -179,7 +194,7 @@ Semua route berikut berada di bawah prefix `/wongelek`.
 
 - `GET /feedback/pertanyaan` -> `admin.feedback.pertanyaan`
 - `GET /feedback/pertanyaan/get` -> `admin.feedback.pertanyaan`
-- `GET /feedback/pertanyaan/replied` -> `admin.feedback.pertanyaan`
+- `GET|POST /feedback/pertanyaan/replied` -> `admin.feedback.pertanyaan`
 
 #### Feedback Mitra
 
@@ -252,6 +267,27 @@ Semua route berikut berada di bawah prefix `/wongelek`.
 - `GET /resep/delete/{id}` -> `admin.resep`
 - `GET /resep/publish/{id}` -> `admin.resep`
 
+#### Ticketing
+
+- `GET /ticket` -> `admin.ticket`
+- `GET /ticket/show/{id}` -> `admin.ticket`
+- `POST /ticket/update/{id}` -> `admin.ticket`
+
+#### Email Config
+
+- `GET /email-config` -> `admin.email-config`
+- `GET /email-config/add` -> `admin.email-config`
+- `GET /email-config/edit/{id}` -> `admin.email-config`
+- `GET /email-config/form` -> `admin.email-config`
+- `POST /email-config/save` -> `admin.email-config`
+- `GET /email-config/delete/{id}` -> `admin.email-config`
+- `GET /email-config/activate/{id}` -> `admin.email-config`
+
+#### Email Log
+
+- `GET /email-log` -> `admin.email-log`
+- `GET /email-log/show/{id}` -> `admin.email-log`
+
 ## Route Checking
 
 Untuk melihat route terbaru langsung dari aplikasi:
@@ -267,3 +303,191 @@ php artisan route:list --path=api
 ```bash
 php artisan test
 ```
+
+## Image Optimization (Spatie)
+
+Project ini sudah menggunakan package:
+
+- `spatie/laravel-image-optimizer`
+
+Binary yang dipakai Spatie:
+
+- `jpegoptim`
+- `optipng`
+- `pngquant`
+- `gifsicle`
+
+### Cek Binary di Server (cPanel Terminal/SSH)
+
+Jalankan:
+
+```bash
+which jpegoptim
+which optipng
+which pngquant
+which gifsicle
+```
+
+Jika semua ada path output, artinya binary sudah tersedia dan bisa langsung dipakai.
+
+### Instalasi di Shared Hosting cPanel (tanpa root)
+
+Di shared hosting biasanya Anda tidak punya akses `apt/yum`, jadi gunakan salah satu cara berikut.
+
+1. Cara paling aman (recommended): minta provider hosting install binary global:
+   - `jpegoptim`
+   - `optipng`
+   - `pngquant`
+   - `gifsicle`
+2. Jika provider tidak bisa install global, gunakan binary custom per-user:
+   - Buat folder binary:
+
+```bash
+mkdir -p /home/sidoagu1/bin/image-optimizer
+```
+
+   - Download/upload binary Linux x86_64 (static build) ke folder tersebut dengan nama:
+     - `/home/sidoagu1/bin/image-optimizer/jpegoptim`
+     - `/home/sidoagu1/bin/image-optimizer/optipng`
+     - `/home/sidoagu1/bin/image-optimizer/pngquant`
+     - `/home/sidoagu1/bin/image-optimizer/gifsicle`
+   - Set permission executable:
+
+```bash
+chmod +x /home/sidoagu1/bin/image-optimizer/jpegoptim
+chmod +x /home/sidoagu1/bin/image-optimizer/optipng
+chmod +x /home/sidoagu1/bin/image-optimizer/pngquant
+chmod +x /home/sidoagu1/bin/image-optimizer/gifsicle
+```
+
+### Set Path Binary di Laravel
+
+Edit file `config/image-optimizer.php` pada key `binary_path`:
+
+```php
+'binary_path' => '/home/sidoagu1/bin/image-optimizer/',
+```
+
+Lalu jalankan:
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+```
+
+### Verifikasi
+
+Jalankan:
+
+```bash
+/home/sidoagu1/bin/image-optimizer/jpegoptim --version
+/home/sidoagu1/bin/image-optimizer/optipng -v
+/home/sidoagu1/bin/image-optimizer/pngquant --version
+/home/sidoagu1/bin/image-optimizer/gifsicle --version
+```
+
+Catatan:
+
+- Jika command di atas gagal, binary belum cocok dengan OS server Anda.
+- Pastikan fungsi proses di PHP tidak diblok (`proc_open`, `exec`, `shell_exec`), karena Spatie mengeksekusi binary lewat process.
+- Jika hosting membatasi binary custom, gunakan opsi request ke provider agar binary diinstall global.
+
+## Queue Job (Ticketing & Notification)
+
+Project ini memakai job:
+
+- `App\Jobs\TicketingJob`
+- `App\Jobs\NotificationJob`
+
+### Menjalankan Job di Lokal
+
+Secara default `.env.example` masih menggunakan:
+
+```env
+QUEUE_CONNECTION=sync
+```
+
+Mode `sync` artinya job langsung dieksekusi saat request berjalan, jadi tidak perlu worker terpisah.
+
+Jika ingin simulasi async queue di lokal:
+
+1. Ubah `.env`:
+
+```env
+QUEUE_CONNECTION=database
+```
+
+2. Pastikan tabel queue sudah ada (migration `2026_03_10_014221_create_jobs_table.php`):
+
+```bash
+php artisan migrate
+```
+
+3. Jalankan worker di terminal terpisah:
+
+```bash
+php artisan queue:work --queue=default --tries=3 --timeout=120
+```
+
+4. Cek job gagal:
+
+```bash
+php artisan queue:failed
+php artisan queue:retry all
+```
+
+### Menjalankan Job di cPanel Shared Hosting
+
+Di shared hosting biasanya tidak ada Supervisor, jadi worker dijalankan via Cron Job.
+
+1. (Opsional) Jika ingin membuat class job langsung di server (via Terminal cPanel):
+
+```bash
+php artisan make:job NamaJobBaru
+```
+
+Catatan:
+
+- Lokasi file job akan dibuat di `app/Jobs`.
+- Jika terminal cPanel tidak tersedia, buat job di lokal lalu deploy ke server.
+
+2. Set `.env` production:
+
+```env
+APP_ENV=production
+APP_DEBUG=false
+APP_TIMEZONE=Asia/Jakarta
+QUEUE_CONNECTION=sync
+```
+
+3. Jalankan migration di server (sekali saat deploy/ubah schema):
+
+```bash
+php artisan migrate --force
+```
+
+4. Jika `QUEUE_CONNECTION=sync` (sesuai project saat ini), cukup pasang cron scheduler:
+
+```bash
+php -q /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/artisan schedule:run >> /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/log-schedule.log 2>&1
+```
+
+5. Jika suatu saat Anda ganti ke async queue (`QUEUE_CONNECTION=database`), tambahkan worker cron terpisah:
+
+```bash
+php -q /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/artisan queue:work --queue=tickets --sleep=1 --tries=3 --stop-when-empty >> /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/log-queue-tickets.log 2>&1
+php -q /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/artisan queue:work --queue=emails --sleep=1 --tries=3 --stop-when-empty >> /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/log-queue-emails.log 2>&1
+```
+
+Alternatif path PHP bawaan cPanel:
+
+```bash
+/usr/local/bin/php /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/artisan schedule:run >> /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/log-schedule.log 2>&1
+```
+
+Catatan:
+
+- Path project harus menunjuk folder root Laravel (folder yang berisi file `artisan`), bukan folder `public`.
+- Saat `QUEUE_CONNECTION=sync`, command `queue:work` tidak wajib dan boleh tidak dijalankan.
+- Saat mode async, gunakan queue name `tickets` dan `emails` sesuai job pada project ini.
+- Untuk melihat error queue, cek `storage/logs/laravel.log`, `log-schedule.log`, `log-queue-tickets.log`, dan `log-queue-emails.log`.

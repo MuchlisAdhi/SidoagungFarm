@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\SaveNewsRequest;
 use App\Models\News;
 use App\Models\Media;
+use App\Services\ImageOptimizationService;
 use Illuminate\Support\Str;
 
 class NewsController extends Controller
@@ -48,38 +49,44 @@ class NewsController extends Controller
         return view("admin.news.news-form", ['rs' => $find]);
     }
 
-    public function save()
+    public function save(SaveNewsRequest $request)
     {
+        $validated = $request->validated();
         $id = null;
         $mode = $this->mode;
         if(session()->has("newsKey"))
             $id = session()->get("newsKey");
 
         $form = [
-            'title'  => request()->input("formTitle"),
+            'title'  => $validated['formTitle'],
             'mode' => $mode,
-            'releasedate'  => request()->input("formPostedOn"),
-            'author'  => request()->input("formAuthor"),
-            'content'  => request()->input("formContent"),
-            'publish'  => request()->input("formPublish") == "on" ? 1 : 0,
+            'releasedate'  => $validated['formPostedOn'],
+            'author'  => $validated['formAuthor'],
+            'content'  => $validated['formContent'] ?? null,
+            'publish'  => ($validated['formPublish'] ?? null) == "on" ? 1 : 0,
         ];
 
-        $image = request()->file("formThumbnail");
-
-        $imageId = Str::uuid();
-        $ext = strtolower($image->getClientOriginalExtension());
+        $image = $request->file("formThumbnail");
 
         try {
-            if($image->move(app_path("Uploads"), $path = $imageId . "." . $ext))
+            if($image)
             {
-                Media::create([
-                    'mediaId' => $imageId,
-                    'mediaType' => $_FILES['formThumbnail']['type'],
-                    'mediaExt' => $ext,
-                    'resultPath' => $path
-                ]);
+                $imageId = Str::uuid();
+                $ext = strtolower($image->getClientOriginalExtension());
+                $mimeType = $image->getClientMimeType() ?: $image->getMimeType();
+                if($image->move(app_path("Uploads"), $path = $imageId . "." . $ext))
+                {
+                    app(ImageOptimizationService::class)->optimize(app_path("Uploads/" . $path), $ext);
 
-                $form['thumbnail'] = $imageId;
+                    Media::create([
+                        'mediaId' => $imageId,
+                        'mediaType' => $mimeType,
+                        'mediaExt' => $ext,
+                        'resultPath' => $path
+                    ]);
+
+                    $form['thumbnail'] = $imageId;
+                }
             }
 
             if($id)

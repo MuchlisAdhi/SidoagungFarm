@@ -14,7 +14,7 @@ class AddJoinAsPartner extends Migration
     public function up()
     {
         Schema::create('joinaspartner', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('firstname')->nullable();
             $table->string('lastname')->nullable();
             $table->string('bod')->nullable();

@@ -33,8 +33,16 @@
                                     placeholder="Alamat Surel" required>
                             </div>
                             <div class="form-group mb-3">
-                                <input type="text" class="form-control" id="formType" name="formType"
-                                    placeholder="Type Pertanyaan" required>
+                                <input type="text" class="form-control" id="formPhone" name="formPhone"
+                                    placeholder="Nomor Telepon" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <select class="form-control" id="formType" name="formType" required>
+                                    <option value="">-- Pilih Topik --</option>
+                                    <option value="Produk">Produk</option>
+                                    <option value="Kemitraan">Kemitraan</option>
+                                    <option value="Karir">Karir</option>
+                                </select>
                             </div>
                             <div class="form-group mb-4">
                                 <textarea class="form-control" id="formDescription" name="formDescription" placeholder="Deskripsi Pertanyaan Anda"
@@ -67,7 +75,7 @@
 
             $("#btnSubmit").click(function() {
                 let valid = true;
-                const check = ["formName", "formType", "formEmail", "formDescription"];
+                const check = ["formName", "formEmail", "formPhone", "formType", "formDescription"];
                 check.map(function(e) {
                     const x = $("#" + e)
                     x.removeClass("is-invalid");

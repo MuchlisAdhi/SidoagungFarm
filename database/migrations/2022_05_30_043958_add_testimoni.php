@@ -14,7 +14,7 @@ class AddTestimoni extends Migration
     public function up()
     {
         Schema::create('testimoni', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name')->nullable();
             $table->string('photo')->nullable();
             $table->text('testimoni')->nullable();

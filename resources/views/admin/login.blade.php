@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>PT. Sidoagung Farm | Log in</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="shortcut icon" href="{{ asset('images/saf/favicon.png') }}">
     <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('fonts/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('fonts/ionicons/ionicons.min.css') }}">
@@ -24,7 +25,7 @@
 <body class="hold-transition login-page" style="background: #27ae60">
     <div class="login-box">
         <div class="login-logo">
-            <img class="img-fluid" src="{{ asset('images/saap/logo-text-white.png') }}" alt="logo">
+            <img class="img-fluid" src="{{ asset('images/saf/logo-text-white.png') }}" alt="logo">
             {{-- <a href="javascript:void(0);" style="color:#fff;"><b>SidoFoods</b></a> --}}
         </div><!-- /.login-logo -->
         <div class="login-box-body" style="border-radius:10px;">
