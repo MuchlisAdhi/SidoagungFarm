@@ -73,7 +73,7 @@ class MainController extends Controller
             [
                 'title' => 'Bisnis Kami',
                 'links' => [
-                    ['label' => 'Produk Kami', 'url' => route('products')],
+                    // ['label' => 'Produk Kami', 'url' => 'https://www.product.sidoagungfarm.com/', 'external' => true],
                     ['label' => 'Produk Pakan', 'url' => 'https://www.product.sidoagungfarm.com/', 'external' => true],
                     ['label' => 'Kemitraan', 'url' => route('we.be-our-partner')],
                 ],
