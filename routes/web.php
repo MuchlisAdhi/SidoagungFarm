@@ -39,6 +39,9 @@ Route::controller(MainController::class)->name("main")->group(function (){
     Route::get('/getResource/{id}', "getResource")->name(".getResource");
 });
 
+Route::get('/sitemap', [MainController::class, 'sitemap'])->name('sitemap');
+Route::get('/sitemap.xml', [MainController::class, 'sitemapXml'])->name('sitemap.xml');
+
 Route::get("/about-us", [AboutController::class, "index"])->name("about-us");
 
 Route::controller(ProductController::class)->name("products")->prefix("products")->group(function(){

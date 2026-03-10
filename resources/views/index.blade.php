@@ -1,5 +1,9 @@
 @extends('shared.master')
 
+@section('meta_title', 'PT. Sidoagung Farm | Pakan Ternak Berkualitas')
+@section('meta_description', 'Website resmi PT. Sidoagung Farm. Kami memproduksi pakan ternak berkualitas dan menyediakan layanan kemitraan peternakan di Indonesia.')
+@section('canonical_url', url('/'))
+
 @php
     $categories = [
         'karkas'        => "Karkas",
@@ -345,7 +349,6 @@
 @endsection
 
 @section('css')
-    <meta content="width=device-width, initial-scale=1" name="viewport" />
     <link rel="stylesheet" href="{{ asset('js/rolling-slider/rolling.css') }}" />
     
 @endsection

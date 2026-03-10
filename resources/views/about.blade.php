@@ -1,5 +1,9 @@
 @extends('shared.master')
 
+@section('meta_title', 'Tentang Kami | PT. Sidoagung Farm')
+@section('meta_description', 'Pelajari profil PT. Sidoagung Farm, manajemen, serta visi dan misi perusahaan sebagai bagian dari Sido Agung Group.')
+@section('canonical_url', route('about-us'))
+
 @section('content')
     <x-banner-summary mode="about"></x-banner-summary>
 

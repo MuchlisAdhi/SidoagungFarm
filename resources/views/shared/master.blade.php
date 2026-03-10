@@ -4,17 +4,55 @@
    
    <head>
       <meta charset="utf-8">
-      <meta name="keywords">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-		<meta name="author" content="Sido Agung Group"/>	
-		<meta name="description" content="PT. Sidoagung Farm Official"/>
-		<meta name="keywords" content="Sido Agung Group, Sidoagung Farm, Sidoagung Foods Processing, Sido Agung Farm, Sidosari Multi Farm, Asia Pangan Utama">	
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<meta name="author" content="Sido Agung Group"/>
+		<meta name="description" content="@yield('meta_description', 'PT. Sidoagung Farm adalah perusahaan pakan ternak berkualitas di Indonesia, bagian dari Sido Agung Group.')"/>
+		<meta name="keywords" content="Sido Agung Group, Sidoagung Farm, Sidoagung Foods Processing, Sido Agung Farm, Sidosari Multi Farm, Asia Pangan Utama">
+      <meta property="og:type" content="website">
+      <meta property="og:title" content="@yield('meta_title', 'PT. Sidoagung Farm - Menjadi tuan rumah di negeri sendiri')">
+      <meta property="og:description" content="@yield('meta_description', 'PT. Sidoagung Farm adalah perusahaan pakan ternak berkualitas di Indonesia, bagian dari Sido Agung Group.')">
+      <meta property="og:url" content="@yield('canonical_url', request()->url())">
+      <meta property="og:image" content="{{ asset('images/saf/logo.png') }}">
+      <meta name="twitter:card" content="summary_large_image">
 
       <meta name="csrf-token" content="{{ csrf_token() }}" />
-      <title>PT. Sidoagung Farm &#8211; &quot;Menjadi tuan rumah di negeri sendiri&quot;</title>
+      <title>@yield('meta_title', 'PT. Sidoagung Farm - Menjadi tuan rumah di negeri sendiri')</title>
+      <link rel="canonical" href="@yield('canonical_url', request()->url())" />
       <link rel="shortcut icon" href="{{ asset('images/saf/favicon.png')}}" />
+
+      @php
+         $organizationSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => 'PT. Sidoagung Farm',
+            'url' => url('/'),
+            'logo' => asset('images/saf/logo.png'),
+            'contactPoint' => [[
+               '@type' => 'ContactPoint',
+               'telephone' => '+62-933-3301257',
+               'contactType' => 'customer service',
+               'areaServed' => 'ID',
+               'availableLanguage' => ['Indonesian', 'English'],
+            ]],
+         ];
+
+         $websiteSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            'name' => 'PT. Sidoagung Farm',
+            'url' => url('/'),
+            'inLanguage' => 'id-ID',
+         ];
+      @endphp
+      <script type="application/ld+json">
+         {!! json_encode($organizationSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+      </script>
+      <script type="application/ld+json">
+         {!! json_encode($websiteSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+      </script>
+      @yield('json_ld')
+
       <link rel="stylesheet" href="{{ asset('css/googleapis.css?family=Archivo:400,500,600,700&amp;display=swap')}}">
       <link rel="stylesheet" href="{{ asset('css/font-awesome/all.min.css') }}" />
       <link rel="stylesheet" href="{{ asset('css/flaticon/flaticon.css') }}" />

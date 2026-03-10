@@ -59,6 +59,74 @@ class MainController extends Controller
         return response(File::get($file), 200)->header("Content-Type", $media->mediaType);
     }
 
+    public function sitemap()
+    {
+        $sections = [
+            [
+                'title' => 'Tentang Kami',
+                'links' => [
+                    ['label' => 'Profil Perusahaan', 'url' => route('about-us')],
+                    ['label' => 'Manajemen', 'url' => route('about-us') . '#manajemen'],
+                    ['label' => 'Visi & Misi', 'url' => route('about-us') . '#visimisi'],
+                ],
+            ],
+            [
+                'title' => 'Bisnis Kami',
+                'links' => [
+                    ['label' => 'Produk Kami', 'url' => route('products')],
+                    ['label' => 'Produk Pakan', 'url' => 'https://www.product.sidoagungfarm.com/', 'external' => true],
+                    ['label' => 'Kemitraan', 'url' => route('we.be-our-partner')],
+                ],
+            ],
+            [
+                'title' => 'Keberlanjutan',
+                'links' => [
+                    ['label' => 'CSR Summary', 'url' => route('csr.summary')],
+                    ['label' => 'Berita CSR', 'url' => route('csr.news')],
+                    ['label' => 'Resep', 'url' => route('csr.resep')],
+                ],
+            ],
+            [
+                'title' => 'Karir',
+                'links' => [
+                    ['label' => 'Karir', 'url' => route('we.career')],
+                    ['label' => 'Join Us', 'url' => route('we.join-us')],
+                ],
+            ],
+            [
+                'title' => 'Hubungi Kami',
+                'links' => [
+                    ['label' => 'Talk To Us', 'url' => route('we.summary')],
+                    ['label' => 'Menjadi Mitra', 'url' => route('we.be-our-partner')],
+                ],
+            ],
+        ];
+
+        return view('sitemap', compact('sections'));
+    }
+
+    public function sitemapXml()
+    {
+        $now = now()->toAtomString();
+        $urls = [
+            ['loc' => url('/'), 'changefreq' => 'weekly', 'priority' => '1.0', 'lastmod' => $now],
+            ['loc' => route('about-us'), 'changefreq' => 'monthly', 'priority' => '0.9', 'lastmod' => $now],
+            ['loc' => route('products'), 'changefreq' => 'weekly', 'priority' => '0.9', 'lastmod' => $now],
+            ['loc' => route('csr.summary'), 'changefreq' => 'weekly', 'priority' => '0.8', 'lastmod' => $now],
+            ['loc' => route('csr.news'), 'changefreq' => 'daily', 'priority' => '0.8', 'lastmod' => $now],
+            ['loc' => route('csr.resep'), 'changefreq' => 'weekly', 'priority' => '0.8', 'lastmod' => $now],
+            ['loc' => route('we.summary'), 'changefreq' => 'weekly', 'priority' => '0.8', 'lastmod' => $now],
+            ['loc' => route('we.join-us'), 'changefreq' => 'weekly', 'priority' => '0.7', 'lastmod' => $now],
+            ['loc' => route('we.be-our-partner'), 'changefreq' => 'weekly', 'priority' => '0.7', 'lastmod' => $now],
+            ['loc' => route('we.career'), 'changefreq' => 'weekly', 'priority' => '0.7', 'lastmod' => $now],
+            ['loc' => route('sitemap'), 'changefreq' => 'monthly', 'priority' => '0.6', 'lastmod' => $now],
+        ];
+
+        return response()
+            ->view('sitemap-xml', compact('urls'))
+            ->header('Content-Type', 'application/xml');
+    }
+
     public function testimoni()
     {
         $data = [

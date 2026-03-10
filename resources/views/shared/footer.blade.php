@@ -27,6 +27,7 @@
                     <ul class="list-unstyled mb-0">
                         <li><a href="{{ route('we.career') }}" class="text-white font-weight-bold p-1" style="font-size: 14px">Karir</a></li>
                         <li><a href="{{ route('we.summary') }}" class="text-white font-weight-bold p-1" style="font-size: 14px">Hubungi Kami</a></li>
+                        <li><a href="{{ route('sitemap') }}" class="text-white font-weight-bold p-1" style="font-size: 14px">Sitemap</a></li>
                     </ul>
                 </div>
             </div>
