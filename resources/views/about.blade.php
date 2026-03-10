@@ -35,7 +35,7 @@
                     &nbsp;
                 </div>
                 <div class="col-lg-5">
-                    <img class="img-gms mt-xl-n4" src="{{ asset('images/saf/bg-office.jpeg') }}"
+                    <img class="img-gms mt-xl-n4" src="{{ asset('images/saf/about-front-radius.png') }}"
                         alt="Sidoagung Farm" style="">
                 </div>
             </div>
