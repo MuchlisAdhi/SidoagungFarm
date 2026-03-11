@@ -236,7 +236,7 @@
             [
                 'title' => "Kapasitas",
                 'content'   => "Feedmill milik PT. Sidoagung Farm memiliki kapasitas 25.000 ton per bulan, hal ini menjadi komitmen kami untuk melakukan pemenuhan kebutuhan pakan di Indonesia. Distribusi ke seluruh bagian pulau Jawa dan sekitarnya yang terus kami perluas demi menjangkau lebih jauh.",
-                'image' => asset('images/saap/capacity.png')
+                'image' => asset('images/saf/capacity.png')
             ],
             [
                 'title' => "Kemitraan",
@@ -336,7 +336,7 @@
     </section>
 
     <section class="header-inner header-inner-menu h-700 "
-        style="background-image: url('{{asset('images/saf/bg-office.jpeg')}}');">
+        style="background-image: url('{{asset('images/saf/bg-silo3.jpeg')}}');">
         <div class="container">
             <div class="row d-flex justify-content-center">
                 <div class="col-md-8 header-innermenu-height"></div>
@@ -379,26 +379,16 @@
 
         $(document).ready(function(){
             let header = $(".header")
-            header.css("position", "fixed")
-                    .css("width", "100%")
-                    .css("background", "transparent")
-                    .css("box-shadow", "unset")
-            header.find(".navbar").first().removeClass("bg-white");
+            $("body").addClass("home-fixed-header");
+            header.addClass("sticky-top");
+            header.find(".navbar").first().addClass("bg-white");
 
             $(".header-inner").eq(0).css("height", "auto")
         })
 
-        $(window).scroll(function(){
+        $(window).on("scroll.homeHeader", function(){
             let header = $(document).find(".header").first()
-            if(header.hasClass("sticky-top"))
-            {
-                header.css("background", "white")
-                .css("box-shadow", "0 1px 14px rgb(0 0 0 / 5%)")
-                .css("-webkit-box-shadow", "0 1px 14px rgb(0 0 0 / 5%)")
-            }else{
-                header.css("background", "transparent")
-                .css("box-shadow", "unset")
-            }
+            header.addClass("sticky-top")
         })
     </script>
     <script>

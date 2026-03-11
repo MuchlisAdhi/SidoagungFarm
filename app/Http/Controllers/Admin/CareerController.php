@@ -51,8 +51,9 @@ class CareerController extends Controller
     public function form()
     {
         $find = new Career();
-        if($id = session()->has("careerKey"))
-            $find = Career::where('id', $id)->first();
+        if ($id = session()->get("careerKey")) {
+            $find = Career::where('id', $id)->first() ?? new Career();
+        }
 
         return view("admin.career.form", ['rs' => $find]);
     }

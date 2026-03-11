@@ -131,8 +131,22 @@ class WeController extends Controller
 
     public function saveApply()
     {
-        // dd(request()->all());
-        // dd(request()->input("companyName1"));
+        request()->validate([
+            'formCareerId' => ['required', 'string'],
+            'formFirstName' => ['required', 'string', 'max:255'],
+            'formLastName' => ['required', 'string', 'max:255'],
+            'formEmail' => ['required', 'email', 'max:255'],
+            'formPhone' => ['required', 'regex:/^\d{10,12}$/'],
+            'formBod' => ['required', 'date'],
+            'formLastEducation' => ['required', 'in:smk,diploma,s1,s2,s3'],
+            'formMajor' => ['required', 'string', 'max:255'],
+            'formIsExperience' => ['required', 'in:0,1'],
+            'formCurrentSalary' => ['required', 'string', 'max:20'],
+            'formExpectSalary' => ['required', 'string', 'max:20'],
+            'formCV' => ['required', 'file', 'mimes:pdf', 'max:1024'],
+            'totalRow' => ['nullable', 'integer', 'min:0'],
+        ]);
+
         $careerId = decrypt(request()->input("formCareerId"));
         $form = [
             'careerid'  => $careerId,
@@ -169,7 +183,7 @@ class WeController extends Controller
         {
             Media::create([
                 'mediaId' => $cvId,
-                'mediaType' => $_FILES['formCV']['type'],
+                'mediaType' => 'application/pdf',
                 'mediaExt' => $ext,
                 'resultPath' => $path
             ]);

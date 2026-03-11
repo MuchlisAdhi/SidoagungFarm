@@ -1,4 +1,5 @@
 @extends('shared.master')
+@section('body_class', 'force-sticky-header')
 
 @section('content')
 <x-banner-summary mode="career"></x-banner-summary>
@@ -32,7 +33,7 @@
    <div class="row">
       <div class="col-lg-12">
          @foreach($list as $l)
-            <a href="{{route('we.career', ["id" => encrypt($l->id)])}}" class="row list-job bg-white border-radius mt-3">
+            <a href="{{route('we.career', ["id" => encrypt($l->id)])}}" class="row list-job bg-white border-radius mt-3 surface-contrast surface-strong surface-contrast-hover">
                <div class="col-md-8">
                   <div class="circle-text"></div>
                   <div class="pl-5 pb-5 pt-5 ">

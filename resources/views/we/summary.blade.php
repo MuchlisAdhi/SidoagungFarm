@@ -20,7 +20,7 @@
         <div class="container">
             <div class="row justify-content-lg-around position-relative pt-5">
                 <div class="col-lg-12 col-md-12 pr-lg-5">
-                    <div class="p-4 p-md-5 bg-white shadow border-radius">
+                    <div class="p-4 p-md-5 bg-white border-radius surface-contrast surface-medium">
                         <h4>Kami Ingin Sekali Mendengar Dari Anda</h4>
                         <form class="mt-4" id="frmQuestion">
                             {{ csrf_field() }}

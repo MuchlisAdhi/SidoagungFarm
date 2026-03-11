@@ -94,7 +94,7 @@
      </style>
       @yield("css")
    </head>
-   <body>
+   <body class="@yield('body_class')">
       
       <div id="myOverlay" class="overlay">
          <span class="closebtn" onclick="closeSearch()" title="Close Overlay">×</span>
@@ -110,10 +110,14 @@
       
       @include("shared.header")
 
-      @yield("content")
+      <main class="@yield('main_class', 'bg-light')">
+         @yield("content")
+      </main>
 
 
-      @include("shared.footer")
+      <div class="site-footer-shell bg-white">
+         @include("shared.footer")
+      </div>
 
       <div id="back-to-top" class="back-to-top">atas</div>
       {{-- <div id="wa"></div> --}}

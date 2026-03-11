@@ -1,4 +1,4 @@
-<div class="container bg-white gms-container our-container ">
+<div class="container bg-white gms-container our-container surface-contrast surface-medium">
     <div class="container bg-white pb-3">
         <div class="navigation post-navigation my-md-4 ">
             <div>

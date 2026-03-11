@@ -68,7 +68,7 @@
             </div>
 
 
-            <div id="productsect" class="row bg-white">
+            <div id="productsect" class="row bg-white surface-contrast surface-medium">
                 <div class="col-md-12">
                     <div class="owl-carousel text-left" data-nav-arrow="true" data-nav-dots="true" data-items="1"
                         data-md-items="1" data-sm-items="1" data-xs-items="1" data-xx-items="1" style="z-index: unset;">

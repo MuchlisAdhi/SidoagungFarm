@@ -203,6 +203,7 @@ img.lang-flag {
 
 .header-farmingnew {
     padding-top: 50px;
+    padding-bottom: 44px;
     background-size: cover;
     background-position: center center;
 }
@@ -1262,6 +1263,168 @@ img.lang-flag {
     padding-left: 5%;
 }
 
+body.home-fixed-header {
+    padding-top: 86px;
+}
+
+body.force-sticky-header {
+    padding-top: 86px;
+}
+
+body.home-fixed-header .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    background: #ffffff !important;
+    box-shadow: 0 1px 14px rgb(0 0 0 / 5%) !important;
+    -webkit-box-shadow: 0 1px 14px rgb(0 0 0 / 5%) !important;
+}
+
+body.force-sticky-header .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    background: #ffffff !important;
+    box-shadow: 0 4px 18px rgba(2, 45, 98, 0.14) !important;
+    -webkit-box-shadow: 0 4px 18px rgba(2, 45, 98, 0.14) !important;
+}
+
+body.home-fixed-header .header .navbar {
+    background: #ffffff !important;
+}
+
+body.force-sticky-header .header .navbar {
+    background: #ffffff !important;
+}
+
+body.home-fixed-header .header .navbar-brand {
+    padding: 15px 0px;
+}
+
+body.force-sticky-header .header .navbar-brand {
+    padding: 15px 0px;
+}
+
+.footer-compact .footer-compact-wrap {
+    max-width: 1220px;
+    margin: 0 auto;
+}
+
+.footer-compact .footer-compact-content {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    row-gap: 18px;
+}
+
+.footer-compact .footer-logo {
+    width: 180px;
+}
+
+.footer-compact .footer-address {
+    max-width: 280px;
+    line-height: 1.65;
+}
+
+.footer-compact .footer-link-row {
+    row-gap: 14px;
+}
+
+.footer-compact .footer-link ul {
+    padding-right: 0;
+}
+
+.footer-compact .footer-link ul li a {
+    padding: 5px 0;
+}
+
+.footer-compact h5 {
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+.footer-compact .footer-bottom {
+    border-top: 1px solid #e7e7e7;
+    margin-top: 18px;
+}
+
+.footer-compact .footer-bottom p {
+    line-height: 1.6;
+}
+
+.surface-contrast {
+    background: #ffffff;
+    border: 1px solid rgba(2, 45, 98, 0.08);
+    box-shadow: 0 10px 28px rgba(2, 45, 98, 0.08);
+    border-radius: 14px;
+}
+
+.surface-soft {
+    border-color: rgba(2, 45, 98, 0.05);
+    box-shadow: 0 6px 16px rgba(2, 45, 98, 0.05);
+}
+
+.surface-strong {
+    border-color: rgba(2, 45, 98, 0.12);
+    box-shadow: 0 14px 34px rgba(2, 45, 98, 0.14);
+}
+
+.surface-medium {
+    border-color: rgba(2, 45, 98, 0.08);
+    box-shadow: 0 10px 24px rgba(2, 45, 98, 0.09);
+}
+
+.surface-contrast-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.surface-contrast-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(2, 45, 98, 0.12);
+}
+
+.surface-strong.surface-contrast-hover:hover {
+    box-shadow: 0 18px 38px rgba(2, 45, 98, 0.2);
+}
+
+.surface-contrast-padded {
+    padding: 22px 26px;
+}
+
+main.bg-light + .site-footer-shell,
+main.bg-light + .site-footer-shell .footer.footer-compact,
+main.bg-light + .site-footer-shell .footer.footer-compact .footer-bottom,
+body.force-sticky-header .footer.footer-compact,
+body.force-sticky-header .footer.footer-compact .footer-bottom,
+body.force-sticky-header main.bg-light .footer.footer-compact,
+body.force-sticky-header main.bg-light .footer.footer-compact .footer-bottom,
+body.force-sticky-header .site-footer-shell,
+body.force-sticky-header .site-footer-shell .footer.footer-compact,
+body.force-sticky-header .site-footer-shell .footer.footer-compact .footer-bottom,
+body.force-sticky-header .footer.footer-compact .footer-pad,
+body.force-sticky-header .footer.footer-compact .footer-compact-wrap,
+body.force-sticky-header .footer.footer-compact .footer-compact-content {
+    background-color: #ffffff !important;
+}
+
+.site-footer-shell {
+    position: relative;
+    z-index: 4;
+    background-color: #ffffff !important;
+    box-shadow: 0 -1px 0 rgba(2, 45, 98, 0.08);
+}
+
+.site-footer-shell .footer,
+.site-footer-shell .footer-bottom,
+.site-footer-shell .footer-pad,
+.site-footer-shell .footer-compact-wrap,
+.site-footer-shell .footer-compact-content {
+    background-color: #ffffff !important;
+}
+
 .contactus-text {
     color: #4fbae8;
 }
@@ -1461,6 +1624,26 @@ img.lang-flag {
 }
 
 @media all and (max-width:992px) {
+    body.home-fixed-header {
+        padding-top: 76px;
+    }
+
+    body.force-sticky-header {
+        padding-top: 76px;
+    }
+
+    .footer-compact .footer-logo {
+        width: 165px;
+    }
+
+    .footer-compact .footer-address {
+        max-width: none;
+    }
+
+    .surface-contrast-padded {
+        padding: 16px;
+    }
+
     #hidden-desktop-footermenu {
         display: unset;
     }

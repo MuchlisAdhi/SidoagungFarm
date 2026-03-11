@@ -8,7 +8,7 @@
     <x-banner-summary mode="about"></x-banner-summary>
 
     <section class="pt-4 pb-3"
-        style="background-image: url('{{ asset('images/saap/green-radius-right.png') }}'); background-size:100% 90px; background-repeat: no-repeat;"
+        style="background-image: url('{{ asset('images/saf/green-radius-right.png') }}'); background-size:100% 90px; background-repeat: no-repeat;"
         id="about-us">
         <div class="container ">
             <div class="row">
@@ -67,7 +67,7 @@
                         alt="sidoagung-bram-sebastian">
                 </div>
                 <div class="col-lg-9 mb-4 mb-lg-0">
-                    <div class="col-md-12 bg-white border-radius mt-3">
+                    <div class="col-md-12 bg-white border-radius mt-3 surface-contrast surface-soft">
                         <div class="pl-5 pb-5 pt-5 ">
                             <h5 class="text-primary mb-2">Bram Sebastian</h5>
                             <p style="font-style: italic; margin-top: -10px;">Direktur Utama</p>
@@ -97,7 +97,7 @@
                     <img class="img-fluid" src="{{ asset('images/saap/asrokh-nawawi.png') }}" alt="sidoagung-asrokh-nawawi">
                 </div>
                 <div class="col-lg-9 mb-4 mb-lg-0">
-                    <div class="col-md-12 bg-white border-radius mt-3">
+                    <div class="col-md-12 bg-white border-radius mt-3 surface-contrast surface-soft">
                         <div class="pl-5 pb-5 pt-5 ">
                             <h5 class="text-primary mb-2">Asrokh Nawawi</h5>
                             <p style="font-style: italic; margin-top: -10px;">Direktur Marketing</p>
@@ -124,7 +124,7 @@
     </section>
 
     <section class="pt-4 pb-3"
-        style="background-image: url('{{ asset('images/saap/green-radius-right.png') }}'); background-size:100% 90px; background-repeat: no-repeat;"
+        style="background-image: url('{{ asset('images/saf/green-radius-right.png') }}'); background-size:100% 90px; background-repeat: no-repeat;"
         id="visimisi">
         <div class="container ">
             <div class="row">

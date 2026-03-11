@@ -1,4 +1,22 @@
 @extends('shared.master')
+@section('body_class', 'force-sticky-header')
+@section('css')
+    <style>
+        #applyToastStack {
+            position: fixed;
+            top: 104px;
+            right: 20px;
+            z-index: 2000;
+        }
+
+        #applyToastStack .toast {
+            min-width: 320px;
+            margin-bottom: 10px;
+            border: none;
+            box-shadow: 0 10px 28px rgba(2, 45, 98, 0.2);
+        }
+    </style>
+@endsection
 
 @section('content')
     <x-banner-summary mode="career"></x-banner-summary>
@@ -6,7 +24,7 @@
         <div class=" container">
             <div class="row align-items-center">
                 <div class="col-xl-12">
-                    <div class="blog-detail">
+                    <div class="blog-detail surface-contrast surface-strong surface-contrast-padded">
                         <div class="blog-post mb-4 ">
                             <div class="blog-post-content">
                                 <div class="blog-post-info">
@@ -37,7 +55,7 @@
                                             <span class="input-group-text">Dokumen</span>
                                         </div>
                                         <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="formCV" name="formCV">
+                                            <input type="file" class="custom-file-input" id="formCV" name="formCV" accept=".pdf,application/pdf">
                                             <label class="custom-file-label" for="formCV">Upload CV / Portofolio-mu ( PDF )</label>
                                         </div>
                                         <div id="cvInvalid" class="invalid-feedback"></div>
@@ -54,10 +72,12 @@
                                     <div class="form-group col-6 mb-3">
                                         <input type="email" class="form-control" placeholder="Email" name="formEmail"
                                             id="formEmail" required>
+                                        <div id="emailInvalid" class="invalid-feedback"></div>
                                     </div>
                                     <div class="form-group col-6 mb-3">
                                         <input type="text" class="form-control" placeholder="Telp" name="formPhone"
-                                            id="formPhone" required>
+                                            id="formPhone" required inputmode="numeric" maxlength="12" pattern="[0-9]{10,12}">
+                                        <div id="phoneInvalid" class="invalid-feedback"></div>
                                     </div>
                                     <div class="form-group col-12 mb-3">
                                         <label>Tgl. Lahir</label>
@@ -157,6 +177,8 @@
             </div>
         </div>
     </section>
+
+    <div id="applyToastStack" aria-live="polite" aria-atomic="true"></div>
     
     <div class="modal fade" id="modalRespons" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
         aria-hidden="true">
@@ -172,7 +194,7 @@
                             </h5>
                             <p class="mb-4 text-primary" id="teks_2">Let’s create many great stories!</p>
                             <p class="mb-4 text-primary" id="teks_3">Sincerely,</p>
-                            <img class="img-fluid" src="{{ asset('images/logo.png') }}" alt="">
+                            <img class="img-fluid" src="{{ asset('images/saf/logo.png') }}" alt="">
                         </div>
                         <div class="col-sm-3 align-self-start align-self-lg-center ">
                             <img class="img-fluid " src="{{ asset('images/ai/telur.png') }}" alt=""
@@ -191,6 +213,9 @@
         var have_experience = $('#have-experience').html()
 
         $(function() {
+            const allowExt = ["application/pdf"];
+            const maxCvSize = 1024 * 1024; // 1MB
+
             @if (session()->has('success'))
                $("#modalRespons").modal("show");
                setTimeout(() => {
@@ -229,6 +254,77 @@
                return false
             })
 
+            $("#formPhone").on("input", function(){
+               this.value = (this.value || "").replace(/\D/g, "").slice(0, 12);
+            });
+
+            const syncCvLabel = function(input){
+               const defaultLabel = "Upload CV / Portofolio-mu ( PDF )";
+               const label = $(input).next(".custom-file-label");
+               const file = input.files && input.files.length ? input.files[0] : null;
+
+               label.text(file ? file.name : defaultLabel);
+            };
+
+            const showApplyToast = function(message, variant = "danger"){
+               const isWarning = variant === "warning";
+               const contextClass = isWarning ? "bg-warning text-dark" : "bg-danger text-white";
+               const closeClass = isWarning ? "text-dark" : "text-white";
+               const delay = isWarning ? 5200 : 4200;
+               const toastId = "apply-toast-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+
+               const toastHtml = `
+                  <div id="${toastId}" class="toast ${contextClass}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="${delay}">
+                     <div class="toast-body d-flex justify-content-between align-items-center">
+                        <span>${message}</span>
+                        <button type="button" class="ml-2 mb-1 close ${closeClass}" data-dismiss="toast" aria-label="Close">
+                           <span aria-hidden="true">&times;</span>
+                        </button>
+                     </div>
+                  </div>
+               `;
+
+               const stack = $("#applyToastStack");
+               stack.append(toastHtml);
+
+               const toast = $("#" + toastId);
+               toast.toast({ autohide: true, delay: delay });
+               toast.toast("show");
+               toast.on("hidden.bs.toast", function(){
+                  $(this).remove();
+               });
+            };
+
+            $("#formCV").on("change", function(){
+               syncCvLabel(this);
+
+               const files = this.files;
+               if(!files || files.length < 1)
+                  return;
+
+               const file = files[0];
+               const isPdfByMime = allowExt.includes((file.type || "").toLowerCase());
+               const isPdfByExt = (file.name || "").toLowerCase().endsWith(".pdf");
+
+               if (!(isPdfByMime || isPdfByExt)) {
+                  $("#cvInvalid").text("Extensi file harus .pdf").css("display", "unset");
+                  showApplyToast("Format file harus PDF (.pdf).", "danger");
+                  this.value = "";
+                  syncCvLabel(this);
+                  return;
+               }
+
+               if(file.size > maxCvSize) {
+                  $("#cvInvalid").text("Maksimum size 1 MB").css("display", "unset");
+                  showApplyToast("Ukuran CV terlalu besar. Batas maksimum 1 MB.", "warning");
+                  this.value = "";
+                  syncCvLabel(this);
+                  return;
+               }
+
+               $("#cvInvalid").text("").css("display", "none");
+            });
+
             $(document).on("keypress", ".lengthOfWork", function(e){
                let allow = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
                if(allow.includes(e.key))
@@ -238,9 +334,14 @@
 
             $("#btnSubmit").on("click", function(){
                const formAccept = $("#formAccept");
-               const allowExt = ["application/pdf"];
+               const emailInput = $("#formEmail");
+               const phoneInput = $("#formPhone");
+               const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+               const phonePattern = /^\d{10,12}$/;
                $("#cvInvalid").text("").css("display", "none");
                $("#acceptedInvalid").text("").css("display", "none");
+               $("#emailInvalid").text("").css("display", "none");
+               $("#phoneInvalid").text("").css("display", "none");
                let isValid = true;
 
                let check = [
@@ -258,6 +359,25 @@
                      selector.addClass("is-invalid");
                   }
                });
+
+               const emailValue = (emailInput.val() || "").trim();
+               const phoneValue = (phoneInput.val() || "").trim();
+               emailInput.val(emailValue);
+               phoneInput.val(phoneValue);
+
+               if(emailValue !== "" && !emailPattern.test(emailValue)) {
+                  isValid = false;
+                  emailInput.addClass("is-invalid");
+                  $("#emailInvalid").text("Format email tidak valid.").css("display", "unset");
+                  showApplyToast("Format email tidak valid.", "danger");
+               }
+
+               if(phoneValue !== "" && !phonePattern.test(phoneValue)) {
+                  isValid = false;
+                  phoneInput.addClass("is-invalid");
+                  $("#phoneInvalid").text("Nomor telepon harus angka dengan panjang 10 sampai 12 digit.").css("display", "unset");
+                  showApplyToast("Nomor telepon harus angka dengan panjang 10 sampai 12 digit.", "danger");
+               }
 
                const experienceTable = $("#experienceTable")
                const experienceRows = experienceTable.find(".row")
@@ -289,15 +409,19 @@
                }
 
                const file = cv[0];
-               if (!allowExt.includes(file.type))
+               const isPdfByMime = allowExt.includes((file.type || "").toLowerCase());
+               const isPdfByExt = (file.name || "").toLowerCase().endsWith(".pdf");
+               if (!(isPdfByMime || isPdfByExt))
                {
                   $("#cvInvalid").text("Extensi file harus .pdf").css("display", "unset");
+                  showApplyToast("Format file harus PDF (.pdf).", "danger");
                   return;
                }
 
-               if(file.size > 250000 )
+               if(file.size > maxCvSize )
                {
-                  $("#cvInvalid").text("Maksimum size 250kb").css("display", "unset");
+                  $("#cvInvalid").text("Maksimum size 1 MB").css("display", "unset");
+                  showApplyToast("Ukuran CV terlalu besar. Batas maksimum 1 MB.", "warning");
                   return;
                }
 

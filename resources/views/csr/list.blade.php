@@ -58,7 +58,7 @@
 
 @foreach ($list as $l)
     @if($loop->index % 2 == 0)
-        <div class="container p-5">
+        <div class="container p-5 surface-contrast surface-medium mb-4">
             <div class="row align-items-center">
                 <div class="col-lg-5 mb-4 mb-lg-0 text-right">
                     <div class="container image-text-right-container">
@@ -75,7 +75,7 @@
             </div>
         </div>
     @else
-        <div class="container p-5">
+        <div class="container p-5 surface-contrast surface-medium mb-4">
             <div class="row align-items-center">
                 <div class="col-lg-7 text-right">
                     <img class="img-fluid" style="border-radius: 20px;" src="{{ route('main.getResource', ['id' => $l->thumbnail]) }}" alt="{{ $l->title }}" title="{{ $l->title }}">

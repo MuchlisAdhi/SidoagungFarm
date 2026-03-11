@@ -1,4 +1,5 @@
 @extends('shared.master')
+@section('body_class', 'force-sticky-header')
 
 @section('content')
 <x-banner-summary mode="career"></x-banner-summary>
@@ -13,7 +14,7 @@
   <div class="container">
       <div class="row align-items-center">
          <div class="col-xl-12">
-            <div class="blog-detail">
+            <div class="blog-detail surface-contrast surface-strong surface-contrast-padded">
                <div class="blog-post mb-4 ">
                   <div class="blog-post-content">
                       <div class="blog-post-details jobs-info-positions">

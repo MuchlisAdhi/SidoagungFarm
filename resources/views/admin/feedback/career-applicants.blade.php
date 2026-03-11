@@ -42,10 +42,6 @@
                                     onclick="show('{{ encrypt($l->id) }}')">
                                     <i class="fa fa-eye" style="font-size: 20px;"></i>
                                 </a>
-                                &nbsp;
-                                <a href="{{ route('main.getResource', ['id' => $l->cvid]) }}" target="blank" class="text-success" title="Show CV">
-                                    <i class="fa fa-download" style="font-size: 20px;"></i>
-                                </a>
                             </td>
                         </tr>
                     @endforeach
@@ -153,6 +149,39 @@
                                     </table>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <hr />
+                                    <h5 class="text-bold text-success">Curriculum Vitae</h5>
+                                    <div class="pdf-toolbar">
+                                        <button type="button" class="btn btn-default btn-sm" id="btnPdfPrev" disabled>
+                                            <i class="fa fa-chevron-left"></i> Prev
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm" id="btnPdfNext" disabled>
+                                            Next <i class="fa fa-chevron-right"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm" id="btnPdfZoomOut" disabled>
+                                            <i class="fa fa-search-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm" id="btnPdfZoomIn" disabled>
+                                            <i class="fa fa-search-plus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm" id="btnPdfPrint" disabled>
+                                            <i class="fa fa-print"></i> Print
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm" id="btnPdfDownload" disabled>
+                                            <i class="fa fa-download"></i> Download
+                                        </button>
+                                        <span id="pdfPageInfo" class="label label-default">Halaman 0 / 0</span>
+                                        <span id="pdfZoomInfo" class="label label-info">Zoom 100%</span>
+                                    </div>
+                                    <div id="cvPdfViewport">
+                                        <canvas id="cvPdfCanvas"></canvas>
+                                        <div id="pdfViewerEmpty">CV belum tersedia.</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -193,14 +222,209 @@
 
 @section('style')
     <link rel="stylesheet" href="{{ asset('plugins/datatables/dataTables.bootstrap.css') }}">
+    <style>
+        .pdf-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        #cvPdfViewport {
+            border: 1px solid #d2d6de;
+            border-radius: 4px;
+            background: #f5f7fa;
+            overflow: auto;
+            max-height: 65vh;
+            min-height: 320px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 12px;
+        }
+
+        #cvPdfCanvas {
+            display: none;
+            max-width: 100%;
+            height: auto;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+        }
+
+        #pdfViewerEmpty {
+            color: #707070;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            border: 1px dashed #bfc5cc;
+            border-radius: 4px;
+            padding: 28px 14px;
+            background: #fcfcfc;
+        }
+    </style>
 @endsection
 
 @section('script')
     <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('plugins/datatables/dataTables.bootstrap.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" referrerpolicy="no-referrer"></script>
     <script>
         var selected;
+        var pdfDoc = null;
+        var pageNum = 1;
+        var pageRendering = false;
+        var pageNumPending = null;
+        var pdfScale = 1;
+        var pdfCanvas = null;
+        var pdfContext = null;
+        var currentCvUrl = null;
+        var currentCvFileName = "cv.pdf";
+        const PDF_DEFAULT_SCALE = 1;
+        const PDF_MIN_SCALE = 0.7;
+        const PDF_MAX_SCALE = 2.5;
+
+        function getCvResourceUrl(cvid) {
+            return `{{ url('/getResource') }}/${encodeURIComponent(cvid)}`;
+        }
+
+        function setPdfControlState(isEnabled) {
+            $("#btnPdfPrev, #btnPdfNext, #btnPdfZoomOut, #btnPdfZoomIn, #btnPdfPrint, #btnPdfDownload").prop("disabled", !isEnabled);
+        }
+
+        function sanitizeFileName(text) {
+            return (text || "cv")
+                .toString()
+                .replace(/\s+/g, "_")
+                .replace(/[^a-zA-Z0-9_\-.]/g, "")
+                .replace(/_+/g, "_")
+                .replace(/^_+|_+$/g, "")
+                || "cv";
+        }
+
+        function showViewerToastError(message) {
+            if (typeof $ !== "undefined" && typeof $.toast === "function") {
+                $.toast({
+                    heading: "Error",
+                    text: message,
+                    showHideTransition: "fade",
+                    position: "bottom-right",
+                    icon: "error"
+                });
+                return;
+            }
+
+            alert(message);
+        }
+
+        function updatePdfMeta() {
+            const totalPage = pdfDoc ? pdfDoc.numPages : 0;
+            $("#pdfPageInfo").text(`Halaman ${totalPage ? pageNum : 0} / ${totalPage}`);
+            $("#pdfZoomInfo").text(`Zoom ${Math.round(pdfScale * 100)}%`);
+        }
+
+        function resetPdfViewer(message = "CV belum tersedia.") {
+            pdfDoc = null;
+            pageNum = 1;
+            pageRendering = false;
+            pageNumPending = null;
+            pdfScale = PDF_DEFAULT_SCALE;
+            currentCvUrl = null;
+            currentCvFileName = "cv.pdf";
+            setPdfControlState(false);
+
+            if (pdfCanvas && pdfContext) {
+                pdfContext.clearRect(0, 0, pdfCanvas.width, pdfCanvas.height);
+            }
+
+            $("#cvPdfCanvas").hide();
+            $("#pdfViewerEmpty").text(message).show();
+            updatePdfMeta();
+        }
+
+        function renderPdfPage(num) {
+            if (!pdfDoc) {
+                return;
+            }
+
+            pageRendering = true;
+            pdfDoc.getPage(num).then(function(page) {
+                const viewport = page.getViewport({ scale: pdfScale });
+                pdfCanvas.height = viewport.height;
+                pdfCanvas.width = viewport.width;
+
+                const renderContext = {
+                    canvasContext: pdfContext,
+                    viewport: viewport
+                };
+
+                return page.render(renderContext).promise;
+            }).then(function() {
+                pageRendering = false;
+
+                if (pageNumPending !== null) {
+                    const pending = pageNumPending;
+                    pageNumPending = null;
+                    renderPdfPage(pending);
+                }
+
+                updatePdfMeta();
+            }).catch(function() {
+                resetPdfViewer("Gagal menampilkan halaman PDF.");
+            });
+        }
+
+        function queueRenderPdfPage(num) {
+            if (pageRendering) {
+                pageNumPending = num;
+            } else {
+                renderPdfPage(num);
+            }
+        }
+
+        function loadCvPdf(cvid, fileName = "cv.pdf") {
+            if (!cvid) {
+                resetPdfViewer("CV belum tersedia.");
+                return;
+            }
+
+            if (typeof window.pdfjsLib === "undefined") {
+                resetPdfViewer("PDF.js gagal dimuat.");
+                return;
+            }
+
+            setPdfControlState(false);
+            $("#pdfViewerEmpty").text("Memuat CV PDF...").show();
+            $("#cvPdfCanvas").hide();
+
+            const resourceUrl = getCvResourceUrl(cvid);
+            currentCvUrl = resourceUrl;
+            currentCvFileName = sanitizeFileName(fileName).replace(/\.pdf$/i, "") + ".pdf";
+            const loadingTask = window.pdfjsLib.getDocument({ url: resourceUrl });
+            loadingTask.promise.then(function(loadedPdf) {
+                pdfDoc = loadedPdf;
+                pageNum = 1;
+                pdfScale = PDF_DEFAULT_SCALE;
+                setPdfControlState(true);
+
+                $("#pdfViewerEmpty").hide();
+                $("#cvPdfCanvas").show();
+                updatePdfMeta();
+                renderPdfPage(pageNum);
+            }).catch(function() {
+                resetPdfViewer("Gagal memuat CV PDF.");
+            });
+        }
+
         $(function() {
+            if (typeof window.pdfjsLib !== "undefined") {
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+            }
+
+            pdfCanvas = document.getElementById("cvPdfCanvas");
+            pdfContext = pdfCanvas ? pdfCanvas.getContext("2d") : null;
+            resetPdfViewer("Pilih pelamar untuk melihat CV.");
+
             $("#tblCareer").DataTable();
 
             $("#btnApprove").click(function(){
@@ -258,7 +482,90 @@
                         })
                     }
                 });
-            })
+            });
+
+            $("#btnPdfPrev").click(function() {
+                if (!pdfDoc || pageNum <= 1) {
+                    return;
+                }
+                pageNum--;
+                queueRenderPdfPage(pageNum);
+            });
+
+            $("#btnPdfNext").click(function() {
+                if (!pdfDoc || pageNum >= pdfDoc.numPages) {
+                    return;
+                }
+                pageNum++;
+                queueRenderPdfPage(pageNum);
+            });
+
+            $("#btnPdfZoomOut").click(function() {
+                if (!pdfDoc) {
+                    return;
+                }
+                const nextScale = Math.max(PDF_MIN_SCALE, pdfScale - 0.2);
+                if (nextScale === pdfScale) {
+                    return;
+                }
+                pdfScale = nextScale;
+                queueRenderPdfPage(pageNum);
+            });
+
+            $("#btnPdfZoomIn").click(function() {
+                if (!pdfDoc) {
+                    return;
+                }
+                const nextScale = Math.min(PDF_MAX_SCALE, pdfScale + 0.2);
+                if (nextScale === pdfScale) {
+                    return;
+                }
+                pdfScale = nextScale;
+                queueRenderPdfPage(pageNum);
+            });
+
+            $("#btnPdfDownload").click(function() {
+                if (!currentCvUrl) {
+                    return;
+                }
+
+                const link = document.createElement("a");
+                link.href = currentCvUrl;
+                link.download = currentCvFileName;
+                link.rel = "noopener noreferrer";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            $("#btnPdfPrint").click(function() {
+                if (!currentCvUrl) {
+                    return;
+                }
+
+                const printWindow = window.open(currentCvUrl, "_blank");
+                if (!printWindow) {
+                    showViewerToastError("Popup print diblokir browser. Izinkan popup untuk situs ini.");
+                    return;
+                }
+
+                printWindow.focus();
+                const triggerPrint = function() {
+                    try {
+                        printWindow.print();
+                    } catch (e) {
+                        // Browser PDF plugin handles print dialog.
+                    }
+                };
+
+                printWindow.addEventListener("load", function() {
+                    setTimeout(triggerPrint, 600);
+                }, { once: true });
+            });
+
+            $("#modalDetail").on("hidden.bs.modal", function() {
+                resetPdfViewer("Pilih pelamar untuk melihat CV.");
+            });
         })
 
         function show(id) {
@@ -294,12 +601,19 @@
                         }
                     }
 
-                    const expList = JSON.parse(experiencelist);
+                    const expList = (() => {
+                        try {
+                            return JSON.parse(experiencelist || "[]");
+                        } catch (e) {
+                            return [];
+                        }
+                    })();
                     let html = ``;
                     expList.map(function(e, i){
                         html += `<tr><td>${i+1}</td><td>${e.companyName}</td><td>${e.industri}</td><td>${e.position}</td><td>${e.lengthOfWork}</td></tr>`
                     })
                     $("#tblExpBody").html(html)
+                    loadCvPdf(cvid, `${firstname || "cv"}_${lastname || ""}`);
 
                     $("#modalDetail").modal("show")
                 }
@@ -307,6 +621,10 @@
         }
 
         function formatNumber(num) {
+            if (num === null || typeof num === "undefined" || num === "") {
+                return "";
+            }
+
             return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
         }
     </script>
