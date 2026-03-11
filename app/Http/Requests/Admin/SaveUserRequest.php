@@ -11,6 +11,7 @@ class SaveUserRequest extends AdminAjaxFormRequest
             'fullname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'pass' => ['nullable', 'string', 'max:255', 'required_without:id'],
+            'navigation_access' => ['nullable', 'string'],
         ];
     }
 

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Contracts\INavigationService;
+use App\Services\NavigationService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(INavigationService::class, NavigationService::class);
     }
 
     /**
@@ -23,6 +25,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if (app()->runningInConsole()) {
+            return;
+        }
+
+        try {
+            app(INavigationService::class)->BootstrapNavigationAccess();
+        } catch (\Throwable $th) {
+            report($th);
+        }
     }
 }

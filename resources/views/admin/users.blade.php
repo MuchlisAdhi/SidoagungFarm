@@ -17,6 +17,7 @@
                         <th style="width: 5%;">No.</th>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>Navigation Access</th>
                         <th style="width: 10%;">Action</th>
                     </tr>
                 </thead>
@@ -26,6 +27,7 @@
                             <td></td>
                             <td>{{ $u->name }}</td>
                             <td>{{ $u->email }}</td>
+                            <td>{{ $u->roles->pluck('name')->join(', ') ?: '-' }}</td>
                             <td style="text-align: center;">
                                 <a href="javascript:void(0);" class="btnEdit" title="Edit"
                                     onclick="editSelected('{{ encrypt($u->id) }}')">
@@ -92,6 +94,17 @@
                                     <input type="password" class="form-control" id="formPassword" placeholder="Password" >
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label for="formNavigationAccess" class="col-sm-3 control-label">Navigation Access</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" id="formNavigationAccess">
+                                        <option value="">Select Navigation Access</option>
+                                        @foreach ($navigationAccesses as $access)
+                                            <option value="{{ $access['id'] }}">{{ $access['name'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -137,8 +150,9 @@
                 const fullname = $("#formUserFullName").val()
                 const email = $("#formEmail").val()
                 const pass = $("#formPassword").val()
+                const navigation_access = $("#formNavigationAccess").val()
 
-                $.post('{{url("/wongelek/users/save")}}', {id, fullname, email, pass})
+                $.post('{{url("/wongelek/users/save")}}', {id, fullname, email, pass, navigation_access})
                 .done(function(res){
                     if(res.code == 200)
                     {
@@ -177,11 +191,12 @@
                     {
                         $("#formUserFullName").val(data.name).attr('disabled','disabled');
                         $("#formEmail").val(data.email).attr('disabled','disabled');
+                        $("#formNavigationAccess").val(data.navigation_access || "");
                         $("#modalFormUser").modal("show");
                     }else{
                         $.toast({
                             heading: 'Error',
-                            text: data.msg,
+                            text: res.msg,
                             showHideTransition: 'fade',
                             position: 'bottom-right',
                             icon: 'error'
@@ -208,7 +223,7 @@
         function clearForm()
         {
             userSelected = "";
-            $("#formUserFullName, #formEmail, #formPassword").val("");
+            $("#formUserFullName, #formEmail, #formPassword, #formNavigationAccess").val("");
             $("#formUserFullName, #formEmail, #formPassword").removeAttr('disabled');
         }
     </script>

@@ -63,112 +63,21 @@
                <ul class="sidebar-menu">
                   <li class="header">NAVIGATION</li>
                   @php
-                     $base = "/wongelek";
-                      $menus = [
-                        [
-                           'url' => "",
-                           'title'  => "Home",
-                           'childs' => [
-                              [ 'url' => url($base . '/home/banner'), 'title'  => "Banners" ],
-                              [ 'url' => url($base . '/home/banner-menu'), 'title'  => "Banner Menu" ]
-                           ]
-                        ],
-                        [
-                           'url' => url($base . '/product'),
-                           'title'  => "Produk",
-                           'childs' => []
-                        ],
-                        // [
-                        //    'url' => url($base . '/resep'),
-                        //    'title'  => "Resep",
-                        //    'childs' => []
-                        // ],
-                        // [
-                        //    'url' => "",
-                        //    'title'  => "Investor",
-                        //    'childs' => [
-                        //       [ 'url' => url($base . '/investor/rups'), 'title'  => "RUPS" ],
-                        //       [ 'url' => url($base . '/investor/laporantahunan'), 'title'  => "Laporan Tahunan" ],
-                        //       [ 'url' => url($base . '/investor/laporankeuangan'), 'title'  => "Laporan Keuangan" ],
-                        //       [ 'url' => url($base . '/investor/ikhtisakeuangan'), 'title'  => "Ikhtisar Keuangan" ],
-                        //       [ 'url' => url($base . '/investor/informasisaham'), 'title'  => "Informasi Saham" ],
-                        //       [ 'url' => url($base . '/investor/informasidividen'), 'title'  => "Informasi Dividen" ],
-                        //       [ 'url' => url($base . '/investor/berita'), 'title'  => "Berita" ]
-                        //    ]
-                        // ],
-                        // [
-                        //    'url' => "",
-                        //    'title'  => "Tata Kelola",
-                        //    'childs' => [
-                        //       [ 'url' => url($base . '/tatakelola/piagam'), 'title'  => "Piagam Komite" ],
-                        //       [ 'url' => url($base . '/tatakelola/audit'), 'title'  => "Komite Audit" ],
-                        //       [ 'url' => url($base . '/tatakelola/risiko'), 'title'  => "Manajemen Risiko" ]
-                        //    ]
-                        // ],
-                        [
-                           'url' => "",
-                           'title'  => "CSR",
-                           'childs' => [
-                              [ 'url' => url($base . '/csr/env'), 'title'  => "Pendidikan" ],
-                              [ 'url' => url($base . '/csr/safety'), 'title'  => "Kesehatan & Keselamatan" ],
-                              [ 'url' => url($base . '/csr/sosial'), 'title'  => "Sosial" ]
-                           ]
-                        ],
-                        [
-                           'url' => url($base . '/news'),
-                           'title'  => "Berita",
-                           'childs' => []
-                        ],
-                        [
-                           'url' => url($base . '/testimoni'),
-                           'title'  => "Testimoni",
-                           'childs' => []
-                        ],
-                        [
-                           'url' => "",
-                           'title'  => "Feedback",
-                           'childs' => [
-                              // [ 'url' => url($base . '/feedback/order'), 'title'  => "Pesanan Produk" ],
-                              // [ 'url' => url($base . '/feedback/teknologi'), 'title'  => "Teknologi" ],
-                              // [ 'url' => url($base . '/feedback/sistem'), 'title'  => "Sistem Whistleblowing" ],
-                              [ 'url' => url($base . '/feedback/karir'), 'title'  => "Karir" ],
-                              [ 'url' => url($base . '/feedback/pertanyaan'), 'title'  => "Pertanyaan" ],
-                              [ 'url' => url($base . '/feedback/mitra'), 'title'  => "Menjadi Mitra" ],
-                              [ 'url' => url($base . '/ticket'), 'title'  => "Tickets" ]
-                           ]
-                        ],
-                        [
-                           'url' => url($base . '/karir'),
-                           'title'  => "Karir",
-                           'childs' => []
-                        ],
-                        [
-                           'url' => url($base . '/users'),
-                           'title'  => "Users",
-                           'childs' => []
-                        ],
-                        [
-                           'url' => "",
-                           'title'  => "Config",
-                           'childs' => [
-                              [ 'url' => url($base . '/email-log'), 'title'  => "Email Logs" ],
-                              [ 'url' => url($base . '/email-config'), 'title'  => "Email Config" ]
-                           ]
-                        ]
-                     ];
+                     $menus = app(\App\Services\Contracts\INavigationService::class)
+                        ->GetAccessNavigation(auth()->user());
                   @endphp
                   @foreach ($menus as $menu)
                      @if (count($menu['childs']))
                         <li class="treeview">
                            <a href="#">
-                              <i class="fa fa-home"></i>
+                              <i class="{{ $menu['icon'] ?? 'fa fa-home' }}"></i>
                               <span>{{$menu["title"]}}</span>
                               <i class="fa fa-angle-left pull-right"></i>
                            </a>
                            <ul class="treeview-menu">
                               @foreach ($menu['childs'] as $child)
                                  <li>
-                                    <a href="{{$child['url']}}">
+                                    <a href="{{$child['url'] ?? '#'}}">
                                        <i class="fa fa-angle-double-right"></i> {{$child['title']}}
                                     </a>
                                  </li>
@@ -176,7 +85,11 @@
                            </ul>
                         </li>
                      @else
-                        <li><a href="{{$menu['url']}}"><i class="fa fa-angle-double-right"></i> {{$menu['title']}}</a></li>
+                        <li>
+                           <a href="{{$menu['url'] ?? '#'}}">
+                              <i class="{{ $menu['icon'] ?? 'fa fa-angle-double-right' }}"></i> {{$menu['title']}}
+                           </a>
+                        </li>
                      @endif
                   @endforeach
                </ul>
