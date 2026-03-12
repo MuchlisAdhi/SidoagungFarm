@@ -12,7 +12,7 @@
                     <tr>
                         <td style="padding: 24px;">
                             <div style="margin-bottom: 16px;">
-                                <img src="cid:{{ $logoCid }}" alt="Sidoagung Farm" style="height: 48px;">
+                                <img src="{{ !empty($logoEmbedded) ? 'cid:'.$logoCid : $logoUrl }}" alt="Sidoagung Farm" style="height: 48px;">
                             </div>
                             <h2 style="margin: 0 0 12px; color: #2c3e50;">Terima kasih telah menghubungi PT. Sidoagung Farm</h2>
                             <p style="margin: 0 0 16px; color: #4b5563;">Halo {{ $customerName }},</p>

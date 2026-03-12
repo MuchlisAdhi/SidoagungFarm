@@ -94,6 +94,7 @@ Agar notifikasi ticket baru terkirim ke admin (dan tidak gagal ke alamat `no-rep
 Catatan:
 
 - Jangan gunakan alamat `no-reply@...` sebagai penerima notifikasi admin jika mailbox tersebut memang tidak menerima incoming email.
+- Untuk memastikan logo email selalu muncul, isi `APP_URL` dengan domain production dan (opsional, disarankan) isi `MAIL_LOGO_URL=https://sidoagungfarm.com/images/saf/logo.png`.
 - Setelah ubah `.env`, jalankan `php artisan optimize:clear`.
 
 ## Dokumentasi Routes
@@ -469,25 +470,29 @@ php artisan migrate --force
 4. Jika `QUEUE_CONNECTION=sync` (sesuai project saat ini), cukup pasang cron scheduler:
 
 ```bash
-php -q /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/artisan schedule:run >> /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/log-schedule.log 2>&1
+php -q /home/sidoagu1/sidoagungfarm/artisan schedule:run >> /home/sidoagu1/sidoagungfarm/storage/logs/log-schedule.log 2>&1
 ```
 
 5. Jika suatu saat Anda ganti ke async queue (`QUEUE_CONNECTION=database`), tambahkan worker cron terpisah:
 
 ```bash
-php -q /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/artisan queue:work --queue=tickets --sleep=1 --tries=3 --stop-when-empty >> /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/log-queue-tickets.log 2>&1
-php -q /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/artisan queue:work --queue=emails --sleep=1 --tries=3 --stop-when-empty >> /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/log-queue-emails.log 2>&1
+php -q /home/sidoagu1/sidoagungfarm/artisan queue:work --queue=tickets --sleep=1 --tries=3 --stop-when-empty >> /home/sidoagu1/sidoagungfarm/storage/logs/log-queue-tickets.log 2>&1
+php -q /home/sidoagu1/sidoagungfarm/artisan queue:work --queue=emails --sleep=1 --tries=3 --stop-when-empty >> /home/sidoagu1/sidoagungfarm/storage/logs/log-queue-emails.log 2>&1
 ```
 
 Alternatif path PHP bawaan cPanel:
 
 ```bash
-/usr/local/bin/php /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/artisan schedule:run >> /home/sidoagu1/domains/sidoagungfarm.com/sidoagungfarm/log-schedule.log 2>&1
+/usr/local/bin/php /home/sidoagu1/sidoagungfarm/artisan schedule:run >> /home/sidoagu1/sidoagungfarm/storage/logs/log-schedule.log 2>&1
 ```
 
 Catatan:
 
+- Pastikan folder log tersedia:
+```bash
+mkdir -p /home/sidoagu1/sidoagungfarm/storage/logs
+```
 - Path project harus menunjuk folder root Laravel (folder yang berisi file `artisan`), bukan folder `public`.
 - Saat `QUEUE_CONNECTION=sync`, command `queue:work` tidak wajib dan boleh tidak dijalankan.
 - Saat mode async, gunakan queue name `tickets` dan `emails` sesuai job pada project ini.
-- Untuk melihat error queue, cek `storage/logs/laravel.log`, `log-schedule.log`, `log-queue-tickets.log`, dan `log-queue-emails.log`.
+- Untuk melihat error queue, cek `storage/logs/laravel.log`, `storage/logs/log-schedule.log`, `storage/logs/log-queue-tickets.log`, dan `storage/logs/log-queue-emails.log`.

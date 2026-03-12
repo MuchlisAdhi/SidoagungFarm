@@ -8,6 +8,7 @@ use App\Mail\ReplyCustomerMail;
 use App\Models\ClientQuestion2;
 use App\Models\EmailConfig;
 use App\Models\LogEmailSender;
+use Illuminate\Support\Str;
 use PHPMailer\PHPMailer\Exception as PhpMailerException;
 use PHPMailer\PHPMailer\PHPMailer;
 use RuntimeException;
@@ -186,8 +187,24 @@ class PhpMailerService
             throw new RuntimeException('From email belum dikonfigurasi.');
         }
 
-        $logoCid = $logoCid ?: 'sidoagung-logo';
+        $logoCid = $logoCid ?: ('sidoagung-logo-'.Str::uuid()->toString());
+        $logoUrl = $this->resolveLogoUrl($logoPath);
+        $logoEmbedded = false;
+
+        $logoPath = $logoPath ?: public_path('images/saf/logo.png');
+        if (is_file($logoPath)) {
+            $logoEmbedded = (bool) $mailer->addEmbeddedImage(
+                $logoPath,
+                $logoCid,
+                basename($logoPath),
+                PHPMailer::ENCODING_BASE64,
+                'image/png'
+            );
+        }
+
         $viewData['logoCid'] = $logoCid;
+        $viewData['logoUrl'] = $logoUrl;
+        $viewData['logoEmbedded'] = $logoEmbedded;
 
         $htmlBody = view($viewName, $viewData)->render();
 
@@ -209,11 +226,6 @@ class PhpMailerService
         $mailer->isHTML(true);
         $mailer->Body = $htmlBody;
         $mailer->AltBody = strip_tags(str_replace(['<br>', '</p>'], ["\n", "\n"], $htmlBody));
-
-        $logoPath = $logoPath ?: public_path('images/saf/logo.png');
-        if (is_file($logoPath)) {
-            $mailer->addEmbeddedImage($logoPath, $logoCid, basename($logoPath));
-        }
 
         try {
             $mailer->send();
@@ -316,5 +328,26 @@ class PhpMailerService
         }
 
         return $email;
+    }
+
+    protected function resolveLogoUrl(?string $logoPath = null): string
+    {
+        $configuredLogoUrl = trim((string) env('MAIL_LOGO_URL', ''));
+        if ($configuredLogoUrl !== '' && filter_var($configuredLogoUrl, FILTER_VALIDATE_URL)) {
+            return $configuredLogoUrl;
+        }
+
+        $logoPath = $logoPath ?: public_path('images/saf/logo.png');
+        $publicRoot = str_replace('\\', '/', public_path());
+        $normalizedLogoPath = str_replace('\\', '/', $logoPath);
+
+        if (Str::startsWith($normalizedLogoPath, $publicRoot)) {
+            $relativePath = ltrim((string) Str::after($normalizedLogoPath, $publicRoot), '/');
+            if ($relativePath !== '') {
+                return url($relativePath);
+            }
+        }
+
+        return url('images/saf/logo.png');
     }
 }

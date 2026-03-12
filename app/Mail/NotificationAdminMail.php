@@ -28,7 +28,7 @@ class NotificationAdminMail extends Mailable
         public string $submittedAt
     ) {
         $this->embeddedLogoPath = public_path('images/saf/logo.png');
-        $this->logoCid = 'sidoagung-logo-'.Str::uuid().'@sidoagungfarm';
+        $this->logoCid = 'sidoagung-logo-'.Str::uuid()->toString();
 
         $this->withSymfonyMessage(function ($message): void {
             if (! is_file($this->embeddedLogoPath)) {
