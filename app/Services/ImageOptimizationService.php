@@ -115,6 +115,54 @@ class ImageOptimizationService
         }
     }
 
+    /**
+     * Optimize uploaded image and return final media metadata for DB storage.
+     *
+     * @return array{absolute_path:string,relative_path:string,ext:string,mime_type:string}
+     */
+    public function optimizeForStorage(string $absolutePath, string $extension, ?string $mimeType = null): array
+    {
+        $ext = strtolower(trim($extension));
+        $mime = (string) ($mimeType ?: $this->guessMimeFromExtension($ext));
+        $finalPath = $absolutePath;
+
+        if ($this->shouldConvertToWebp($ext, $mime)) {
+            $webpPath = $this->buildWebpPath($absolutePath);
+            $converted = $this->convertImageToWebp($absolutePath, $webpPath);
+
+            if ($converted && is_file($webpPath)) {
+                $originSize = (int) (filesize($absolutePath) ?: 0);
+                $webpSize = (int) (filesize($webpPath) ?: 0);
+                $onlyIfSmaller = filter_var((string) env('IMAGE_OPTIMIZER_ONLY_IF_SMALLER', '1'), FILTER_VALIDATE_BOOL);
+
+                if (! $onlyIfSmaller || ($webpSize > 0 && ($originSize <= 0 || $webpSize < $originSize))) {
+                    @unlink($absolutePath);
+                    $finalPath = $webpPath;
+                    $ext = 'webp';
+                    $mime = 'image/webp';
+
+                    Log::info('Image converted to webp for storage.', [
+                        'from' => $absolutePath,
+                        'to' => $webpPath,
+                        'origin_size' => $originSize,
+                        'webp_size' => $webpSize,
+                    ]);
+                } else {
+                    @unlink($webpPath);
+                }
+            }
+        }
+
+        $this->optimize($finalPath, $ext);
+
+        return [
+            'absolute_path' => $finalPath,
+            'relative_path' => basename($finalPath),
+            'ext' => $ext,
+            'mime_type' => $mime,
+        ];
+    }
+
     protected function shouldRunImagickFallback(string $ext, int $beforeSize, int $afterSize, bool $optimizedBySpatie): bool
     {
         if (! $this->isImagickFallbackEnabled()) {
@@ -177,6 +225,115 @@ class ImageOptimizationService
                 'error' => $th->getMessage(),
             ]);
         }
+    }
+
+    protected function shouldConvertToWebp(string $ext, string $mimeType): bool
+    {
+        if (! filter_var((string) env('IMAGE_OPTIMIZER_CONVERT_TO_WEBP', '1'), FILTER_VALIDATE_BOOL)) {
+            return false;
+        }
+
+        if ($ext === 'webp' || $mimeType === 'image/webp') {
+            return false;
+        }
+
+        return in_array($ext, ['jpg', 'jpeg', 'png', 'gif'], true)
+            || in_array($mimeType, ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'], true);
+    }
+
+    protected function buildWebpPath(string $absolutePath): string
+    {
+        $dir = dirname($absolutePath);
+        $name = pathinfo($absolutePath, PATHINFO_FILENAME);
+
+        return $dir . DIRECTORY_SEPARATOR . $name . '.webp';
+    }
+
+    protected function convertImageToWebp(string $sourcePath, string $targetPath): bool
+    {
+        $quality = (int) env('IMAGE_OPTIMIZER_WEBP_QUALITY', 82);
+        $quality = max(20, min(100, $quality));
+
+        if (extension_loaded('imagick') && class_exists(\Imagick::class)) {
+            try {
+                $img = new \Imagick($sourcePath);
+                $img->stripImage();
+                $img->setImageFormat('webp');
+                $img->setImageCompressionQuality($quality);
+                $img->writeImage($targetPath);
+                $img->clear();
+                $img->destroy();
+
+                return is_file($targetPath);
+            } catch (\Throwable $th) {
+                Log::warning('Imagick webp conversion failed.', [
+                    'source' => $sourcePath,
+                    'target' => $targetPath,
+                    'error' => $th->getMessage(),
+                ]);
+            }
+        }
+
+        $memoryLimitBefore = ini_get('memory_limit');
+        if (! $this->canUseGdSafely($sourcePath)) {
+            $raised = $this->tryRaiseMemoryLimitForOptimization();
+            if (! $raised || ! $this->canUseGdSafely($sourcePath)) {
+                if ($memoryLimitBefore !== false && $memoryLimitBefore !== null) {
+                    @ini_set('memory_limit', (string) $memoryLimitBefore);
+                }
+                return false;
+            }
+        }
+
+        if (! function_exists('imagewebp')) {
+            if ($memoryLimitBefore !== false && $memoryLimitBefore !== null) {
+                @ini_set('memory_limit', (string) $memoryLimitBefore);
+            }
+            return false;
+        }
+
+        $source = $this->createGdImageResource($sourcePath);
+        if (! $source) {
+            if ($memoryLimitBefore !== false && $memoryLimitBefore !== null) {
+                @ini_set('memory_limit', (string) $memoryLimitBefore);
+            }
+            return false;
+        }
+
+        try {
+            $saved = @imagewebp($source, $targetPath, $quality);
+            imagedestroy($source);
+            if ($memoryLimitBefore !== false && $memoryLimitBefore !== null) {
+                @ini_set('memory_limit', (string) $memoryLimitBefore);
+            }
+
+            return (bool) $saved && is_file($targetPath);
+        } catch (\Throwable $th) {
+            imagedestroy($source);
+            if ($memoryLimitBefore !== false && $memoryLimitBefore !== null) {
+                @ini_set('memory_limit', (string) $memoryLimitBefore);
+            }
+            Log::warning('GD webp conversion failed.', [
+                'source' => $sourcePath,
+                'target' => $targetPath,
+                'error' => $th->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    protected function createGdImageResource(string $sourcePath): mixed
+    {
+        $mime = (string) (@mime_content_type($sourcePath) ?: '');
+
+        return match (strtolower($mime)) {
+            'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($sourcePath),
+            'image/png' => @imagecreatefrompng($sourcePath),
+            'image/gif' => @imagecreatefromgif($sourcePath),
+            'image/webp' => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($sourcePath) : null,
+            default => @imagecreatefromstring((string) @file_get_contents($sourcePath)),
+        };
     }
 
     protected function shouldRunGdFallback(string $ext, int $beforeSize, int $afterSize, bool $optimizedBySpatie): bool
@@ -501,7 +658,7 @@ class ImageOptimizationService
 
     protected function isGdFallbackEnabled(): bool
     {
-        return filter_var((string) env('IMAGE_OPTIMIZER_ENABLE_GD_FALLBACK', '1'), FILTER_VALIDATE_BOOL);
+        return filter_var((string) env('IMAGE_OPTIMIZER_ENABLE_GD_FALLBACK', '0'), FILTER_VALIDATE_BOOL);
     }
 
     protected function isImagickFallbackEnabled(): bool
@@ -511,7 +668,7 @@ class ImageOptimizationService
 
     protected function isBinaryFallbackEnabled(): bool
     {
-        return filter_var((string) env('IMAGE_OPTIMIZER_ENABLE_BINARY_FALLBACK', '1'), FILTER_VALIDATE_BOOL);
+        return filter_var((string) env('IMAGE_OPTIMIZER_ENABLE_BINARY_FALLBACK', '0'), FILTER_VALIDATE_BOOL);
     }
 
     protected function hasCustomBinaryPath(): bool
@@ -544,6 +701,17 @@ class ImageOptimizationService
             'm' => (int) ($number * 1024 * 1024),
             'k' => (int) ($number * 1024),
             default => (int) $number,
+        };
+    }
+
+    protected function guessMimeFromExtension(string $ext): string
+    {
+        return match ($ext) {
+            'jpg', 'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'webp' => 'image/webp',
+            default => 'application/octet-stream',
         };
     }
 }

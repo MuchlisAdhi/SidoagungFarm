@@ -53,13 +53,17 @@ class AdminProductController extends Controller
 
             if($image->move(app_path("Uploads"), $path = $imageId . "." . $ext))
             {
-                app(ImageOptimizationService::class)->optimize(app_path("Uploads/" . $path), $ext);
+                $optimized = app(ImageOptimizationService::class)->optimizeForStorage(
+                    app_path("Uploads/" . $path),
+                    $ext,
+                    $mimeType
+                );
 
                 Media::create([
                     'mediaId' => $imageId,
-                    'mediaType' => $mimeType,
-                    'mediaExt' => $ext,
-                    'resultPath' => $path
+                    'mediaType' => $optimized['mime_type'],
+                    'mediaExt' => $optimized['ext'],
+                    'resultPath' => $optimized['relative_path']
                 ]);
             }
         }

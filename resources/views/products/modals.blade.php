@@ -16,7 +16,7 @@
                     </div>
                     <div class="col-md-6 align-self-start align-self-lg-center ">
                         <div class="p-4 p-md-5 bg-white border-radius">
-                            <img class="img-fluid pb-3" src="{{ asset('images/saap/logo-text.png') }}" alt="logo" style="width: 250px;">
+                            <img class="img-fluid pb-3" src="{{ asset('images/saf/logo-text.png') }}" alt="logo" style="width: 250px;">
                             <h3>Ada pertanyaan?</h3>
                             <form class="mt-4" action="!#" method="POST">
                                 {{ csrf_field() }}
