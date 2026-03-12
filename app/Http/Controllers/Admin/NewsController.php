@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\SaveNewsRequest;
 use App\Models\News;
 use App\Models\Media;
 use App\Services\ImageOptimizationService;
+use App\Services\MediaCleanupService;
 use Illuminate\Support\Str;
 
 class NewsController extends Controller
@@ -56,6 +57,8 @@ class NewsController extends Controller
         $mode = $this->mode;
         if(session()->has("newsKey"))
             $id = session()->get("newsKey");
+        $existingNews = $id ? News::where('id', $id)->first() : null;
+        $oldMediaId = $existingNews?->thumbnail;
 
         $form = [
             'title'  => $validated['formTitle'],
@@ -92,6 +95,9 @@ class NewsController extends Controller
             if($id)
             {
                 News::where('id', $id)->update($form);
+                if (! empty($form['thumbnail']) && $oldMediaId && $oldMediaId !== $form['thumbnail']) {
+                    app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
+                }
             }else{
                 $save = News::create($form);
                 session()->put("newsKey", $save->id);
@@ -110,7 +116,14 @@ class NewsController extends Controller
     {
         try {
             $id = decrypt($id);
-            News::where("id", $id)->delete();
+            $news = News::where("id", $id)->first();
+            if (! $news) {
+                return redirect("/wongelek/news")->with("error", "Berita tidak ditemukan.");
+            }
+
+            $oldMediaId = $news->thumbnail;
+            $news->delete();
+            app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
             return redirect("/wongelek/news")->with("success", "Berita berhasil di hapus.");
         } catch (\Exception $th) {
             return redirect("/wongelek/news")->with("error", "Gagal menghapus Berita.");            

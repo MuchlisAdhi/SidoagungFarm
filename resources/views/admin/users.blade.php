@@ -147,10 +147,56 @@
 
             $("#btnSaveForm").click(function(){
                 const id = userSelected;
-                const fullname = $("#formUserFullName").val()
-                const email = $("#formEmail").val()
-                const pass = $("#formPassword").val()
+                const fullname = ($("#formUserFullName").val() || "").trim()
+                const email = ($("#formEmail").val() || "").trim()
+                const pass = $("#formPassword").val() || ""
                 const navigation_access = $("#formNavigationAccess").val()
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+                const strongPasswordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+
+                if (fullname === "" || email === "") {
+                    $.toast({
+                        heading: 'Error',
+                        text: "Nama dan email wajib diisi.",
+                        showHideTransition: 'fade',
+                        position: 'bottom-right',
+                        icon: 'error'
+                    })
+                    return;
+                }
+
+                if (!emailRegex.test(email)) {
+                    $.toast({
+                        heading: 'Error',
+                        text: "Format email tidak valid.",
+                        showHideTransition: 'fade',
+                        position: 'bottom-right',
+                        icon: 'error'
+                    })
+                    return;
+                }
+
+                if (id === "" && pass === "") {
+                    $.toast({
+                        heading: 'Error',
+                        text: "Password tidak boleh kosong.",
+                        showHideTransition: 'fade',
+                        position: 'bottom-right',
+                        icon: 'error'
+                    })
+                    return;
+                }
+
+                if (pass !== "" && !strongPasswordRegex.test(pass)) {
+                    $.toast({
+                        heading: 'Error',
+                        text: "Password wajib kombinasi huruf, angka, simbol dan minimal 8 karakter.",
+                        showHideTransition: 'fade',
+                        position: 'bottom-right',
+                        icon: 'error'
+                    })
+                    return;
+                }
 
                 $.post('{{url("/wongelek/users/save")}}', {id, fullname, email, pass, navigation_access})
                 .done(function(res){
@@ -167,10 +213,18 @@
                         })
                     }
                 })
-                .fail(function(){
+                .fail(function(xhr){
+                    let errText = "Gagal Menyimpan form.";
+                    if (xhr && xhr.responseJSON && xhr.responseJSON.errors) {
+                        const firstKey = Object.keys(xhr.responseJSON.errors)[0];
+                        if (firstKey && xhr.responseJSON.errors[firstKey] && xhr.responseJSON.errors[firstKey][0]) {
+                            errText = xhr.responseJSON.errors[firstKey][0];
+                        }
+                    }
+
                     $.toast({
                         heading: 'Error',
-                        text: "Gagal Menyimpan form.",
+                        text: errText,
                         showHideTransition: 'fade',
                         position: 'bottom-right',
                         icon: 'error'

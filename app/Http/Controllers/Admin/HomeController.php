@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use App\Models\Banner;
 use App\Models\Media;
 use App\Services\ImageOptimizationService;
+use App\Services\MediaCleanupService;
 
 class HomeController extends Controller
 {
@@ -85,7 +86,9 @@ class HomeController extends Controller
         {
             session()->flash("error", "Banner tidak ditemukan.");
         }else{
+            $oldMediaId = $banner->mediaId;
             $banner->delete();
+            app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
             session()->flash("success", "Banner berhasil di hapus.");
         }
         return response()->json([
@@ -177,7 +180,9 @@ class HomeController extends Controller
         {
             session()->flash("error", "Banner tidak ditemukan.");
         }else{
+            $oldMediaId = $banner->mediaId;
             $banner->delete();
+            app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
             session()->flash("success", "Banner berhasil di hapus.");
         }
         return response()->json([

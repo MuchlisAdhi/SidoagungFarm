@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\SaveCsrRequest;
 use App\Models\CSR;
 use App\Models\Media;
 use App\Services\ImageOptimizationService;
+use App\Services\MediaCleanupService;
 use Illuminate\Support\Str;
 
 class SosialController extends Controller
@@ -56,6 +57,8 @@ class SosialController extends Controller
         $mode = $this->mode;
         if(session()->has("sosialKey"))
             $id = session()->get("sosialKey");
+        $existingItem = $id ? CSR::where('id', $id)->first() : null;
+        $oldMediaId = $existingItem?->thumbnail;
 
         $form = [
             'title'  => $validated['formTitle'],
@@ -91,6 +94,9 @@ class SosialController extends Controller
             if($id)
             {
                 CSR::where('id', $id)->update($form);
+                if (! empty($form['thumbnail']) && $oldMediaId && $oldMediaId !== $form['thumbnail']) {
+                    app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
+                }
             }else{
                 $save = CSR::create($form);
                 session()->put("sosialKey", $save->id);
@@ -109,7 +115,14 @@ class SosialController extends Controller
     {
         try {
             $id = decrypt($id);
-            CSR::where("id", $id)->delete();
+            $item = CSR::where("id", $id)->first();
+            if (! $item) {
+                return redirect("/wongelek/csr/sosial")->with("error", "Sosial tidak ditemukan.");
+            }
+
+            $oldMediaId = $item->thumbnail;
+            $item->delete();
+            app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
             return redirect("/wongelek/csr/sosial")->with("success", "Sosial berhasil di hapus.");
         } catch (\Exception $th) {
             return redirect("/wongelek/csr/sosial")->with("error", "Gagal menghapus Sosial.");            

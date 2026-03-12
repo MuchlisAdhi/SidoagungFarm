@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\SaveProductRequest;
 use App\Models\Product;
 use App\Models\Media;
 use App\Services\ImageOptimizationService;
+use App\Services\MediaCleanupService;
 use Illuminate\Support\Str;
 
 class AdminProductController extends Controller
@@ -32,6 +33,9 @@ class AdminProductController extends Controller
         $id = $validated['id'] ?? null;
         if($id)
             $id = decrypt($id);
+
+        $existingProduct = $id ? Product::where('id', $id)->first() : null;
+        $oldMediaId = $existingProduct?->mediaId;
 
         $form = [
             'title' => $validated['title'],
@@ -66,6 +70,9 @@ class AdminProductController extends Controller
         if($id)
         {
             Product::where("id", $id)->update($form);
+            if ($imageId && $oldMediaId && $oldMediaId !== $imageId) {
+                app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
+            }
         }else{
             Product::create($form);
         }
@@ -102,7 +109,9 @@ class AdminProductController extends Controller
         {
             session()->flash("error", "Produk tidak ditemukan.");
         }else{
+            $oldMediaId = $pakan->mediaId;
             $pakan->delete();
+            app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
             session()->flash("success", "Produk berhasil di hapus.");
         }
         return response()->json([

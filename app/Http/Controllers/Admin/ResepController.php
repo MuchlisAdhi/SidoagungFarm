@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\SaveResepRequest;
 use App\Models\Resep;
 use App\Models\Media;
 use App\Services\ImageOptimizationService;
+use App\Services\MediaCleanupService;
 use Illuminate\Support\Str;
 
 class ResepController extends Controller
@@ -56,6 +57,8 @@ class ResepController extends Controller
         $mode = $this->mode;
         if(session()->has("resepKey"))
             $id = session()->get("resepKey");
+        $existingResep = $id ? Resep::where('id', $id)->first() : null;
+        $oldMediaId = $existingResep?->thumbnail;
 
         $form = [
             'title'  => $validated['formTitle'],
@@ -92,6 +95,9 @@ class ResepController extends Controller
             if($id)
             {
                 Resep::where('id', $id)->update($form);
+                if (! empty($form['thumbnail']) && $oldMediaId && $oldMediaId !== $form['thumbnail']) {
+                    app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
+                }
             }else{
                 $save = Resep::create($form);
                 session()->put("resepKey", $save->id);
@@ -110,7 +116,14 @@ class ResepController extends Controller
     {
         try {
             $id = decrypt($id);
-            Resep::where("id", $id)->delete();
+            $resep = Resep::where("id", $id)->first();
+            if (! $resep) {
+                return redirect("/wongelek/resep")->with("error", "Berita tidak ditemukan.");
+            }
+
+            $oldMediaId = $resep->thumbnail;
+            $resep->delete();
+            app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
             return redirect("/wongelek/resep")->with("success", "Berita berhasil di hapus.");
         } catch (\Exception $th) {
             return redirect("/wongelek/resep")->with("error", "Gagal menghapus Berita.");            

@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\Testimoni;
 use App\Models\Media;
 use App\Services\ImageOptimizationService;
+use App\Services\MediaCleanupService;
 
 class TestimoniController extends Controller
 {
@@ -70,7 +71,9 @@ class TestimoniController extends Controller
         {
             session()->flash("error", "Testimoni tidak ditemukan.");
         }else{
+            $oldMediaId = $banner->photo;
             $banner->delete();
+            app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
             session()->flash("success", "Testimoni berhasil di hapus.");
         }
         return response()->json([

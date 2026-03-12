@@ -140,7 +140,7 @@
                                         <label for="formImage" class="col-sm-3 control-label">Image <span
                                                 class="text-danger">*</span></label>
                                         <div class="col-sm-9">
-                                            <input type="file" id="formImage">
+                                            <input type="file" id="formImage" accept="image/png,image/jpg,image/jpeg">
                                         </div>
                                     </div>
 
@@ -186,13 +186,31 @@
     <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('plugins/datatables/dataTables.bootstrap.min.js') }}"></script>
     <script>
-        var noImage = '{{asset("images/sag/no-image.png")}}';
+        var noImage = '{{ asset("images/saf/no-image.png") }}';
         var Selected = "";
         $(document).ready(function() {
             $("#tblBodyProduct").find("tr").each(function(i, e) {
                 $(this).find("td").eq(0).html(i + 1)
             });
             $("#tblProduct").DataTable();
+            $("#photo-product").prop("src", noImage);
+
+            $("#formImage").on("change", function() {
+                const file = this.files && this.files[0] ? this.files[0] : null;
+                if (!file) {
+                    $("#photo-product").prop("src", noImage);
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $("#photo-product").prop("src", e.target.result || noImage);
+                };
+                reader.onerror = function() {
+                    $("#photo-product").prop("src", noImage);
+                };
+                reader.readAsDataURL(file);
+            });
 
             $("#btnRemoveYes").click(function() {
                 $.get('{{ url('/wongelek/product/remove') }}/' + Selected, function() {
@@ -273,9 +291,17 @@
                         }
                     },
                     error: function(e) {
+                        let errText = "Gagal Menyimpan form.";
+                        if (e.responseJSON && e.responseJSON.errors) {
+                            const firstKey = Object.keys(e.responseJSON.errors)[0];
+                            if (firstKey && e.responseJSON.errors[firstKey] && e.responseJSON.errors[firstKey][0]) {
+                                errText = e.responseJSON.errors[firstKey][0];
+                            }
+                        }
+
                         $.toast({
                             heading: 'Error',
-                            text: "Gagal Menyimpan form.",
+                            text: errText,
                             showHideTransition: 'fade',
                             position: 'bottom-right',
                             icon: 'error'
@@ -300,7 +326,11 @@
                 $("#formCategory").val(category)
                 $("#formDescription").val(description)
                 $("#formPublish").prop("checked", publish == "1")
-                $("#photo-product").prop("src", "{{url('/getResource')}}/" + mediaId)
+                if (mediaId) {
+                    $("#photo-product").prop("src", "{{url('/getResource')}}/" + mediaId)
+                } else {
+                    $("#photo-product").prop("src", noImage)
+                }
                 $("#modalFormProduct").modal("show");
             });
         }
