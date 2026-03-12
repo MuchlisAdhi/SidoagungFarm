@@ -7,21 +7,26 @@ use Spatie\ImageOptimizer\Optimizers\Optipng;
 use Spatie\ImageOptimizer\Optimizers\Pngquant;
 use Spatie\ImageOptimizer\Optimizers\Svgo;
 
-$configuredBinaryPath = (string) env('IMAGE_OPTIMIZER_BINARY_PATH', 'tools/image-optimizer-bundle/bin');
-$configuredBinaryPath = trim($configuredBinaryPath);
+$configuredBinaryPathRaw = env('IMAGE_OPTIMIZER_BINARY_PATH');
+$configuredBinaryPath = is_null($configuredBinaryPathRaw)
+    ? 'tools/image-optimizer-bundle/bin'
+    : trim((string) $configuredBinaryPathRaw);
 
-if ($configuredBinaryPath === '') {
-    $configuredBinaryPath = 'tools/image-optimizer-bundle/bin';
+if ($configuredBinaryPath === 'global') {
+    $configuredBinaryPath = '';
 }
 
-$isWindowsAbsolutePath = preg_match('/^[A-Za-z]:[\/\\\\]/', $configuredBinaryPath) === 1;
-$isUnixAbsolutePath = str_starts_with($configuredBinaryPath, '/');
+$binaryPath = '';
+if ($configuredBinaryPath !== '') {
+    $isWindowsAbsolutePath = preg_match('/^[A-Za-z]:[\/\\\\]/', $configuredBinaryPath) === 1;
+    $isUnixAbsolutePath = str_starts_with($configuredBinaryPath, '/');
 
-$binaryPath = $isWindowsAbsolutePath || $isUnixAbsolutePath
-    ? $configuredBinaryPath
-    : base_path(trim($configuredBinaryPath, '/\\'));
+    $binaryPath = $isWindowsAbsolutePath || $isUnixAbsolutePath
+        ? $configuredBinaryPath
+        : base_path(trim($configuredBinaryPath, '/\\'));
 
-$binaryPath = rtrim($binaryPath, '/\\') . DIRECTORY_SEPARATOR;
+    $binaryPath = rtrim($binaryPath, '/\\') . DIRECTORY_SEPARATOR;
+}
 
 return [
     /*

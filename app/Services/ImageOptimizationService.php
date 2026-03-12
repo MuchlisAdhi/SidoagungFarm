@@ -9,6 +9,7 @@ use Symfony\Component\Process\Process;
 class ImageOptimizationService
 {
     protected static bool $binaryPrepared = false;
+    protected static bool $skipBinaryFallback = false;
 
     /**
      * Optimize image file safely.
@@ -77,6 +78,10 @@ class ImageOptimizationService
 
     protected function optimizeWithBinaryFallback(string $absolutePath, string $ext): void
     {
+        if (self::$skipBinaryFallback) {
+            return;
+        }
+
         $commands = $this->buildBinaryCommands($absolutePath, $ext);
         if ($commands === []) {
             return;
@@ -84,10 +89,13 @@ class ImageOptimizationService
 
         foreach ($commands as $command) {
             $binary = $command['binary'];
+            $binaryName = $command['binary_name'];
             $args = $command['args'];
 
             if (! is_file($binary)) {
-                Log::warning('Binary optimizer not found.', [
+                $this->runGlobalBinaryFallback($binaryName, $args, $absolutePath, $ext, true);
+
+                Log::warning('Binary optimizer not found (custom path).', [
                     'binary' => $binary,
                     'path' => $absolutePath,
                     'ext' => $ext,
@@ -100,12 +108,29 @@ class ImageOptimizationService
             $process->run();
 
             if (! $process->isSuccessful()) {
+                $errorOutput = trim((string) $process->getErrorOutput());
+
+                if ($this->containsGlibcError($errorOutput)) {
+                    $globalWorked = $this->runGlobalBinaryFallback($binaryName, $args, $absolutePath, $ext, false);
+                    if ($globalWorked) {
+                        continue;
+                    }
+
+                    self::$skipBinaryFallback = true;
+                    Log::warning('Disabling binary fallback due to GLIBC incompatibility.', [
+                        'binary' => $binary,
+                        'path' => $absolutePath,
+                        'ext' => $ext,
+                        'error' => $errorOutput,
+                    ]);
+                }
+
                 Log::warning('Binary optimizer command failed.', [
                     'binary' => $binary,
                     'args' => $args,
                     'path' => $absolutePath,
                     'ext' => $ext,
-                    'error' => trim($process->getErrorOutput()),
+                    'error' => $errorOutput,
                 ]);
             }
         }
@@ -130,12 +155,24 @@ class ImageOptimizationService
 
     protected function optimizeWithGd(string $absolutePath, string $ext): void
     {
+        $memoryLimitBefore = ini_get('memory_limit');
+
         if (! $this->canUseGdSafely($absolutePath)) {
-            Log::warning('Skipping GD fallback due to memory limit risk.', [
-                'path' => $absolutePath,
-                'ext' => $ext,
-            ]);
-            return;
+            $raised = $this->tryRaiseMemoryLimitForOptimization();
+
+            if (! $raised || ! $this->canUseGdSafely($absolutePath)) {
+                Log::warning('Skipping GD fallback due to memory limit risk.', [
+                    'path' => $absolutePath,
+                    'ext' => $ext,
+                    'memory_limit' => ini_get('memory_limit'),
+                ]);
+
+                if ($memoryLimitBefore !== false && $memoryLimitBefore !== null) {
+                    @ini_set('memory_limit', (string) $memoryLimitBefore);
+                }
+
+                return;
+            }
         }
 
         try {
@@ -183,6 +220,10 @@ class ImageOptimizationService
                 'ext' => $ext,
                 'error' => $th->getMessage(),
             ]);
+        } finally {
+            if ($memoryLimitBefore !== false && $memoryLimitBefore !== null) {
+                @ini_set('memory_limit', (string) $memoryLimitBefore);
+            }
         }
     }
 
@@ -235,6 +276,7 @@ class ImageOptimizationService
         if (in_array($ext, ['jpg', 'jpeg'], true)) {
             $commands[] = [
                 'binary' => $binaryPath . 'jpegoptim',
+                'binary_name' => 'jpegoptim',
                 'args' => ['-m85', '--strip-all', '--all-progressive', $absolutePath],
             ];
         }
@@ -242,10 +284,12 @@ class ImageOptimizationService
         if ($ext === 'png') {
             $commands[] = [
                 'binary' => $binaryPath . 'pngquant',
+                'binary_name' => 'pngquant',
                 'args' => ['--force', '--skip-if-larger', '--quality=65-85', '--output', $absolutePath, $absolutePath],
             ];
             $commands[] = [
                 'binary' => $binaryPath . 'optipng',
+                'binary_name' => 'optipng',
                 'args' => ['-i0', '-o2', '-quiet', $absolutePath],
             ];
         }
@@ -253,6 +297,7 @@ class ImageOptimizationService
         if ($ext === 'gif') {
             $commands[] = [
                 'binary' => $binaryPath . 'gifsicle',
+                'binary_name' => 'gifsicle',
                 'args' => ['-b', '-O3', $absolutePath],
             ];
         }
@@ -284,6 +329,62 @@ class ImageOptimizationService
         $headroom = (int) ($memoryLimitBytes - $currentUsage - (96 * 1024 * 1024));
 
         return $estimatedBytes > 0 && $estimatedBytes < $headroom;
+    }
+
+    protected function containsGlibcError(string $errorOutput): bool
+    {
+        return str_contains($errorOutput, 'GLIBC_')
+            || str_contains($errorOutput, 'not found (required by')
+            || str_contains($errorOutput, 'version `GLIBC_');
+    }
+
+    protected function runGlobalBinaryFallback(
+        string $binaryName,
+        array $args,
+        string $absolutePath,
+        string $ext,
+        bool $silentWhenFail
+    ): bool {
+        $process = new Process(array_merge([$binaryName], $args));
+        $process->setTimeout(60);
+        $process->run();
+
+        if ($process->isSuccessful()) {
+            Log::info('Global binary optimizer command succeeded.', [
+                'binary' => $binaryName,
+                'args' => $args,
+                'path' => $absolutePath,
+                'ext' => $ext,
+            ]);
+
+            return true;
+        }
+
+        if (! $silentWhenFail) {
+            Log::warning('Global binary optimizer command failed.', [
+                'binary' => $binaryName,
+                'args' => $args,
+                'path' => $absolutePath,
+                'ext' => $ext,
+                'error' => trim((string) $process->getErrorOutput()),
+            ]);
+        }
+
+        return false;
+    }
+
+    protected function tryRaiseMemoryLimitForOptimization(): bool
+    {
+        $targetLimit = (string) env('IMAGE_OPTIMIZER_GD_MEMORY_LIMIT', '1024M');
+        if ($targetLimit === '') {
+            return false;
+        }
+
+        $before = (string) ini_get('memory_limit');
+        @ini_set('memory_limit', $targetLimit);
+        $after = (string) ini_get('memory_limit');
+
+        return $after !== '' && $after !== $before;
     }
 
     protected function toBytes(string $value): int
