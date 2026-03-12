@@ -10,6 +10,7 @@ class ImageOptimizationService
 {
     protected static bool $binaryPrepared = false;
     protected static bool $skipBinaryFallback = false;
+    protected static bool $imagickAvailabilityLogged = false;
 
     /**
      * Optimize image file safely.
@@ -29,6 +30,13 @@ class ImageOptimizationService
         $this->prepareBinaryAliases();
 
         $beforeSize = (int) (filesize($absolutePath) ?: 0);
+        if ($beforeSize <= 0) {
+            return;
+        }
+
+        $backupPath = $this->createBackup($absolutePath);
+        $attemptSize = $beforeSize;
+
         $optimizedBySpatie = false;
 
         try {
@@ -43,25 +51,52 @@ class ImageOptimizationService
         }
 
         $afterSpatieSize = (int) (filesize($absolutePath) ?: 0);
-        if ($this->shouldRunGdFallback($ext, $beforeSize, $afterSpatieSize, $optimizedBySpatie)) {
+
+        if ($this->shouldRunImagickFallback($ext, $beforeSize, $afterSpatieSize, $optimizedBySpatie)) {
+            $this->optimizeWithImagick($absolutePath, $ext);
+        }
+
+        $afterImagickSize = (int) (filesize($absolutePath) ?: 0);
+
+        if ($this->shouldRunGdFallback($ext, $beforeSize, $afterImagickSize, $optimizedBySpatie)) {
             $this->optimizeWithGd($absolutePath, $ext);
         }
 
         $afterGdSize = (int) (filesize($absolutePath) ?: 0);
-        if ($afterGdSize <= 0 || $afterGdSize >= $beforeSize) {
+        if (
+            $this->isBinaryFallbackEnabled()
+            && $this->hasCustomBinaryPath()
+            && ($afterGdSize <= 0 || $afterGdSize >= $beforeSize)
+        ) {
             $this->optimizeWithBinaryFallback($absolutePath, $ext);
         }
 
-        $afterFinalSize = (int) (filesize($absolutePath) ?: 0);
-        if ($beforeSize > 0 && $afterFinalSize > 0) {
-            $delta = $beforeSize - $afterFinalSize;
+        $attemptSize = (int) (filesize($absolutePath) ?: 0);
+
+        if ($backupPath && ($attemptSize <= 0 || $attemptSize >= $beforeSize)) {
+            $attemptBeforeRevert = $attemptSize;
+            if (@copy($backupPath, $absolutePath)) {
+                $attemptSize = (int) (filesize($absolutePath) ?: 0);
+                Log::warning('Optimization result reverted because output is not smaller.', [
+                    'path' => $absolutePath,
+                    'ext' => $ext,
+                    'before' => $beforeSize,
+                    'after_attempt' => $attemptBeforeRevert,
+                    'restored_after' => $attemptSize,
+                ]);
+            }
+        }
+
+        if ($beforeSize > 0 && $attemptSize > 0) {
+            $delta = $beforeSize - $attemptSize;
             $percent = round(($delta / $beforeSize) * 100, 2);
+
             if ($delta > 0) {
                 Log::info('Image optimized successfully.', [
                     'path' => $absolutePath,
                     'ext' => $ext,
                     'before' => $beforeSize,
-                    'after' => $afterFinalSize,
+                    'after' => $attemptSize,
                     'saved_bytes' => $delta,
                     'saved_percent' => $percent,
                 ]);
@@ -70,74 +105,86 @@ class ImageOptimizationService
                     'path' => $absolutePath,
                     'ext' => $ext,
                     'before' => $beforeSize,
-                    'after' => $afterFinalSize,
+                    'after' => $attemptSize,
                 ]);
             }
+        }
+
+        if ($backupPath && is_file($backupPath)) {
+            @unlink($backupPath);
         }
     }
 
-    protected function optimizeWithBinaryFallback(string $absolutePath, string $ext): void
+    protected function shouldRunImagickFallback(string $ext, int $beforeSize, int $afterSize, bool $optimizedBySpatie): bool
     {
-        if (self::$skipBinaryFallback) {
-            return;
+        if (! $this->isImagickFallbackEnabled()) {
+            return false;
         }
 
-        $commands = $this->buildBinaryCommands($absolutePath, $ext);
-        if ($commands === []) {
-            return;
-        }
-
-        foreach ($commands as $command) {
-            $binary = $command['binary'];
-            $binaryName = $command['binary_name'];
-            $args = $command['args'];
-
-            if (! is_file($binary)) {
-                $this->runGlobalBinaryFallback($binaryName, $args, $absolutePath, $ext, true);
-
-                Log::warning('Binary optimizer not found (custom path).', [
-                    'binary' => $binary,
-                    'path' => $absolutePath,
+        if (! extension_loaded('imagick') || ! class_exists(\Imagick::class)) {
+            if (! self::$imagickAvailabilityLogged) {
+                self::$imagickAvailabilityLogged = true;
+                Log::warning('Imagick fallback is enabled but extension is not loaded in runtime.', [
                     'ext' => $ext,
                 ]);
-                continue;
             }
+            return false;
+        }
 
-            $process = new Process(array_merge([$binary], $args));
-            $process->setTimeout(60);
-            $process->run();
+        if (! in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'], true)) {
+            return false;
+        }
 
-            if (! $process->isSuccessful()) {
-                $errorOutput = trim((string) $process->getErrorOutput());
+        if (! $optimizedBySpatie) {
+            return true;
+        }
 
-                if ($this->containsGlibcError($errorOutput)) {
-                    $globalWorked = $this->runGlobalBinaryFallback($binaryName, $args, $absolutePath, $ext, false);
-                    if ($globalWorked) {
-                        continue;
-                    }
+        return $afterSize <= 0 || $afterSize >= $beforeSize;
+    }
 
-                    self::$skipBinaryFallback = true;
-                    Log::warning('Disabling binary fallback due to GLIBC incompatibility.', [
-                        'binary' => $binary,
-                        'path' => $absolutePath,
-                        'ext' => $ext,
-                        'error' => $errorOutput,
-                    ]);
+    protected function optimizeWithImagick(string $absolutePath, string $ext): void
+    {
+        try {
+            $image = new \Imagick($absolutePath);
+            $image->stripImage();
+
+            if (in_array($ext, ['jpg', 'jpeg'], true)) {
+                $image->setImageCompression(\Imagick::COMPRESSION_JPEG);
+                $image->setImageCompressionQuality(82);
+                $image->setInterlaceScheme(\Imagick::INTERLACE_PLANE);
+            } elseif ($ext === 'png') {
+                if ($image->getImageAlphaChannel()) {
+                    $image->setImageAlphaChannel(\Imagick::ALPHACHANNEL_ACTIVATE);
                 }
 
-                Log::warning('Binary optimizer command failed.', [
-                    'binary' => $binary,
-                    'args' => $args,
-                    'path' => $absolutePath,
-                    'ext' => $ext,
-                    'error' => $errorOutput,
-                ]);
+                $image->quantizeImage(256, \Imagick::COLORSPACE_RGB, 0, false, false);
+                $image->setOption('png:compression-level', '9');
+                $image->setOption('png:compression-strategy', '1');
+                $image->setOption('png:exclude-chunk', 'all');
+                $image->setImageFormat('png');
+            } elseif ($ext === 'webp') {
+                $image->setImageCompressionQuality(82);
+                $image->setImageFormat('webp');
             }
+
+            $image->writeImage($absolutePath);
+            $image->clear();
+            $image->destroy();
+        } catch (\Throwable $th) {
+            Log::warning('Imagick optimization failed.', [
+                'path' => $absolutePath,
+                'ext' => $ext,
+                'error' => $th->getMessage(),
+            ]);
         }
     }
 
-    protected function shouldRunGdFallback(string $ext, int $beforeSize, int $afterSpatieSize, bool $optimizedBySpatie): bool
+    protected function shouldRunGdFallback(string $ext, int $beforeSize, int $afterSize, bool $optimizedBySpatie): bool
     {
+        if (! $this->isGdFallbackEnabled()) {
+            return false;
+        }
+
         if (! in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) {
             return false;
         }
@@ -150,7 +197,7 @@ class ImageOptimizationService
             return true;
         }
 
-        return $afterSpatieSize <= 0 || $afterSpatieSize >= $beforeSize;
+        return $afterSize <= 0 || $afterSize >= $beforeSize;
     }
 
     protected function optimizeWithGd(string $absolutePath, string $ext): void
@@ -200,7 +247,7 @@ class ImageOptimizationService
 
                 imagealphablending($image, false);
                 imagesavealpha($image, true);
-                imagepng($image, $absolutePath, 8);
+                imagepng($image, $absolutePath, 9);
                 imagedestroy($image);
                 return;
             }
@@ -224,6 +271,70 @@ class ImageOptimizationService
             if ($memoryLimitBefore !== false && $memoryLimitBefore !== null) {
                 @ini_set('memory_limit', (string) $memoryLimitBefore);
             }
+        }
+    }
+
+    protected function optimizeWithBinaryFallback(string $absolutePath, string $ext): void
+    {
+        if (self::$skipBinaryFallback) {
+            return;
+        }
+
+        $commands = $this->buildBinaryCommands($absolutePath, $ext);
+        if ($commands === []) {
+            return;
+        }
+
+        foreach ($commands as $command) {
+            if (self::$skipBinaryFallback) {
+                break;
+            }
+
+            $binary = $command['binary'];
+            $binaryName = $command['binary_name'];
+            $args = $command['args'];
+
+            if (! is_file($binary)) {
+                Log::warning('Binary optimizer not found (custom path).', [
+                    'binary' => $binary,
+                    'path' => $absolutePath,
+                    'ext' => $ext,
+                ]);
+                continue;
+            }
+
+            $process = new Process(array_merge([$binary], $args));
+            $process->setTimeout(60);
+            $process->run();
+
+            if ($process->isSuccessful()) {
+                continue;
+            }
+
+            $errorOutput = trim((string) $process->getErrorOutput());
+
+            if ($this->containsGlibcError($errorOutput)) {
+                $globalWorked = $this->runGlobalBinaryFallback($binaryName, $args, $absolutePath, $ext, false);
+                if ($globalWorked) {
+                    continue;
+                }
+
+                self::$skipBinaryFallback = true;
+                Log::warning('Disabling binary fallback due to GLIBC incompatibility.', [
+                    'binary' => $binary,
+                    'path' => $absolutePath,
+                    'ext' => $ext,
+                    'error' => $errorOutput,
+                ]);
+            }
+
+            Log::warning('Binary optimizer command failed.', [
+                'binary' => $binary,
+                'args' => $args,
+                'path' => $absolutePath,
+                'ext' => $ext,
+                'error' => $errorOutput,
+            ]);
         }
     }
 
@@ -367,6 +478,7 @@ class ImageOptimizationService
                 'path' => $absolutePath,
                 'ext' => $ext,
                 'error' => trim((string) $process->getErrorOutput()),
+                'output' => trim((string) $process->getOutput()),
             ]);
         }
 
@@ -387,6 +499,36 @@ class ImageOptimizationService
         return $after !== '' && $after !== $before;
     }
 
+    protected function isGdFallbackEnabled(): bool
+    {
+        return filter_var((string) env('IMAGE_OPTIMIZER_ENABLE_GD_FALLBACK', '1'), FILTER_VALIDATE_BOOL);
+    }
+
+    protected function isImagickFallbackEnabled(): bool
+    {
+        return filter_var((string) env('IMAGE_OPTIMIZER_ENABLE_IMAGICK_FALLBACK', '1'), FILTER_VALIDATE_BOOL);
+    }
+
+    protected function isBinaryFallbackEnabled(): bool
+    {
+        return filter_var((string) env('IMAGE_OPTIMIZER_ENABLE_BINARY_FALLBACK', '1'), FILTER_VALIDATE_BOOL);
+    }
+
+    protected function hasCustomBinaryPath(): bool
+    {
+        return (string) config('image-optimizer.binary_path', '') !== '';
+    }
+
+    protected function createBackup(string $absolutePath): ?string
+    {
+        $backupPath = $absolutePath . '.orig';
+        try {
+            return @copy($absolutePath, $backupPath) ? $backupPath : null;
+        } catch (\Throwable $th) {
+            return null;
+        }
+    }
+
     protected function toBytes(string $value): int
     {
         $value = trim($value);
@@ -396,6 +538,7 @@ class ImageOptimizationService
 
         $last = strtolower(substr($value, -1));
         $number = (float) $value;
+
         return match ($last) {
             'g' => (int) ($number * 1024 * 1024 * 1024),
             'm' => (int) ($number * 1024 * 1024),
