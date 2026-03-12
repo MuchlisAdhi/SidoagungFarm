@@ -1,0 +1,61 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: optipng
+Upstream-Contact: Cosmin Truţa <ctruta@gmail.com>
+Source: http://optipng.sourceforge.net/
+
+Files: *
+Copyright: 2001-2019, Cosmin Truţa <ctruta@gmail.com>
+License: Zlib
+
+Files: src/cexcept/cexcept.h
+Copyright: 2000-2008, Adam M. Costello
+           2000-2008, Cosmin Truţa <ctruta@gmail.com>
+License: CEXCEPT_H
+
+Files: src/gifread/gifread.c
+Copyright: 1990-1993, David Koblas <koblas@netcom.com>
+           2003-2011, Cosmin Truţa <ctruta@gmail.com>
+License: MIT
+
+Files: debian/*
+Copyright: 2006-2010, Nelson A. de Oliveira <naoliv@debian.org>
+           2014-2019, Emmanuel Bouthenot <kolter@debian.org>
+License: Zlib
+
+Files: debian/3rd-party/optipng-check
+Copyright: 2010, Martin Pitt <martin.pitt@ubuntu.com>
+License: Zlib
+
+License: CEXCEPT_H
+ This software may be modified only if its author and version
+ information is updated accurately, and may be redistributed
+ only if accompanied by this unaltered notice.  Subject to those
+ restrictions, permission is granted to anyone to do anything
+ with this software.  The copyright holders make no guarantees
+ regarding this software, and are not responsible for any damage
+ resulting from its use.
+
+License: MIT
+ Permission to use, copy, modify, and distribute this software
+ and its documentation for any purpose and without fee is hereby
+ granted, provided that the above copyright notice appear in all
+ copies and that both that copyright notice and this permission
+ notice appear in supporting documentation.  This software is
+ provided "as is" without express or implied warranty.
+
+License: Zlib
+ This software is provided 'as-is', without any express or implied
+ warranty. In no event will the author(s) be held liable for any damages
+ arising from the use of this software.
+ .
+ Permission is granted to anyone to use this software for any purpose,
+ including commercial applications, and to alter it and redistribute it
+ freely, subject to the following restrictions:
+ .
+ 1. The origin of this software must not be misrepresented; you must not
+    claim that you wrote the original software. If you use this software
+    in a product, an acknowledgment in the product documentation would be
+    appreciated but is not required.
+ 2. Altered source versions must be plainly marked as such, and must not be
+    misrepresented as being the original software.
+ 3. This notice may not be removed or altered from any source distribution.

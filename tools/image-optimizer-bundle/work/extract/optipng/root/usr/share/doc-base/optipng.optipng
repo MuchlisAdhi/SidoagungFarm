@@ -1,0 +1,17 @@
+Document: optipng
+Title: OptiPNG Manual
+Author: Cosmin Truţa
+Abstract: OptiPNG is a PNG optimizer that recompresses the image files to a
+ smaller size. It losslessly reduces the bit depth, the color type and the
+ color palette of the image, runs a suite of compression methods and
+ strategies, and selects the compression parameters that yield the smallest
+ output file. It also recognizes several external file formats like BMP, GIF,
+ TIFF and PNM (PBM, PGM, PPM).
+Section: Graphics
+
+Format: PDF
+Files: /usr/share/doc/optipng/optipng.man.pdf.gz
+
+Format: HTML
+Index: /usr/share/doc/optipng/optipng.man.html
+Files: /usr/share/doc/optipng/optipng.man.html

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Read a list of file paths from stdin (such as produced by find) and verify
+# that running optipng on them will produce an output file which looks
+# identical. This is checked by converting original and new file to PPM and
+# checking for identical output.
+#
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+# (C) 2010 Canonical Ltd.
+#
+# This software is distributed under the same licensing and warranty terms as
+# OptiPNG.  Please see the attached LICENSE for more info.
+
+set -e
+
+if ! type convert >/dev/null 2>&1; then
+    echo "ERROR: Please install imagemagick" >&2
+    exit 1
+fi
+
+workdir=`mktemp -d`
+trap "rm -r '$workdir'" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+out=$workdir/out.png
+
+while read f; do
+    if ! optipng -o4 -quiet -out $out "$f"; then
+    echo "SKIP: optipng cannot process $f"
+    continue
+    fi
+    if ! cmp <(convert -depth 24 "$f" ppm:-) <(convert -depth 24 "$out" ppm:-); then
+    echo "FAIL: Different result on $f" >&2
+    exit 1
+    fi
+    echo "OK: $f"
+    rm $out
+done

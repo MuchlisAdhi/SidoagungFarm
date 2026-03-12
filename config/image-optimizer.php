@@ -51,7 +51,7 @@ return [
     * The directory where your binaries are stored.
     * Only use this when you binaries are not accessible in the global environment.
     */
-    'binary_path' => '',
+    'binary_path' => env('IMAGE_OPTIMIZER_BINARY_PATH', ''),
 
     /*
      * The maximum time in seconds each optimizer is allowed to run separately.
