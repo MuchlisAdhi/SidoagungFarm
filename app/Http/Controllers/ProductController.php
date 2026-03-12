@@ -56,10 +56,10 @@ class ProductController extends Controller
     public function faq()
     {
         $validator = Validator::make(request()->all(), [
-            'name'  => "required",
-            'email' => "required|email",
-            'phone' => "required",
-            'desc'  => "required"
+            'name'  => "required|string|max:255",
+            'email' => "required|email|max:255",
+            'phone' => "required|string|max:30",
+            'desc'  => "required|string|max:10000"
         ]);
 
         if($validator->fails())

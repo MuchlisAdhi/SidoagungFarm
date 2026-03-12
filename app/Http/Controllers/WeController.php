@@ -28,7 +28,7 @@ class WeController extends Controller
             'formEmail' => ['required', 'email', 'max:255'],
             'formPhone' => ['required', 'string', 'max:30'],
             'formType' => ['required', 'in:Produk,Kemitraan,Karir'],
-            'formDescription' => ['required', 'string', 'max:2000'],
+            'formDescription' => ['required', 'string', 'max:10000'],
         ]);
 
         $form = [

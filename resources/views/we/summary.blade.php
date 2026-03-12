@@ -46,7 +46,7 @@
                             </div>
                             <div class="form-group mb-4">
                                 <textarea class="form-control" id="formDescription" name="formDescription" placeholder="Deskripsi Pertanyaan Anda"
-                                    rows="5" required></textarea>
+                                    rows="5" maxlength="10000" required></textarea>
                             </div>
                             <div class="form-group mb-0 text-right">
                                 <button type="button" id="btnSubmit" class="btn btn-danger text-white">Submit</button>

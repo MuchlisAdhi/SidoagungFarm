@@ -30,7 +30,7 @@
                                     <input type="tel" class="form-control" id="formInputPhone" placeholder="Nomor Hp">
                                 </div>
                                 <div class="form-group mb-4">
-                                    <textarea class="form-control" id="formInputDescription" placeholder="Deskripsi Permintaan" rows="3"></textarea>
+                                    <textarea class="form-control" id="formInputDescription" placeholder="Deskripsi Permintaan" rows="3" maxlength="10000"></textarea>
                                 </div>
                                 <div style="float:right;" class="form-group mb-0">
                                     <span id="errorMessage" class="text-danger"></span>
