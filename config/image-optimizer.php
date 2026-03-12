@@ -7,6 +7,22 @@ use Spatie\ImageOptimizer\Optimizers\Optipng;
 use Spatie\ImageOptimizer\Optimizers\Pngquant;
 use Spatie\ImageOptimizer\Optimizers\Svgo;
 
+$configuredBinaryPath = (string) env('IMAGE_OPTIMIZER_BINARY_PATH', 'tools/image-optimizer-bundle/bin');
+$configuredBinaryPath = trim($configuredBinaryPath);
+
+if ($configuredBinaryPath === '') {
+    $configuredBinaryPath = 'tools/image-optimizer-bundle/bin';
+}
+
+$isWindowsAbsolutePath = preg_match('/^[A-Za-z]:[\/\\\\]/', $configuredBinaryPath) === 1;
+$isUnixAbsolutePath = str_starts_with($configuredBinaryPath, '/');
+
+$binaryPath = $isWindowsAbsolutePath || $isUnixAbsolutePath
+    ? $configuredBinaryPath
+    : base_path(trim($configuredBinaryPath, '/\\'));
+
+$binaryPath = rtrim($binaryPath, '/\\') . DIRECTORY_SEPARATOR;
+
 return [
     /*
      * When calling `optimize` the package will automatically determine which optimizers
@@ -51,7 +67,7 @@ return [
     * The directory where your binaries are stored.
     * Only use this when you binaries are not accessible in the global environment.
     */
-    'binary_path' => env('IMAGE_OPTIMIZER_BINARY_PATH', ''),
+    'binary_path' => $binaryPath,
 
     /*
      * The maximum time in seconds each optimizer is allowed to run separately.
