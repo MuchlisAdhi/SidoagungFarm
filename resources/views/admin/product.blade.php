@@ -110,7 +110,7 @@
                                                 class="text-danger">*</span></label>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control" id="formTitle" placeholder="Full Name"
-                                                maxlength="30">
+                                                maxlength="100">
                                         </div>
                                     </div>
 
