@@ -38,6 +38,10 @@
                                     onclick="show('{{ encrypt($l->id) }}')">
                                     <i class="fa fa-eye" style="font-size: 20px;"></i>
                                 </a>
+                                <a href="javascript:void(0);" class="text-success" title="Export"
+                                    onclick="show('{{ encrypt($l->id) }}')">
+                                    <i class="fa fa-file-excel" style="font-size: 20px;"></i>
+                                </a>
                             </td>
                         </tr>
                     @endforeach

@@ -6,6 +6,15 @@
 @section('content')
     <div class="box">
         <div class="box-body">
+            <div class="row">
+                <div class="col-lg-12" style="margin-bottom: 5px;">
+                    <div class="pull-right">
+                        <a href="{{ route('admin.feedback.karir.export-applicants', ['careerId' => encrypt($career->id)]) }}" class="btn btn-success btn-sm">
+                            <i class="fa fa-file-excel-o"></i> Export to Excel
+                        </a>
+                    </div>
+                </div>
+            </div>
             <table id="tblCareer" class="table table-bordered table-hover">
                 <thead>
                     <tr>
