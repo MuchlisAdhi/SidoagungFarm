@@ -75,7 +75,7 @@ class MainController extends Controller
                 'links' => [
                     // ['label' => 'Produk Kami', 'url' => 'https://www.product.sidoagungfarm.com/', 'external' => true],
                     ['label' => 'Produk Pakan', 'url' => route('products')],
-                    ['label' => 'Kemitraan', 'url' => route('we.be-our-partner')],
+                    ['label' => 'Kemitraan', 'url' => route('we.join-us')],
                 ],
             ],
             [
@@ -90,14 +90,14 @@ class MainController extends Controller
                 'title' => 'Karir',
                 'links' => [
                     ['label' => 'Karir', 'url' => route('we.career')],
-                    ['label' => 'Join Us', 'url' => route('we.join-us')],
+                    ['label' => 'Lihat Lowongan', 'url' => route('we.career')],
                 ],
             ],
             [
                 'title' => 'Hubungi Kami',
                 'links' => [
                     ['label' => 'Talk To Us', 'url' => route('we.summary')],
-                    ['label' => 'Menjadi Mitra', 'url' => route('we.be-our-partner')],
+                    ['label' => 'Bergabung Menjadi Mitra', 'url' => route('we.join-us')],
                 ],
             ],
         ];

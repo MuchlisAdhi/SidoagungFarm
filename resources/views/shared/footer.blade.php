@@ -34,6 +34,7 @@
                             <ul class="list-unstyled mb-0">
                                 <li><a href="{{ route('we.career') }}">Karir</a></li>
                                 <li><a href="{{ route('we.summary') }}">Hubungi Kami</a></li>
+                                <li><a href="{{ route('we.join-us') }}">Menjadi Mitra</a></li>
                                 <li><a href="{{ route('sitemap') }}">Sitemap</a></li>
                             </ul>
                         </div>

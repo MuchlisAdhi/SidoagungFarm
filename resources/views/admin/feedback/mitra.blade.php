@@ -8,7 +8,9 @@
         'feed'   => "Pakan Ternak",
         'doc'     => "Bibit Ayam Umur Sehari",
         'livebird'     => "Ayam Hidup",
-        'broiler'    => "Ayam Potong"
+        'broiler'    => "Ayam Potong",
+        'Kemitraan' => "Kemitraan",
+        'kemitraan' => "Kemitraan",
     ];
 @endphp
 
@@ -36,7 +38,7 @@
                             <td>{{ $u->firstname . " " . $u->lastname }}</td>
                             <td>{{ $u->email }}</td>
                             <td>{{ $u->phone }}</td>
-                            <td>{{ $categories[$u->category] }}</td>
+                            <td>{{ $categories[$u->category] ?? $u->category ?? '-' }}</td>
                             <td>{{ $u->companyname }}</td>
                             <td>{{ $u->companylocation }}</td>
                             <td>
@@ -204,7 +206,7 @@
                 $("#formBod").val(bod);
                 $("#formEmail").val(email);
                 $("#formPhone").val(phone);
-                $("#formCategory").val(categories[data.category]);
+                $("#formCategory").val(categories[data.category] || data.category || "-");
                 $("#formCompany").val(companyname);
                 $("#formLocation").val(companylocation);
                 $("#formDescription").val(companydescription);
