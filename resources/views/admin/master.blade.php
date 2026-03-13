@@ -12,6 +12,55 @@
       <link rel="stylesheet" href="{{ asset('dist/css/AdminLTE.min.css') }}">
       <link rel="stylesheet" href="{{ asset('dist/css/skins/_all-skins.min.css') }}">
       <link rel="stylesheet" href="{{ asset('plugins/toast/jquery.toast.min.css') }}">
+      <style>
+         .admin-loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(255, 255, 255, 0.72);
+            display: none;
+         }
+
+         .admin-loading-wrap {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+         }
+
+         .admin-snake-loader {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 4px solid rgba(0, 166, 81, 0.2);
+            border-top-color: #00A651;
+            border-right-color: #00A651;
+            animation: adminSnakeSpin 0.85s linear infinite;
+            margin: 0 auto;
+         }
+
+         .admin-loading-text {
+            margin-top: 10px;
+            color: #00A651;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+         }
+
+         .btn-loading-disabled,
+         .btn-loading-disabled:hover,
+         .btn-loading-disabled:focus {
+            opacity: 0.7 !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+         }
+
+         @keyframes adminSnakeSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+         }
+      </style>
 
       @yield('style')
    </head>
@@ -104,8 +153,14 @@
             <section class="content">
                
                @yield('content')
-               
+              
             </section>
+         </div>
+         <div id="adminLoadingOverlay" class="admin-loading-overlay" aria-hidden="true">
+            <div class="admin-loading-wrap">
+               <div class="admin-snake-loader"></div>
+               <div class="admin-loading-text">Menyimpan...</div>
+            </div>
          </div>
       </div>
       <script src="{{ asset('plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
@@ -120,7 +175,119 @@
              headers: {
                  'X-CSRF-TOKEN': "{{ csrf_token() }}"
              }
-         });  
+         });
+
+        (function(w, $) {
+            function resolveButton(button) {
+               if (!button) {
+                  return $();
+               }
+
+               if (typeof button === 'string') {
+                  return $(button).first();
+               }
+
+               if (button.jquery) {
+                  return button.first();
+               }
+
+               return $(button).first();
+            }
+
+            function setOverlay(show) {
+               if (show) {
+                  $("#adminLoadingOverlay").stop(true, true).fadeIn(120);
+                  return;
+               }
+
+               $("#adminLoadingOverlay").stop(true, true).fadeOut(120);
+            }
+
+            w.AdminSubmit = {
+               start: function(button, text) {
+                  var $btn = resolveButton(button);
+                  if ($btn.length) {
+                     if ($btn.data("loadingLocked")) {
+                        return false;
+                     }
+
+                     $btn.data("loadingLocked", true);
+                     $btn.data("loadingHtml", $btn.html());
+                     $btn.prop("disabled", true).addClass("btn-loading-disabled");
+
+                     if (text) {
+                        $btn.html('<i class="fa fa-spinner fa-spin"></i> ' + text);
+                     }
+                  }
+
+                  setOverlay(true);
+                  return true;
+               },
+               stop: function(button) {
+                  var $btn = resolveButton(button);
+                  if ($btn.length) {
+                     var prevHtml = $btn.data("loadingHtml");
+                     if (typeof prevHtml !== "undefined") {
+                        $btn.html(prevHtml);
+                     }
+
+                     $btn.removeData("loadingHtml")
+                        .removeData("loadingLocked")
+                        .prop("disabled", false)
+                        .removeClass("btn-loading-disabled");
+                  }
+
+                  setOverlay(false);
+               },
+               stopAll: function() {
+                  $(".btn-loading-disabled").each(function() {
+                     var $btn = $(this);
+                     var prevHtml = $btn.data("loadingHtml");
+                     if (typeof prevHtml !== "undefined") {
+                        $btn.html(prevHtml);
+                     }
+
+                     $btn.removeData("loadingHtml")
+                        .removeData("loadingLocked")
+                        .prop("disabled", false)
+                        .removeClass("btn-loading-disabled");
+                  });
+
+                  $("form").removeData("submitLocked");
+                  setOverlay(false);
+               }
+            };
+
+            $(w).on("pageshow", function() {
+               w.AdminSubmit.stopAll();
+            });
+
+            $(document).on("submit", "form", function(e) {
+               var $form = $(this);
+               var method = ($form.attr("method") || "").toLowerCase();
+
+               if (method !== "post") {
+                  return true;
+               }
+
+               if ($form.data("submitLocked")) {
+                  e.preventDefault();
+                  return false;
+               }
+
+               $form.data("submitLocked", true);
+
+               var $submit = $form.find('button[type="submit"], input[type="submit"]').filter(":enabled").first();
+               if ($submit.length) {
+                  w.AdminSubmit.start($submit, "Menyimpan...");
+                  return true;
+               }
+
+               setOverlay(true);
+               return true;
+            });
+        })(window, jQuery);
+
         $(document).ready(function(){ 
             @if (session()->has("error"))
                $.toast({

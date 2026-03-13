@@ -142,6 +142,10 @@
                 $("#" + e).prop("name", e)
             })
 
+            if (!AdminSubmit.start("#btnSave", "Menyimpan...")) {
+                return;
+            }
+
             $("#frmEnv")
                 .prop("method", "post")
                 .prop("action", "{{url('/wongelek/csr/env/save')}}")

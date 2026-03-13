@@ -137,7 +137,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
-                    <button type="button" id="btnReplied" class="btn btn-success btn-sm" data-dismiss="modal">Make as replied</button>
+                    <button type="button" id="btnReplied" class="btn btn-success btn-sm">Make as replied</button>
                 </div>
             </div>
         </div>
@@ -172,9 +172,25 @@
 
         function replied() {
             let id = selected;
-            $("#modalFormMitra").modal("hide")
+            if (!id) {
+                return;
+            }
+
+            if (!AdminSubmit.start("#btnReplied", "Menyimpan...")) {
+                return;
+            }
+
             $.get("{{ url('/wongelek/feedback/mitra/replied') }}/" + id , function() {
                 window.location.reload();
+            }).fail(function() {
+                AdminSubmit.stop("#btnReplied");
+                $.toast({
+                    heading: 'Error',
+                    text: 'Gagal mengubah status mitra.',
+                    showHideTransition: 'fade',
+                    position: 'bottom-right',
+                    icon: 'error'
+                });
             });
         }
 

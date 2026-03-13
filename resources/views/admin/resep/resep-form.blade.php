@@ -148,6 +148,10 @@
                 $("#" + e).prop("name", e)
             })
 
+            if (!AdminSubmit.start("#btnSave", "Menyimpan...")) {
+                return;
+            }
+
             $("#frmResep")
                 .prop("method", "post")
                 .prop("action", "{{url('/wongelek/resep/save')}}")

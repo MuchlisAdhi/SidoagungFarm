@@ -198,12 +198,17 @@
                     return;
                 }
 
+                if (!AdminSubmit.start("#btnSaveForm", "Menyimpan...")) {
+                    return;
+                }
+
                 $.post('{{url("/wongelek/users/save")}}', {id, fullname, email, pass, navigation_access})
                 .done(function(res){
                     if(res.code == 200)
                     {
                         window.location.reload();
                     }else{
+                        AdminSubmit.stop("#btnSaveForm");
                         $.toast({
                             heading: 'Error',
                             text: res.msg,
@@ -214,6 +219,7 @@
                     }
                 })
                 .fail(function(xhr){
+                    AdminSubmit.stop("#btnSaveForm");
                     let errText = "Gagal Menyimpan form.";
                     if (xhr && xhr.responseJSON && xhr.responseJSON.errors) {
                         const firstKey = Object.keys(xhr.responseJSON.errors)[0];

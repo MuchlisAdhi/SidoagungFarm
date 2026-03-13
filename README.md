@@ -34,6 +34,77 @@ Landing page company profile + panel admin berbasis Laravel.
   - Testimoni
   - Resep
 
+## Admin Global Loader & Submit Utility
+
+Panel admin sekarang memakai loader global + helper submit untuk mencegah double click saat proses simpan/update.
+
+Lokasi implementasi:
+
+- `resources/views/admin/master.blade.php`
+
+Komponen yang tersedia:
+
+- Overlay loader global `#adminLoadingOverlay` dengan animasi snake
+- Base color loader: `#00A651`
+- Helper JavaScript global: `window.AdminSubmit`
+
+API helper:
+
+- `AdminSubmit.start(button, text)`
+  - Disable tombol target
+  - Ubah teks tombol (contoh: `Menyimpan...`)
+  - Tampilkan overlay loader
+  - Return `false` jika tombol sedang terkunci (anti klik berulang)
+- `AdminSubmit.stop(button)`
+  - Restore tombol target (enabled + teks awal)
+  - Sembunyikan overlay loader
+- `AdminSubmit.stopAll()`
+  - Reset semua tombol yang sedang mode loading
+
+Auto-protection submit form:
+
+- Semua `form` dengan method `POST` di admin otomatis diberi lock submit sekali.
+- Jika user submit ulang saat request belum selesai, submit kedua dibatalkan.
+
+### Pola Pakai (AJAX)
+
+```javascript
+if (!AdminSubmit.start("#btnSaveForm", "Menyimpan...")) {
+    return;
+}
+
+$.post("/wongelek/example/save", payload)
+    .done(function(res) {
+        if (res.code === 200) {
+            window.location.reload();
+            return;
+        }
+
+        AdminSubmit.stop("#btnSaveForm");
+    })
+    .fail(function() {
+        AdminSubmit.stop("#btnSaveForm");
+    });
+```
+
+### Pola Pakai (Form Submit Biasa)
+
+```javascript
+if (!AdminSubmit.start("#btnSave", "Menyimpan...")) {
+    return;
+}
+
+$("#frmExample")
+    .prop("method", "post")
+    .prop("action", "/wongelek/example/save")
+    .submit();
+```
+
+Catatan:
+
+- Untuk flow sukses yang `window.location.reload()` / redirect, tidak perlu `AdminSubmit.stop()` manual.
+- Untuk flow gagal (validasi/server error), wajib panggil `AdminSubmit.stop(...)` agar tombol aktif lagi.
+
 ## Instalasi Lokal
 
 1. Install dependency PHP:

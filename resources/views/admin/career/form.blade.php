@@ -129,6 +129,11 @@
             inputs.map(function(e){
                 $("#" + e).prop("name", e)
             })
+
+            if (!AdminSubmit.start("#btnSave", "Menyimpan...")) {
+                return;
+            }
+
             $("#frmCareer")
                 .prop("method", "post")
                 .prop("action", "{{url('/wongelek/karir/save')}}")

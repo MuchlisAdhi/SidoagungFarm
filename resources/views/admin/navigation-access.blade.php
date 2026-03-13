@@ -131,6 +131,10 @@
                     return $(this).val();
                 }).get();
 
+                if (!AdminSubmit.start("#btnSaveAccess", "Menyimpan...")) {
+                    return;
+                }
+
                 $.post(`{{ url('/wongelek/navigation-access/save') }}`, {
                     access_id: selectedAccessId,
                     access_name: access_name,
@@ -138,11 +142,13 @@
                     permissions: permissions,
                 }).done(function (res) {
                     if (res.code !== 200) {
+                        AdminSubmit.stop("#btnSaveAccess");
                         showError(res.msg || "Gagal menyimpan navigation access.");
                         return;
                     }
                     window.location.reload();
                 }).fail(function () {
+                    AdminSubmit.stop("#btnSaveAccess");
                     showError("Gagal menyimpan navigation access.");
                 });
             });
@@ -214,4 +220,3 @@
         }
     </script>
 @endsection
-

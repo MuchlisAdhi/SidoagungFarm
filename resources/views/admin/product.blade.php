@@ -260,6 +260,10 @@
                     }
                 }
 
+                if (!AdminSubmit.start("#btnSaveForm", "Menyimpan...")) {
+                    return;
+                }
+
                 console.log(images);
 
                 var form = new FormData();
@@ -281,6 +285,7 @@
                         if (res.code == 200) {
                             window.location.reload();
                         } else {
+                            AdminSubmit.stop("#btnSaveForm");
                             $.toast({
                                 heading: 'Error',
                                 text: res.msg,
@@ -291,6 +296,7 @@
                         }
                     },
                     error: function(e) {
+                        AdminSubmit.stop("#btnSaveForm");
                         let errText = "Gagal Menyimpan form.";
                         if (e.responseJSON && e.responseJSON.errors) {
                             const firstKey = Object.keys(e.responseJSON.errors)[0];

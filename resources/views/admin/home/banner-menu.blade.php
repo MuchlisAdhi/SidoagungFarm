@@ -215,6 +215,10 @@ $menus = [
                     }
                 }
 
+                if (!AdminSubmit.start("#btnSaveForm", "Menyimpan...")) {
+                    return;
+                }
+
                 var form = new FormData();
                 form.append('image', images[0]);
                 form.append('title', title);
@@ -232,6 +236,7 @@ $menus = [
                         if (res.code == 200) {
                             window.location.reload();
                         } else {
+                            AdminSubmit.stop("#btnSaveForm");
                             $.toast({
                                 heading: 'Error',
                                 text: res.msg,
@@ -242,6 +247,7 @@ $menus = [
                         }
                     },
                     error: function(e) {
+                        AdminSubmit.stop("#btnSaveForm");
                         $.toast({
                             heading: 'Error',
                             text: "Gagal Menyimpan form.",

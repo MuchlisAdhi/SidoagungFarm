@@ -428,8 +428,25 @@
             $("#tblCareer").DataTable();
 
             $("#btnApprove").click(function(){
+                if (!selected) {
+                    return;
+                }
+
+                if (!AdminSubmit.start("#btnApprove", "Menyimpan...")) {
+                    return;
+                }
+
                 $.get("{{ url('/wongelek/feedback/karir/approveApp') }}/" + selected, function(r) {
                     window.location.reload()
+                }).fail(function() {
+                    AdminSubmit.stop("#btnApprove");
+                    $.toast({
+                        heading: 'Error',
+                        text: "Gagal, Hubungi Administrator.",
+                        showHideTransition: 'fade',
+                        position: 'bottom-right',
+                        icon: 'error'
+                    })
                 });
             });
 
@@ -448,6 +465,10 @@
                     return;
                 }
 
+                if (!AdminSubmit.start("#btnSubmitReason", "Menyimpan...")) {
+                    return;
+                }
+
                 let form = new FormData();
                 form.append('id', selected);
                 form.append('reason', reason.val());
@@ -463,6 +484,7 @@
                         if (res.code == 200) {
                             window.location.reload();
                         } else {
+                            AdminSubmit.stop("#btnSubmitReason");
                             $.toast({
                                 heading: 'Error',
                                 text: res.msg,
@@ -473,6 +495,7 @@
                         }
                     },
                     error: function(e) {
+                        AdminSubmit.stop("#btnSubmitReason");
                         $.toast({
                             heading: 'Error',
                             text: "Gagal, Hubungi Administrator.",

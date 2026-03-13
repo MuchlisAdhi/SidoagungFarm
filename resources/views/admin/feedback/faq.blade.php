@@ -182,6 +182,10 @@
                 return;
             }
 
+            if (!AdminSubmit.start("#btnReplied", "Menyimpan...")) {
+                return;
+            }
+
             $.post(`{{ url('/wongelek/feedback/pertanyaan/replied') }}`, {id, mode: md, response}, function(res) {
                 $("#modalFormFaq").modal("hide");
                 if (res.msg) {
@@ -197,6 +201,7 @@
                     window.location.reload();
                 }, 500);
             }).fail(function(xhr) {
+                AdminSubmit.stop("#btnReplied");
                 const msg = xhr.responseJSON?.msg || 'Gagal mengirim jawaban.';
                 $.toast({
                     heading: 'Error',

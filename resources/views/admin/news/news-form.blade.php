@@ -148,6 +148,10 @@
                 $("#" + e).prop("name", e)
             })
 
+            if (!AdminSubmit.start("#btnSave", "Menyimpan...")) {
+                return;
+            }
+
             $("#frmNews")
                 .prop("method", "post")
                 .prop("action", "{{url('/wongelek/news/save')}}")
