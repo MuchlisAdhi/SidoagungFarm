@@ -103,11 +103,57 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-end align-items-center mt-3">
+                    <a href="https://www.product.sidoagungfarm.com/" class="btn btn-primary mr-2" target="_blank" rel="noopener noreferrer">Selengkapnya</a>
+                    <span class="feed-tooltip">
+                        <i class="fas fa-question-circle feed-tooltip-icon" aria-hidden="true"></i>
+                        <span class="feed-tooltiptext" style="width: 150px;">Untuk keterangan produk pakan PT. Sidoagung Farm selengkapnya klik disini </span>
+                    </span>
+                </div>
+            </div>
         </div>
     </section>
 
     @include('products.modals')
     @include('products.modal-order')
+@endsection
+
+@section('css')
+    <style>
+        .feed-tooltip {
+            position: relative;
+            display: inline-block;
+            opacity: unset;
+        }
+
+        .feed-tooltip-icon {
+            color: #0b9444;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .feed-tooltip .feed-tooltiptext {
+            visibility: hidden;
+            background-color: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            text-align: left;
+            border-radius: 4px;
+            padding: 8px 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -75px;
+            font-style: normal;
+            line-height: 1.3;
+        }
+
+        .feed-tooltip:hover .feed-tooltiptext {
+            visibility: visible;
+        }
+    </style>
 @endsection
 
 @section('script')

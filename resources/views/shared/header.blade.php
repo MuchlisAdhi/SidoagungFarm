@@ -16,7 +16,7 @@
                         <a href="{{ route('csr.news') }}" class="nav-link">Berita & CSR</a>
                     </li>
                     <li class="nav-item ">
-                        <a href="https://www.product.sidoagungfarm.com/" class="nav-link" target="_blank" rel="noopener noreferrer">Produk Pakan</a>
+                        <a href="{{ route('products') }}" class="nav-link">Produk Pakan</a>
                     </li>
                     <li class="nav-item ">
                         <a href="{{route('we.career')}}" class="nav-link">Karir</a>

@@ -63,29 +63,27 @@
 
             <div class="row justify-content-center">
                 <div class="col-lg-3 mb-4 mb-lg-0 pt-10">
-                    <img class="img-fluid" src="{{ asset('images/saap/bram-sebastian.png') }}"
-                        alt="sidoagung-bram-sebastian">
+                    <img class="img-fluid" src="{{ asset('images/saf/arif-budiman.png') }}"
+                        alt="sidoagung-arif-budiman">
                 </div>
                 <div class="col-lg-9 mb-4 mb-lg-0">
                     <div class="col-md-12 bg-white border-radius mt-3 surface-contrast surface-soft">
                         <div class="pl-5 pb-5 pt-5 ">
-                            <h5 class="text-primary mb-2">Bram Sebastian</h5>
+                            <h5 class="text-primary mb-2">Arif Budiman</h5>
                             <p style="font-style: italic; margin-top: -10px;">Direktur Utama</p>
                             <p class="mb-2 text-justify">
-                                Warga Negara Indonesia, lahir di Magelang pada tanggal 19 November 1982. Menjabat sebagai
-                                Direktur Utama Sido Agung Group sejak 2021.
+                                Warga Negara Indonesia, lahir di Yogyakarta pada tanggal 9 Agustus 1990. Menjabat sebagai 
+                                Direktur Utama Sidoagung Farm sejak 2019.
                                 <br /><br />
-                                Sebelumnya Beliau berkarir sebagai sebagai Partnerships Development Manager Sido Agung Group
-                                (2011-2013), kemudian sebagai Project Head Sido Agung Group (2013-2015), Saat ini beliau
-                                juga memegang berbagai jabatan managerial lain di unit-unit usaha Sido Agung Group seperti
-                                Direktur Utama PT Sido Agung Agro Prima (2015-sekarang), PT Sido Sari Multifarm dan PT
-                                Sidoagung Foods Processing (2018-sekarang).
+                                Sebelumnya Beliau Berkarir sebagai Business Analyst di PT Panca Patriot Prima 
+                                (2013), kemudian berlanjut sebagai Assistant Director Business Development di PT Kawasan Industri Jababeka, Tbk. 
+                                (2014), Investment Banking di Mandiri Sekuritas (2015), serta Director Of Business Development PT Sido Agung Agro Prima 
+                                (2016 2018). Saat ini beliau juga memegang berbagai jabatan managerial lain di unit unit usaha Sido Agung Group seperti 
+                                Direktur Utama PT Sido Agung Farm (2019 Sekarang), serta Direktur Utama Asia Pangan Utama (2021 Sekarang)
                                 <br /><br />
-                                Meraih gelar Bachelor of Science - BS, Electrical Engineer dari Iowa State University
-                                (2000-2004) dan Master of Science - MS, Poultry Science dari The University of Georgia
-                                (2005-2007) serta Doctor of Philosophy - PhD, BioInformatics dari The University of Georgia
-                                (2007-2010).
-
+                                Beliau Meraih Gelar Bachelor Of Science (Bsc), Agriculture Business Dari Iowa State University 
+                                (2008 2012) dan Master’s Degree, International Business dari Hult International Business School 
+                                (2013 2014).
                             </p>
                         </div>
                     </div>

@@ -22,7 +22,7 @@
                             <ul class="list-unstyled mb-0">
                                 <li><a href="{{ route('about-us') }}#about-us">Sekilas</a></li>
                                 <li><a href="{{ route('about-us') }}#news-and-csr">Berita & CSR</a></li>
-                                <li><a href="https://www.product.sidoagungfarm.com/" target="_blank" rel="noopener noreferrer">Produk Pakan</a></li>
+                                <li><a href="{{ route('products') }}" class="nav-link">Produk Pakan</a></li>
                             </ul>
                         </div>
                     </div>
