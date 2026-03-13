@@ -15,17 +15,32 @@
         function clearForm()
         {
             $("#errorMessage").text("");
+            $("#ticketInfoText").hide();
+            $("#ticketInfoNumber").text("-");
             $("#formInputName, #formInputEmail, #formInputPhone, #formInputDescription").val("");
         }
+
+        function setSubmitState(isSubmitting)
+        {
+            $("#btnOrder").prop("disabled", isSubmitting);
+        }
+
         $(document).ready(function(){
-            $("#btnOrder").click(function(){
+            $("#formInquiryProduct").on("submit", function(e){
+                e.preventDefault();
+
+                if ($("#btnOrder").prop("disabled")) {
+                    return;
+                }
+
+                setSubmitState(true);
                 let _token = "{{ csrf_token() }}";
                 let name = $("#formInputName").val()
                 let email = $("#formInputEmail").val()
                 let phone = $("#formInputPhone").val()
                 let desc = $("#formInputDescription").val()
                 let productId = productSelected;
-                
+
                 $.ajax({
                     url: "{{route('products.faq')}}",
                     type: "POST",
@@ -37,6 +52,10 @@
                         {
                             $("#errorMessage").text(msg);
                         }else{
+                            clearForm();
+                            const ticketNo = data && data.ticket_no ? data.ticket_no : "-";
+                            $("#ticketInfoNumber").text(ticketNo);
+                            $("#ticketInfoText").show();
                             $('#inquiryproduct').modal('hide');
                             $("#modalRespons").modal("show")
                             setTimeout(() => {
@@ -46,6 +65,9 @@
                     },
                     error: function(e){
                         $("#errorMessage").text("Tidak dapat mengirim pertanyaan, coba beberapa saat lagi.");
+                    },
+                    complete: function(){
+                        setSubmitState(false);
                     }
                 })
             });

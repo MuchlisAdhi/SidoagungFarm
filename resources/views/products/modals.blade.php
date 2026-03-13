@@ -18,23 +18,23 @@
                         <div class="p-4 p-md-5 bg-white border-radius">
                             <img class="img-fluid pb-3" src="{{ asset('images/saf/logo-text.png') }}" alt="logo" style="width: 250px;">
                             <h3>Ada pertanyaan?</h3>
-                            <form class="mt-4" action="!#" method="POST">
+                            <form class="mt-4" id="formInquiryProduct" action="!#" method="POST">
                                 {{ csrf_field() }}
                                 <div class="form-group mb-3">
                                     <input type="text" class="form-control" id="formInputName" placeholder="Masukan Nama" required>
                                 </div>
                                 <div class="form-group mb-3">
-                                    <input type="text" class="form-control" id="formInputEmail" placeholder="Alamat Email" >
+                                    <input type="text" class="form-control" id="formInputEmail" placeholder="Alamat Email" required>
                                 </div>
                                 <div class="form-group mb-3">
-                                    <input type="tel" class="form-control" id="formInputPhone" placeholder="Nomor Hp">
+                                    <input type="tel" class="form-control" id="formInputPhone" placeholder="Nomor Hp" required>
                                 </div>
                                 <div class="form-group mb-4">
-                                    <textarea class="form-control" id="formInputDescription" placeholder="Deskripsi Permintaan" rows="3" maxlength="10000"></textarea>
+                                    <textarea class="form-control" id="formInputDescription" placeholder="Deskripsi Permintaan" rows="3" maxlength="10000" required></textarea>
                                 </div>
                                 <div style="float:right;" class="form-group mb-0">
                                     <span id="errorMessage" class="text-danger"></span>
-                                    <button type="button" id="btnOrder" class="btn btn-danger text-white">Kirim Pesan</button>
+                                    <button type="submit" id="btnOrder" class="btn btn-danger text-white">Kirim Pesan</button>
                                 </div>
                             </form>
                         </div>
@@ -62,6 +62,9 @@
                                 partner!</span>
                         </p>
                         <h5 class="mb-4 text-primary" id="teks_1">We will get back to you as soon as possible.</h5>
+                        <p class="mb-4 text-primary" id="ticketInfoText" style="display:none;">
+                            Nomor tiket Anda: <strong id="ticketInfoNumber">-</strong>
+                        </p>
                         <p class="mb-4 text-primary" id="teks_2">Let’s create many great stories!</p>
                         <p class="mb-4 text-primary" id="teks_3">Sincerely,</p>
                         <img class="img-fluid" src="{{ asset('images/saf/logo-text.png') }}" alt="" style="width: 250px;">

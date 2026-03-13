@@ -69,7 +69,16 @@ class ProductController extends Controller
                 'data'  => []
             ]);
 
-        $productId = decrypt(request()->input("productId"));
+        try {
+            $productId = decrypt(request()->input("productId"));
+        } catch (\Throwable $th) {
+            return response()->json([
+                'code'  => 0,
+                'msg'   => "Produk tidak valid.",
+                'data'  => []
+            ]);
+        }
+
         $question = ClientQuestion::create([
             'productid' => $productId,
             'name' => request()->input("name"),
@@ -80,11 +89,15 @@ class ProductController extends Controller
         ]);
 
         TicketingJob::dispatchSync('q1', (string) $question->id);
+        $question->refresh();
+        $ticketNo = (string) ($question->ticket_no ?: '-');
 
         return response()->json([
             'code'  => 200,
-            'msg'   => "",
-            'data'  => []
+            'msg'   => "Pertanyaan berhasil dikirim. Nomor tiket Anda: {$ticketNo}",
+            'data'  => [
+                'ticket_no' => $ticketNo,
+            ]
         ]);
     }
 }

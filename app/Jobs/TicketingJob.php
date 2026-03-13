@@ -81,7 +81,7 @@ class TicketingJob implements ShouldQueue
 
         if ($isNewTicket && $ticket) {
             try {
-                NotificationJob::dispatch(
+                NotificationJob::dispatchSync(
                     notificationType: 'ticket-created',
                     questionMode: $this->questionMode,
                     questionId: (string) $question->id,
