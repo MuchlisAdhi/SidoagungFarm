@@ -54,6 +54,18 @@ class WeController extends Controller
 
     public function joinAsPartner()
     {
+        request()->validate([
+            'formFirstName' => ['required', 'string', 'max:255'],
+            'formLastName' => ['required', 'string', 'max:255'],
+            'formBod' => ['required', 'date'],
+            'formPhone' => ['required', 'string', 'max:30'],
+            'formEmail' => ['required', 'email', 'max:255'],
+            'formCategory' => ['required', 'in:Kemitraan'],
+            'formCompanyName' => ['required', 'string', 'max:255'],
+            'formCompanyLocation' => ['required', 'string', 'max:255'],
+            'formCompanyDescription' => ['required', 'string', 'max:10000'],
+        ]);
+
         $form = [
             'firstname'  => request()->input("formFirstName"),
             'lastname'  => request()->input("formLastName"),
@@ -76,7 +88,7 @@ class WeController extends Controller
     }
 
     public function beOurPartner() {
-        return view("we.partner", []);
+        return redirect()->route("we.join-us");
     }
 
     public function career($id = "") { 

@@ -42,7 +42,7 @@ class NavigationService implements INavigationService
                 'key' => 'csr',
                 'url' => '',
                 'title' => 'CSR',
-                'icon' => 'fa fa-home',
+                'icon' => 'fa fa-building-o',
                 'childs' => [
                     ['key' => 'csr.env', 'url' => url($base . '/csr/env'), 'title' => 'Pendidikan'],
                     ['key' => 'csr.safety', 'url' => url($base . '/csr/safety'), 'title' => 'Kesehatan & Keselamatan'],
@@ -67,7 +67,7 @@ class NavigationService implements INavigationService
                 'key' => 'feedback',
                 'url' => '',
                 'title' => 'Feedback',
-                'icon' => 'fa fa-home',
+                'icon' => 'fa fa-comments-o',
                 'childs' => [
                     ['key' => 'feedback.karir', 'url' => url($base . '/feedback/karir'), 'title' => 'Karir'],
                     ['key' => 'feedback.pertanyaan', 'url' => url($base . '/feedback/pertanyaan'), 'title' => 'Pertanyaan'],
@@ -93,7 +93,7 @@ class NavigationService implements INavigationService
                 'key' => 'config',
                 'url' => '',
                 'title' => 'Config',
-                'icon' => 'fa fa-home',
+                'icon' => 'fa fa-cog',
                 'childs' => [
                     ['key' => 'navigation-access', 'url' => url($base . '/navigation-access'), 'title' => 'Navigation Access'],
                     ['key' => 'email-log', 'url' => url($base . '/email-log'), 'title' => 'Email Logs'],
