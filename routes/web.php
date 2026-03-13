@@ -136,6 +136,7 @@ Route::prefix("wongelek")->group(function (){
                 Route::get("/getApplicant/{id}", "getApplicant")->middleware('permission:nav.feedback.karir.read');
                 Route::get("/approveApp/{id}", "approveApp")->middleware('permission:nav.feedback.karir.update');
                 Route::post("/rejectApp", "rejectApp")->middleware('permission:nav.feedback.karir.update');
+                Route::get("/export-applicants/{careerId}", "exportApplicants")->name(".export-applicants")->middleware('permission:nav.feedback.karir.export');
                 Route::get("/download-cv/{id}", "downloadCV")->middleware('permission:nav.feedback.karir.export');
             });
             Route::prefix("pertanyaan")->name(".pertanyaan")->group(function(){

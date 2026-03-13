@@ -18,8 +18,11 @@ use App\Models\{
 };
 use App\Services\TicketNumberService;
 use App\Enums\TicketStatus;
+use App\Exports\CareerApplyExport;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class FeedbackController extends Controller
 {
@@ -100,6 +103,44 @@ class FeedbackController extends Controller
             'msg'   => "",
             'data'  => []
         ]);
+    }
+
+    public function exportApplicants($careerId)
+    {
+        $careerId = decrypt($careerId);
+        $career = Career::find($careerId);
+        
+        if (!$career) {
+            return redirect()->back()->with('error', 'Career position not found.');
+        }
+
+        $fileName = 'Applicants_' . str_replace(' ', '_', $career->position) . '_' . date('YmdHis') . '.xlsx';
+        
+        return Excel::download(new CareerApplyExport($careerId), $fileName);
+    }
+
+    public function downloadCV($id)
+    {
+        $id = decrypt($id);
+        $applicant = CareerApply::find($id);
+        
+        if (!$applicant || !$applicant->cvid) {
+            return response()->json([
+                'code' => 404,
+                'msg' => 'CV not found',
+            ], 404);
+        }
+
+        $filePath = 'public/' . $applicant->cvid;
+        
+        if (!Storage::exists($filePath)) {
+            return response()->json([
+                'code' => 404,
+                'msg' => 'CV file not found in storage',
+            ], 404);
+        }
+
+        return Storage::download($filePath);
     }
 
     public function faqList()
