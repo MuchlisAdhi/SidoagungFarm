@@ -122,13 +122,26 @@ class CsrController extends Controller
         $slug = request()->query("slug", "");
         $mode = request()->query("mode", "sosial");
 
-        if($slug)
-        {
+        if ($slug) {
             $slug = str_replace("-", " ", $slug);
-            $find = Csr::where("mode", $mode)->where("title", "like", "%" . $slug . "%")->first();
+            $find = null;
 
-            if($mode == "news")
-                $find = News::where("mode", "news")->where("title", "like", "%" . $slug . "%")->first();
+            if ($mode === "news") {
+                $find = News::where("mode", "news")
+                    ->where("title", "like", "%" . $slug . "%")
+                    ->first();
+            } else {
+                $find = Csr::where("mode", $mode)
+                    ->where("title", "like", "%" . $slug . "%")
+                    ->first();
+            }
+
+            if (! $find) {
+                return response()->noContent();
+            }
+
+            $find->increment('viewer');
+            $find->refresh();
 
             return view("csr.detail", ['r' => $find]);
         }
