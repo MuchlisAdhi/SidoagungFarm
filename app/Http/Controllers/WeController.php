@@ -10,13 +10,20 @@ use App\Models\{
     ClientQuestion2,
     JoinAsPartner
 };
+use App\Services\PdfCompressionService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Enums\TicketStatus;
 
 class WeController extends Controller
 {
+    public function __construct(
+        protected PdfCompressionService $pdfCompressionService
+    ) {}
+
     public function summary() {
         return view("we.summary", []);
     }
@@ -155,7 +162,7 @@ class WeController extends Controller
             'formIsExperience' => ['required', 'in:0,1'],
             'formCurrentSalary' => ['required', 'string', 'max:20'],
             'formExpectSalary' => ['required', 'string', 'max:20'],
-            'formCV' => ['required', 'file', 'mimes:pdf', 'max:1024'],
+            'formCV' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'totalRow' => ['nullable', 'integer', 'min:0'],
         ]);
 
@@ -190,22 +197,101 @@ class WeController extends Controller
 
         $cvId = Str::uuid();
         $ext = strtolower($cv->getClientOriginalExtension());
+        $path = $cvId . "." . $ext;
+        $absolutePath = app_path("Uploads/" . $path);
 
-        if($cv->move(app_path("Uploads"), $path = $cvId . "." . $ext))
-        {
-            Media::create([
-                'mediaId' => $cvId,
-                'mediaType' => 'application/pdf',
-                'mediaExt' => $ext,
-                'resultPath' => $path
-            ]);
-
-            $form["cvid"] = $cvId;
-            $form["experiencelist"] = json_encode($expList);
-
-            CareerApply::create($form);
-
-            return back()->with("success", "Anda Berhasil Melamar Pekerjaan Ini.");
+        if(! $cv->move(app_path("Uploads"), $path)) {
+            return back()->withErrors([
+                'formCV' => 'CV gagal diunggah. Silakan coba kembali.',
+            ])->withInput();
         }
+
+        Media::create([
+            'mediaId' => $cvId,
+            'mediaType' => 'application/pdf',
+            'mediaExt' => $ext,
+            'resultPath' => $path
+        ]);
+
+        $this->compressCvIfPossible($cvId, $absolutePath);
+
+        $form["cvid"] = $cvId;
+        $form["experiencelist"] = json_encode($expList);
+
+        CareerApply::create($form);
+
+        return back()->with("success", "Anda Berhasil Melamar Pekerjaan Ini.");
+    }
+
+    protected function compressCvIfPossible(string $mediaId, string $absolutePath): void
+    {
+        if (! File::exists($absolutePath)) {
+            return;
+        }
+
+        $publicUrl = $this->resolvePublicResourceUrl($mediaId);
+        if ($publicUrl === null) {
+            return;
+        }
+
+        $result = $this->pdfCompressionService->compressFromPublicUrl($publicUrl);
+
+        if (! is_array($result)) {
+            return;
+        }
+
+        $binary = (string) ($result['binary'] ?? '');
+        if ($binary === '') {
+            return;
+        }
+
+        $originalSize = (int) (File::size($absolutePath) ?: 0);
+        $compressedSize = strlen($binary);
+
+        if ($originalSize > 0 && $compressedSize >= $originalSize) {
+            return;
+        }
+
+        File::put($absolutePath, $binary);
+    }
+
+    protected function resolvePublicResourceUrl(string $mediaId): ?string
+    {
+        $relativePath = route('main.getResource', ['id' => $mediaId], false);
+        $baseUrl = rtrim((string) config('app.url'), '/');
+
+        if ($baseUrl === '') {
+            Log::warning('Skipping PDF compression because APP_URL is empty.');
+            return null;
+        }
+
+        $publicUrl = $baseUrl . $relativePath;
+
+        if (! filter_var($publicUrl, FILTER_VALIDATE_URL)) {
+            Log::warning('Skipping PDF compression because generated URL is invalid.', [
+                'url' => $publicUrl,
+            ]);
+            return null;
+        }
+
+        $host = strtolower((string) parse_url($publicUrl, PHP_URL_HOST));
+        if ($host === '' || in_array($host, ['localhost', '127.0.0.1', '::1'], true) || str_ends_with($host, '.local')) {
+            Log::info('Skipping PDF compression because resource URL is local.', [
+                'url' => $publicUrl,
+            ]);
+            return null;
+        }
+
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            $isPublicIp = filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+            if ($isPublicIp === false) {
+                Log::info('Skipping PDF compression because resource URL uses private/reserved IP.', [
+                    'url' => $publicUrl,
+                ]);
+                return null;
+            }
+        }
+
+        return $publicUrl;
     }
 }

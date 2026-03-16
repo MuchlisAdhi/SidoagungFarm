@@ -30,4 +30,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'apdf' => [
+        'token' => env('APDF_API_TOKEN'),
+        'compress_endpoint' => env('APDF_COMPRESS_ENDPOINT', 'https://apdf.io/api/pdf/file/compress'),
+        'timeout' => (int) env('APDF_TIMEOUT', 30),
+    ],
+
 ];

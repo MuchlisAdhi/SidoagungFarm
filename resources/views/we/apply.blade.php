@@ -15,6 +15,40 @@
             border: none;
             box-shadow: 0 10px 28px rgba(2, 45, 98, 0.2);
         }
+
+        .feed-tooltip {
+            position: relative;
+            display: inline-block;
+            opacity: unset;
+        }
+
+        .feed-tooltip-icon {
+            color: #0b9444;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .feed-tooltip .feed-tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            text-align: left;
+            border-radius: 4px;
+            padding: 8px 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            font-style: normal;
+            line-height: 1.3;
+        }
+
+        .feed-tooltip:hover .feed-tooltiptext {
+            visibility: visible;
+        }
     </style>
 @endsection
 
@@ -58,6 +92,10 @@
                                             <input type="file" class="custom-file-input" id="formCV" name="formCV" accept=".pdf,application/pdf">
                                             <label class="custom-file-label" for="formCV">Upload CV / Portofolio-mu ( PDF )</label>
                                         </div>
+                                        <span class="feed-tooltip ml-2 align-self-center">
+                                            <i class="fas fa-question-circle feed-tooltip-icon" aria-hidden="true"></i>
+                                            <span class="feed-tooltiptext">Maksimal 5 MB. PDF akan dioptimasi otomatis saat dikirim.</span>
+                                        </span>
                                         <div id="cvInvalid" class="invalid-feedback"></div>
                                     </div>
                                     <div class="form-group col-md-12 mb-3">
@@ -214,7 +252,8 @@
 
         $(function() {
             const allowExt = ["application/pdf"];
-            const maxCvSize = 1024 * 1024; // 1MB
+            const maxCvSize = 5 * 1024 * 1024; // 5MB
+            const maxCvSizeLabel = "5 MB";
 
             @if (session()->has('success'))
                $("#modalRespons").modal("show");
@@ -315,8 +354,8 @@
                }
 
                if(file.size > maxCvSize) {
-                  $("#cvInvalid").text("Maksimum size 1 MB").css("display", "unset");
-                  showApplyToast("Ukuran CV terlalu besar. Batas maksimum 1 MB.", "warning");
+                  $("#cvInvalid").text(`Maksimum size ${maxCvSizeLabel}`).css("display", "unset");
+                  showApplyToast(`Ukuran CV terlalu besar. Batas maksimum ${maxCvSizeLabel}.`, "warning");
                   this.value = "";
                   syncCvLabel(this);
                   return;
@@ -420,8 +459,8 @@
 
                if(file.size > maxCvSize )
                {
-                  $("#cvInvalid").text("Maksimum size 1 MB").css("display", "unset");
-                  showApplyToast("Ukuran CV terlalu besar. Batas maksimum 1 MB.", "warning");
+                  $("#cvInvalid").text(`Maksimum size ${maxCvSizeLabel}`).css("display", "unset");
+                  showApplyToast(`Ukuran CV terlalu besar. Batas maksimum ${maxCvSizeLabel}.`, "warning");
                   return;
                }
 
