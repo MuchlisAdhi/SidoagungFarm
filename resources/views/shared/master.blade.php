@@ -99,7 +99,7 @@
       <div id="myOverlay" class="overlay">
          <span class="closebtn" onclick="closeSearch()" title="Close Overlay">×</span>
          <a class="logo-search">
-         <img class="img-fluid" src="{{ asset('images/sag/logo-horizontal.png')}}" alt="logo">
+         <img class="img-fluid" src="{{ asset('images/saf/logo-horizontal.png')}}" alt="logo">
          </a>
          <div class="overlay-content mt-2">
             <form class="mt-5 mb-5 ml-3" action="{{ url("") }}/id/search" method="get">

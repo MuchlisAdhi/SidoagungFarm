@@ -1264,11 +1264,11 @@ img.lang-flag {
 }
 
 body.home-fixed-header {
-    padding-top: 86px;
+    padding-top: 0px;
 }
 
 body.force-sticky-header {
-    padding-top: 86px;
+    padding-top: 0px;
 }
 
 body.home-fixed-header .header {
