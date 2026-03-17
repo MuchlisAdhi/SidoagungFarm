@@ -65,7 +65,7 @@
         })
 
         function show(id) {
-            window.location.href = "{{ url('/wongelek/feedback/karir/applicants') }}/" + id;
+            window.location.href = "{{ url('/admin/feedback/karir/applicants') }}/" + id;
         }
     </script>
 @endsection

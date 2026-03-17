@@ -169,7 +169,7 @@ $menus = [
             $("#tblBanner").DataTable();
 
             $("#btnRemoveYes").click(function() {
-                $.get('{{ url('/wongelek/home/banner-menu/removeMenu') }}/' + bannerSelected, function() {
+                $.get('{{ url('/admin/home/banner-menu/removeMenu') }}/' + bannerSelected, function() {
                     $("#modalRemoveConfirm").modal("hide");
                     window.location.reload();
                 })
@@ -226,7 +226,7 @@ $menus = [
                 form.append('publish', publish);
 
                 $.ajax({
-                    url: "{{ url('/wongelek/home/banner-menu/saveMenu') }}",
+                    url: "{{ url('/admin/home/banner-menu/saveMenu') }}",
                     type: "POST",
                     data: form,
                     contentType: false,
@@ -273,13 +273,13 @@ $menus = [
         }
 
         function unPublish(id) {
-            $.get("{{ url('/wongelek/home/banner-menu/publishMenu') }}/" + id + "?publish=0", function() {
+            $.get("{{ url('/admin/home/banner-menu/publishMenu') }}/" + id + "?publish=0", function() {
                 window.location.reload();
             });
         }
 
         function publish(id) {
-            $.get("{{ url('/wongelek/home/banner-menu/publishMenu') }}/" + id + "?publish=1", function() {
+            $.get("{{ url('/admin/home/banner-menu/publishMenu') }}/" + id + "?publish=1", function() {
                 window.location.reload();
             });
         }

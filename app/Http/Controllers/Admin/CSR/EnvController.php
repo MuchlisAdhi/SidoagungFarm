@@ -24,7 +24,7 @@ class EnvController extends Controller
     public function add()
     {
         session()->forget('envKey');
-        return redirect()->to('/wongelek/csr/env/form');
+        return redirect()->to('/admin/csr/env/form');
     }
 
     public function edit($id)
@@ -37,7 +37,7 @@ class EnvController extends Controller
         } catch (\Exception $e) {
             session()->forget('envKey');
         }finally {
-            return redirect()->to('/wongelek/csr/env/form');
+            return redirect()->to('/admin/csr/env/form');
         }
     }
 
@@ -108,7 +108,7 @@ class EnvController extends Controller
 
             session()->flash("success", "Berhasil Menyimpan Pendidikan.");
 
-            return redirect("/wongelek/csr/env/form");
+            return redirect("/admin/csr/env/form");
         } catch (\Exception $th) {
             session()->flash("error", "Gagal Menyimpan Pendidikan.");
             return redirect()->back()->withInput();
@@ -121,15 +121,15 @@ class EnvController extends Controller
             $id = decrypt($id);
             $item = CSR::where("id", $id)->first();
             if (! $item) {
-                return redirect("/wongelek/csr/env")->with("error", "Pendidikan tidak ditemukan.");
+                return redirect("/admin/csr/env")->with("error", "Pendidikan tidak ditemukan.");
             }
 
             $oldMediaId = $item->thumbnail;
             $item->delete();
             app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
-            return redirect("/wongelek/csr/env")->with("success", "Pendidikan berhasil di hapus.");
+            return redirect("/admin/csr/env")->with("success", "Pendidikan berhasil di hapus.");
         } catch (\Exception $th) {
-            return redirect("/wongelek/csr/env")->with("error", "Gagal menghapus Pendidikan.");            
+            return redirect("/admin/csr/env")->with("error", "Gagal menghapus Pendidikan.");            
         }
     }
 

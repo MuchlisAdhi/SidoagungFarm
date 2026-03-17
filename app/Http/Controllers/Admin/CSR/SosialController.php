@@ -24,7 +24,7 @@ class SosialController extends Controller
     public function add()
     {
         session()->forget('sosialKey');
-        return redirect()->to('/wongelek/csr/sosial/form');
+        return redirect()->to('/admin/csr/sosial/form');
     }
 
     public function edit($id)
@@ -37,7 +37,7 @@ class SosialController extends Controller
         } catch (\Exception $e) {
             session()->forget('sosialKey');
         }finally {
-            return redirect()->to('/wongelek/csr/sosial/form');
+            return redirect()->to('/admin/csr/sosial/form');
         }
     }
 
@@ -108,7 +108,7 @@ class SosialController extends Controller
 
             session()->flash("success", "Berhasil Menyimpan Sosial.");
 
-            return redirect("/wongelek/csr/sosial/form");
+            return redirect("/admin/csr/sosial/form");
         } catch (\Exception $th) {
             session()->flash("error", "Gagal Menyimpan Sosial.");
             return redirect()->back()->withInput();
@@ -121,15 +121,15 @@ class SosialController extends Controller
             $id = decrypt($id);
             $item = CSR::where("id", $id)->first();
             if (! $item) {
-                return redirect("/wongelek/csr/sosial")->with("error", "Sosial tidak ditemukan.");
+                return redirect("/admin/csr/sosial")->with("error", "Sosial tidak ditemukan.");
             }
 
             $oldMediaId = $item->thumbnail;
             $item->delete();
             app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
-            return redirect("/wongelek/csr/sosial")->with("success", "Sosial berhasil di hapus.");
+            return redirect("/admin/csr/sosial")->with("success", "Sosial berhasil di hapus.");
         } catch (\Exception $th) {
-            return redirect("/wongelek/csr/sosial")->with("error", "Gagal menghapus Sosial.");            
+            return redirect("/admin/csr/sosial")->with("error", "Gagal menghapus Sosial.");            
         }
     }
 

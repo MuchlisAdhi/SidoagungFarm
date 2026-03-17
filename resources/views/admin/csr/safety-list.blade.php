@@ -96,11 +96,11 @@
         $(function(){
             $("#tblSafety").DataTable();
             $("#btnAddSafety").click(function(){
-                window.location.href = "{{url('/wongelek/csr/safety/add')}}"
+                window.location.href = "{{url('/admin/csr/safety/add')}}"
             })
 
             $("#btnRemoveYes").click(function() {
-                $.get("{{ url('/wongelek/csr/safety/delete') }}/" + selected, function() {
+                $.get("{{ url('/admin/csr/safety/delete') }}/" + selected, function() {
                     $("#modalRemoveConfirm").modal("hide");
                     window.location.reload();
                 })
@@ -114,19 +114,19 @@
         }
 
         function editSelected(id) {
-            window.location.href = "{{url('/wongelek/csr/safety/edit')}}/" + id;
+            window.location.href = "{{url('/admin/csr/safety/edit')}}/" + id;
         }
 
         function unPublish(id)
         {
-            $.get("{{ url('/wongelek/csr/safety/publish')}}/" + id + "?publish=0", function() {
+            $.get("{{ url('/admin/csr/safety/publish')}}/" + id + "?publish=0", function() {
                 window.location.reload();
             });
         }
 
         function publish(id)
         {
-            $.get("{{ url('/wongelek/csr/safety/publish')}}/" + id + "?publish=1", function() {
+            $.get("{{ url('/admin/csr/safety/publish')}}/" + id + "?publish=1", function() {
                 window.location.reload();
             });
         }

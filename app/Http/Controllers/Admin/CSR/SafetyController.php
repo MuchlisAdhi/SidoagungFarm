@@ -24,7 +24,7 @@ class SafetyController extends Controller
     public function add()
     {
         session()->forget('safetyKey');
-        return redirect()->to('/wongelek/csr/safety/form');
+        return redirect()->to('/admin/csr/safety/form');
     }
 
     public function edit($id)
@@ -37,7 +37,7 @@ class SafetyController extends Controller
         } catch (\Exception $e) {
             session()->forget('safetyKey');
         }finally {
-            return redirect()->to('/wongelek/csr/safety/form');
+            return redirect()->to('/admin/csr/safety/form');
         }
     }
 
@@ -108,7 +108,7 @@ class SafetyController extends Controller
 
             session()->flash("success", "Berhasil Menyimpan Keselamatan Kerja.");
 
-            return redirect("/wongelek/csr/safety/form");
+            return redirect("/admin/csr/safety/form");
         } catch (\Exception $th) {
             session()->flash("error", "Gagal Menyimpan Keselamatan Kerja.");
             return redirect()->back()->withInput();
@@ -121,15 +121,15 @@ class SafetyController extends Controller
             $id = decrypt($id);
             $item = CSR::where("id", $id)->first();
             if (! $item) {
-                return redirect("/wongelek/csr/safety")->with("error", "Keselamatan Kerja tidak ditemukan.");
+                return redirect("/admin/csr/safety")->with("error", "Keselamatan Kerja tidak ditemukan.");
             }
 
             $oldMediaId = $item->thumbnail;
             $item->delete();
             app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
-            return redirect("/wongelek/csr/safety")->with("success", "Keselamatan Kerja berhasil di hapus.");
+            return redirect("/admin/csr/safety")->with("success", "Keselamatan Kerja berhasil di hapus.");
         } catch (\Exception $th) {
-            return redirect("/wongelek/csr/safety")->with("error", "Gagal menghapus Keselamatan Kerja.");            
+            return redirect("/admin/csr/safety")->with("error", "Gagal menghapus Keselamatan Kerja.");            
         }
     }
 

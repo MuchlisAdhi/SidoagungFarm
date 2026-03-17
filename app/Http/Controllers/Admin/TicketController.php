@@ -27,7 +27,7 @@ class TicketController extends Controller
     {
         $ticket = $this->ticketManagementService->findByEncryptedId((string) $id);
         if (! $ticket) {
-            return redirect('/wongelek/ticket')->with('error', 'Ticket tidak ditemukan.');
+            return redirect('/admin/ticket')->with('error', 'Ticket tidak ditemukan.');
         }
 
         return view('admin.ticket.ticket-show', compact('ticket'));
@@ -37,12 +37,12 @@ class TicketController extends Controller
     {
         $ticket = $this->ticketManagementService->findByEncryptedId((string) $id);
         if (! $ticket) {
-            return redirect('/wongelek/ticket')->with('error', 'Ticket tidak ditemukan.');
+            return redirect('/admin/ticket')->with('error', 'Ticket tidak ditemukan.');
         }
 
         $warning = $this->ticketManagementService->update($ticket, $request->validated());
 
-        return redirect('/wongelek/ticket/show/' . encrypt($ticket->id))
+        return redirect('/admin/ticket/show/' . encrypt($ticket->id))
             ->with('success', 'Ticket berhasil diperbarui.' . $warning);
     }
 }

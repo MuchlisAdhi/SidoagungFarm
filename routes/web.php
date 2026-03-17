@@ -75,7 +75,7 @@ Route::controller(WeController::class)->name("we")->prefix("talk-us")->group(fun
     Route::post('/join-as-partner', 'joinAsPartner')->name(".join-as-partner");
 });
 
-Route::prefix("wongelek")->group(function (){
+Route::prefix("admin")->group(function (){
 
     Route::controller(AuthController::class)->group(function (){
         Route::get("/", function(){

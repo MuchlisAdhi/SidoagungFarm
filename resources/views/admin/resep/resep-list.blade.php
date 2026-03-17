@@ -98,11 +98,11 @@
         $(function(){
             $("#tblResep").DataTable();
             $("#btnAddResep").click(function(){
-                window.location.href = "{{url('/wongelek/resep/add')}}"
+                window.location.href = "{{url('/admin/resep/add')}}"
             })
 
             $("#btnRemoveYes").click(function() {
-                $.get('{{ url("/wongelek/resep/delete") }}/' + selected, function() {
+                $.get('{{ url("/admin/resep/delete") }}/' + selected, function() {
                     $("#modalRemoveConfirm").modal("hide");
                     window.location.reload();
                 })
@@ -116,19 +116,19 @@
         }
 
         function editSelected(id) {
-            window.location.href = "{{url('/wongelek/resep/edit')}}/" + id;
+            window.location.href = "{{url('/admin/resep/edit')}}/" + id;
         }
 
         function unPublish(id)
         {
-            $.get("{{ url('/wongelek/resep/publish')}}/" + id + "?publish=0", function() {
+            $.get("{{ url('/admin/resep/publish')}}/" + id + "?publish=0", function() {
                 window.location.reload();
             });
         }
 
         function publish(id)
         {
-            $.get("{{ url('/wongelek/resep/publish')}}/" + id + "?publish=1", function() {
+            $.get("{{ url('/admin/resep/publish')}}/" + id + "?publish=1", function() {
                 window.location.reload();
             });
         }

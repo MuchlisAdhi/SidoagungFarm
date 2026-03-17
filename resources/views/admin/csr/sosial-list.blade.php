@@ -96,11 +96,11 @@
         $(function(){
             $("#tblSosial").DataTable();
             $("#btnAddSosial").click(function(){
-                window.location.href = "{{url('/wongelek/csr/sosial/add')}}"
+                window.location.href = "{{url('/admin/csr/sosial/add')}}"
             })
 
             $("#btnRemoveYes").click(function() {
-                $.get("{{ url('/wongelek/csr/sosial/delete') }}/" + selected, function() {
+                $.get("{{ url('/admin/csr/sosial/delete') }}/" + selected, function() {
                     $("#modalRemoveConfirm").modal("hide");
                     window.location.reload();
                 })
@@ -114,19 +114,19 @@
         }
 
         function editSelected(id) {
-            window.location.href = "{{url('/wongelek/csr/sosial/edit')}}/" + id;
+            window.location.href = "{{url('/admin/csr/sosial/edit')}}/" + id;
         }
 
         function unPublish(id)
         {
-            $.get("{{ url('/wongelek/csr/sosial/publish')}}/" + id + "?publish=0", function() {
+            $.get("{{ url('/admin/csr/sosial/publish')}}/" + id + "?publish=0", function() {
                 window.location.reload();
             });
         }
 
         function publish(id)
         {
-            $.get("{{ url('/wongelek/csr/sosial/publish')}}/" + id + "?publish=1", function() {
+            $.get("{{ url('/admin/csr/sosial/publish')}}/" + id + "?publish=1", function() {
                 window.location.reload();
             });
         }

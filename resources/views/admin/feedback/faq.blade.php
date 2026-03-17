@@ -186,7 +186,7 @@
                 return;
             }
 
-            $.post(`{{ url('/wongelek/feedback/pertanyaan/replied') }}`, {id, mode: md, response}, function(res) {
+            $.post(`{{ url('/admin/feedback/pertanyaan/replied') }}`, {id, mode: md, response}, function(res) {
                 $("#modalFormFaq").modal("hide");
                 if (res.msg) {
                     $.toast({
@@ -217,7 +217,7 @@
         {
             selected = id;
             mode = md;
-            $.get(`{{ url('/wongelek/feedback/pertanyaan/get') }}?id=${selected}&mode=${mode}` , function(res) {
+            $.get(`{{ url('/admin/feedback/pertanyaan/get') }}?id=${selected}&mode=${mode}` , function(res) {
                 const {code, msg, data} = res;
                 const {id, name, email, phone, ticket_no, replied, description, response_message, title, category} = data;
                 const cat = categories[category] ?? null;

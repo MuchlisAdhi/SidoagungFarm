@@ -142,7 +142,7 @@
             $("#tblBanner").DataTable();
 
             $("#btnRemoveYes").click(function() {
-                $.get('{{ url('/wongelek/home/banner/remove') }}/' + bannerSelected, function() {
+                $.get('{{ url('/admin/home/banner/remove') }}/' + bannerSelected, function() {
                     $("#modalRemoveConfirm").modal("hide");
                     window.location.reload();
                 })
@@ -197,7 +197,7 @@
                 form.append('publish', publish);
 
                 $.ajax({
-                    url: "{{ url('/wongelek/home/banner/save') }}",
+                    url: "{{ url('/admin/home/banner/save') }}",
                     type: "POST",
                     data: form,
                     contentType: false,
@@ -244,13 +244,13 @@
         }
 
         function unPublish(id) {
-            $.get("{{ url('/wongelek/home/banner/publish') }}/" + id + "?publish=0", function() {
+            $.get("{{ url('/admin/home/banner/publish') }}/" + id + "?publish=0", function() {
                 window.location.reload();
             });
         }
 
         function publish(id) {
-            $.get("{{ url('/wongelek/home/banner/publish') }}/" + id + "?publish=1", function() {
+            $.get("{{ url('/admin/home/banner/publish') }}/" + id + "?publish=1", function() {
                 window.location.reload();
             });
         }

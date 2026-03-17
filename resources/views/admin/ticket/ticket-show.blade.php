@@ -83,7 +83,7 @@
             <h3 class="box-title">Response Ticket</h3>
         </div>
         <div class="box-body">
-            <form method="post" action="{{ url('/wongelek/ticket/update/' . encrypt($ticket->id)) }}">
+            <form method="post" action="{{ url('/admin/ticket/update/' . encrypt($ticket->id)) }}">
                 {{ csrf_field() }}
                 <div class="row">
                     <div class="col-lg-4">
@@ -122,7 +122,7 @@
                     <textarea class="form-control" id="formResponse" name="formResponse" rows="5">{{ old('formResponse', $ticket->response_message) }}</textarea>
                 </div>
                 <div class="text-right">
-                    <a href="{{ url('/wongelek/ticket') }}" class="btn btn-default">Back</a>
+                    <a href="{{ url('/admin/ticket') }}" class="btn btn-default">Back</a>
                     <button type="submit" class="btn btn-success">Save Ticket</button>
                 </div>
             </form>

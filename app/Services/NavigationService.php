@@ -18,7 +18,7 @@ class NavigationService implements INavigationService
 
     public function GetDefaultNavigation(): array
     {
-        $base = '/wongelek';
+        $base = '/admin';
 
         return [
             [

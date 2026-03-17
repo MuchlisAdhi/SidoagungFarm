@@ -182,7 +182,7 @@
                 return;
             }
 
-            $.get("{{ url('/wongelek/feedback/mitra/replied') }}/" + id , function() {
+            $.get("{{ url('/admin/feedback/mitra/replied') }}/" + id , function() {
                 window.location.reload();
             }).fail(function() {
                 AdminSubmit.stop("#btnReplied");
@@ -199,7 +199,7 @@
         function viewSelected(id)
         {
             selected = id;
-            $.get("{{ url('/wongelek/feedback/mitra/get') }}/" + id , function(res) {
+            $.get("{{ url('/admin/feedback/mitra/get') }}/" + id , function(res) {
                 const {code, msg, data} = res;
                 const {firstname, lastname, bod, email, phone, category, companyname, companylocation, companydescription} = data
                 $("#formName").val(firstname + " " + lastname);

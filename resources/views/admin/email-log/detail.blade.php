@@ -61,7 +61,7 @@
             </div>
 
             <div class="text-right">
-                <a href="{{ url('/wongelek/email-log') }}" class="btn btn-default">Back</a>
+                <a href="{{ url('/admin/email-log') }}" class="btn btn-default">Back</a>
             </div>
         </div>
     </div>

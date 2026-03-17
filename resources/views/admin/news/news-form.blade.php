@@ -89,11 +89,11 @@
             CKEDITOR.replace('formContent');
 
             $("#btnBack").click(function(){
-                window.location.href = "{{url('/wongelek/news')}}"
+                window.location.href = "{{url('/admin/news')}}"
             })
 
             $("#btnClear").click(function(){
-                window.location.href = "{{url('/wongelek/news/add')}}"
+                window.location.href = "{{url('/admin/news/add')}}"
             })
 
             $("#btnSave").click(function(){
@@ -154,7 +154,7 @@
 
             $("#frmNews")
                 .prop("method", "post")
-                .prop("action", "{{url('/wongelek/news/save')}}")
+                .prop("action", "{{url('/admin/news/save')}}")
                .submit()
         }
     </script>

@@ -24,7 +24,7 @@ class ResepController extends Controller
     public function add()
     {
         session()->forget('resepKey');
-        return redirect()->to('/wongelek/resep/form');
+        return redirect()->to('/admin/resep/form');
     }
 
     public function edit($id)
@@ -37,7 +37,7 @@ class ResepController extends Controller
         } catch (\Exception $e) {
             session()->forget('resepKey');
         }finally {
-            return redirect()->to('/wongelek/resep/form');
+            return redirect()->to('/admin/resep/form');
         }
     }
 
@@ -109,7 +109,7 @@ class ResepController extends Controller
 
             session()->flash("success", "Berhasil Menyimpan Berita.");
 
-            return redirect("/wongelek/resep/form");
+            return redirect("/admin/resep/form");
         } catch (\Exception $th) {
             session()->flash("error", "Gagal Menyimpan Berita.");
             return redirect()->back()->withInput();
@@ -122,15 +122,15 @@ class ResepController extends Controller
             $id = decrypt($id);
             $resep = Resep::where("id", $id)->first();
             if (! $resep) {
-                return redirect("/wongelek/resep")->with("error", "Berita tidak ditemukan.");
+                return redirect("/admin/resep")->with("error", "Berita tidak ditemukan.");
             }
 
             $oldMediaId = $resep->thumbnail;
             $resep->delete();
             app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
-            return redirect("/wongelek/resep")->with("success", "Berita berhasil di hapus.");
+            return redirect("/admin/resep")->with("success", "Berita berhasil di hapus.");
         } catch (\Exception $th) {
-            return redirect("/wongelek/resep")->with("error", "Gagal menghapus Berita.");            
+            return redirect("/admin/resep")->with("error", "Gagal menghapus Berita.");            
         }
     }
 

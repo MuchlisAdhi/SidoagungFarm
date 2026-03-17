@@ -213,7 +213,7 @@
             });
 
             $("#btnRemoveYes").click(function() {
-                $.get('{{ url('/wongelek/product/remove') }}/' + Selected, function() {
+                $.get('{{ url('/admin/product/remove') }}/' + Selected, function() {
                     $("#modalRemoveConfirm").modal("hide");
                     window.location.reload();
                 })
@@ -275,7 +275,7 @@
                 form.append('id', id);
 
                 $.ajax({
-                    url: "{{ url('/wongelek/product/save') }}",
+                    url: "{{ url('/admin/product/save') }}",
                     type: "POST",
                     data: form,
                     contentType: false,
@@ -326,7 +326,7 @@
         function editSelected(id)
         {
             Selected = id;
-            $.get("{{ url('/wongelek/product/get') }}/" + id, function(res) {
+            $.get("{{ url('/admin/product/get') }}/" + id, function(res) {
                 const {title, category, description, mediaId, publish} = res
                 $("#formTitle").val(title)
                 $("#formCategory").val(category)
@@ -349,13 +349,13 @@
         }
 
         function unPublish(id) {
-            $.get("{{ url('/wongelek/product/publish') }}/" + id + "?publish=0", function() {
+            $.get("{{ url('/admin/product/publish') }}/" + id + "?publish=0", function() {
                 window.location.reload();
             });
         }
 
         function publish(id) {
-            $.get("{{ url('/wongelek/product/publish') }}/" + id + "?publish=1", function() {
+            $.get("{{ url('/admin/product/publish') }}/" + id + "?publish=1", function() {
                 window.location.reload();
             });
         }

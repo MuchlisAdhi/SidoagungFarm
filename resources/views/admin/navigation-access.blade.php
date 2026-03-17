@@ -101,7 +101,7 @@
                     return;
                 }
 
-                $.get(`{{ url('/wongelek/navigation-access/get') }}/${accessId}`, function (res) {
+                $.get(`{{ url('/admin/navigation-access/get') }}/${accessId}`, function (res) {
                     if (res.code !== 200) {
                         showError(res.msg || "Gagal memuat data navigation access.");
                         clearForm(true);
@@ -135,7 +135,7 @@
                     return;
                 }
 
-                $.post(`{{ url('/wongelek/navigation-access/save') }}`, {
+                $.post(`{{ url('/admin/navigation-access/save') }}`, {
                     access_id: selectedAccessId,
                     access_name: access_name,
                     description: description,
@@ -163,7 +163,7 @@
                     return;
                 }
 
-                $.post(`{{ url('/wongelek/navigation-access/delete') }}`, {
+                $.post(`{{ url('/admin/navigation-access/delete') }}`, {
                     access_id: selectedAccessId,
                 }).done(function (res) {
                     if (res.code !== 200) {

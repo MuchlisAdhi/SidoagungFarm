@@ -133,7 +133,7 @@
             $("#tblUser").DataTable();
 
             $("#btnRemoveYes").click(function() {
-                $.get('{{url('/wongelek/users/remove/')}}/' + userSelected, function(){
+                $.get('{{url('/admin/users/remove/')}}/' + userSelected, function(){
                     $("#modalRemoveConfirm").modal("hide");
                     window.location.reload();
                 })
@@ -202,7 +202,7 @@
                     return;
                 }
 
-                $.post('{{url("/wongelek/users/save")}}', {id, fullname, email, pass, navigation_access})
+                $.post('{{url("/admin/users/save")}}', {id, fullname, email, pass, navigation_access})
                 .done(function(res){
                     if(res.code == 200)
                     {
@@ -244,7 +244,7 @@
             userSelected = id;
 
             $.ajax({
-                url : '{{url('/wongelek/users/getOne/')}}/' + id,
+                url : '{{url('/admin/users/getOne/')}}/' + id,
                 success : function(res){
                     const {data, code} = res;
                     if(code == 200)

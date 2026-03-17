@@ -34,7 +34,7 @@ class FeedbackController extends Controller
     {
         $result = $this->careerFeedbackService->getApplicantsByEncryptedCareerId((string) $id);
         if (! $result) {
-            return redirect('/wongelek/feedback/karir')->with('error', 'Career position not found.');
+            return redirect('/admin/feedback/karir')->with('error', 'Career position not found.');
         }
 
         return view('admin.feedback.career-applicants', [

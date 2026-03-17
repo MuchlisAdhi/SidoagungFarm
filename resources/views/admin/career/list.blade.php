@@ -87,11 +87,11 @@
         $(function(){
             $("#tblCareer").DataTable();
             $("#btnAddCareer").click(function(){
-                window.location.href = "{{url('/wongelek/karir/add')}}"
+                window.location.href = "{{url('/admin/karir/add')}}"
             })
 
             $("#btnRemoveYes").click(function() {
-                $.get('{{ url('/wongelek/karir/delete') }}/' + selected, function() {
+                $.get('{{ url('/admin/karir/delete') }}/' + selected, function() {
                     $("#modalRemoveConfirm").modal("hide");
                     window.location.reload();
                 })
@@ -105,7 +105,7 @@
         }
 
         function editSelected(id) {
-            window.location.href = "{{url('/wongelek/karir/edit')}}/" + id;
+            window.location.href = "{{url('/admin/karir/edit')}}/" + id;
         }
         
     </script>

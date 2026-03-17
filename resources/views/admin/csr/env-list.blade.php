@@ -96,11 +96,11 @@
         $(function(){
             $("#tblEnv").DataTable();
             $("#btnAddEnv").click(function(){
-                window.location.href = "{{url('/wongelek/csr/env/add')}}"
+                window.location.href = "{{url('/admin/csr/env/add')}}"
             })
 
             $("#btnRemoveYes").click(function() {
-                $.get("{{ url('/wongelek/csr/env/delete') }}/" + selected, function() {
+                $.get("{{ url('/admin/csr/env/delete') }}/" + selected, function() {
                     $("#modalRemoveConfirm").modal("hide");
                     window.location.reload();
                 })
@@ -114,19 +114,19 @@
         }
 
         function editSelected(id) {
-            window.location.href = "{{url('/wongelek/csr/env/edit')}}/" + id;
+            window.location.href = "{{url('/admin/csr/env/edit')}}/" + id;
         }
 
         function unPublish(id)
         {
-            $.get("{{ url('/wongelek/csr/env/publish')}}/" + id + "?publish=0", function() {
+            $.get("{{ url('/admin/csr/env/publish')}}/" + id + "?publish=0", function() {
                 window.location.reload();
             });
         }
 
         function publish(id)
         {
-            $.get("{{ url('/wongelek/csr/env/publish')}}/" + id + "?publish=1", function() {
+            $.get("{{ url('/admin/csr/env/publish')}}/" + id + "?publish=1", function() {
                 window.location.reload();
             });
         }

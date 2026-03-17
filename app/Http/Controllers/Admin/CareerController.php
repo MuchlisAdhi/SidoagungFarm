@@ -31,7 +31,7 @@ class CareerController extends Controller
     public function add()
     {
         session()->forget('careerKey');
-        return redirect()->to('/wongelek/karir/form');
+        return redirect()->to('/admin/karir/form');
     }
 
     public function edit($id)
@@ -44,7 +44,7 @@ class CareerController extends Controller
         } catch (\Exception $e) {
             session()->forget('careerKey');
         }finally {
-            return redirect()->to('/wongelek/karir/form');
+            return redirect()->to('/admin/karir/form');
         }
     }
 
@@ -84,7 +84,7 @@ class CareerController extends Controller
                 session()->put("careerKey", $save->id);
             }
             session()->flash("success", "Berhasil Menyimpan Lowongan Kerja.");
-            return redirect("/wongelek/karir/form");
+            return redirect("/admin/karir/form");
         } catch (\Exception $th) {
             session()->flash("error", "Gagal Menyimpan Lowongan Kerja.");
             return redirect()->back()->withInput();
@@ -96,9 +96,9 @@ class CareerController extends Controller
         try {
             $id = decrypt($id);
             Career::where("id", $id)->delete();
-            return redirect("/wongelek/karir")->with("success", "Lowongan Kerja berhasil di hapus.");
+            return redirect("/admin/karir")->with("success", "Lowongan Kerja berhasil di hapus.");
         } catch (\Exception $th) {
-            return redirect("/wongelek/karir")->with("error", "Gagal menghapus Lowongan Kerja.");            
+            return redirect("/admin/karir")->with("error", "Gagal menghapus Lowongan Kerja.");            
         }
     }
 }

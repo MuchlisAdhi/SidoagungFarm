@@ -100,11 +100,11 @@
         $(function() {
             $("#tblEmailConfig").DataTable();
             $("#btnAddConfig").click(function() {
-                window.location.href = "{{ url('/wongelek/email-config/add') }}";
+                window.location.href = "{{ url('/admin/email-config/add') }}";
             });
 
             $("#btnRemoveYes").click(function() {
-                $.get("{{ url('/wongelek/email-config/delete') }}/" + selected, function() {
+                $.get("{{ url('/admin/email-config/delete') }}/" + selected, function() {
                     $("#modalRemoveConfirm").modal("hide");
                     window.location.reload();
                 });
@@ -112,11 +112,11 @@
         });
 
         function editSelected(id) {
-            window.location.href = "{{ url('/wongelek/email-config/edit') }}/" + id;
+            window.location.href = "{{ url('/admin/email-config/edit') }}/" + id;
         }
 
         function activateSelected(id) {
-            $.get("{{ url('/wongelek/email-config/activate') }}/" + id, function() {
+            $.get("{{ url('/admin/email-config/activate') }}/" + id, function() {
                 window.location.reload();
             });
         }

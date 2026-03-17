@@ -83,11 +83,11 @@
             CKEDITOR.replace('formContent');
 
             $("#btnBack").click(function(){
-                window.location.href = "{{url('/wongelek/csr/safety')}}"
+                window.location.href = "{{url('/admin/csr/safety')}}"
             })
 
             $("#btnClear").click(function(){
-                window.location.href = "{{url('/wongelek/csr/safety/add')}}"
+                window.location.href = "{{url('/admin/csr/safety/add')}}"
             })
 
             $("#btnSave").click(function(){
@@ -148,7 +148,7 @@
 
             $("#frmEnv")
                 .prop("method", "post")
-                .prop("action", "{{url('/wongelek/csr/safety/save')}}")
+                .prop("action", "{{url('/admin/csr/safety/save')}}")
                .submit()
         }
     </script>

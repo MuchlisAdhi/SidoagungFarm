@@ -24,7 +24,7 @@ class NewsController extends Controller
     public function add()
     {
         session()->forget('newsKey');
-        return redirect()->to('/wongelek/news/form');
+        return redirect()->to('/admin/news/form');
     }
 
     public function edit($id)
@@ -37,7 +37,7 @@ class NewsController extends Controller
         } catch (\Exception $e) {
             session()->forget('newsKey');
         }finally {
-            return redirect()->to('/wongelek/news/form');
+            return redirect()->to('/admin/news/form');
         }
     }
 
@@ -109,7 +109,7 @@ class NewsController extends Controller
 
             session()->flash("success", "Berhasil Menyimpan Berita.");
 
-            return redirect("/wongelek/news/form");
+            return redirect("/admin/news/form");
         } catch (\Exception $th) {
             session()->flash("error", "Gagal Menyimpan Berita.");
             return redirect()->back()->withInput();
@@ -122,15 +122,15 @@ class NewsController extends Controller
             $id = decrypt($id);
             $news = News::where("id", $id)->first();
             if (! $news) {
-                return redirect("/wongelek/news")->with("error", "Berita tidak ditemukan.");
+                return redirect("/admin/news")->with("error", "Berita tidak ditemukan.");
             }
 
             $oldMediaId = $news->thumbnail;
             $news->delete();
             app(MediaCleanupService::class)->cleanupIfUnused($oldMediaId);
-            return redirect("/wongelek/news")->with("success", "Berita berhasil di hapus.");
+            return redirect("/admin/news")->with("success", "Berita berhasil di hapus.");
         } catch (\Exception $th) {
-            return redirect("/wongelek/news")->with("error", "Gagal menghapus Berita.");            
+            return redirect("/admin/news")->with("error", "Gagal menghapus Berita.");            
         }
     }
 

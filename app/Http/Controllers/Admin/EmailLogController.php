@@ -25,7 +25,7 @@ class EmailLogController extends Controller
     {
         $row = $this->emailLogService->findByEncryptedId((string) $id);
         if (! $row) {
-            return redirect('/wongelek/email-log')->with('error', 'Log email tidak ditemukan.');
+            return redirect('/admin/email-log')->with('error', 'Log email tidak ditemukan.');
         }
 
         return view('admin.email-log.detail', compact('row'));

@@ -141,7 +141,7 @@
             $("#tblTestimoni").DataTable();
 
             $("#btnRemoveYes").click(function() {
-                $.get("{{ url('/wongelek/testimoni/remove') }}/" + bannerSelected, function() {
+                $.get("{{ url('/admin/testimoni/remove') }}/" + bannerSelected, function() {
                     $("#modalRemoveConfirm").modal("hide");
                     window.location.reload();
                 })
@@ -198,7 +198,7 @@
                 form.append('formTestimoni', testimoni);
 
                 $.ajax({
-                    url: "{{ url('/wongelek/testimoni/save') }}",
+                    url: "{{ url('/admin/testimoni/save') }}",
                     type: "POST",
                     data: form,
                     contentType: false,

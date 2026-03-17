@@ -98,11 +98,11 @@
             CKEDITOR.replace('formQualification');
 
             $("#btnBack").click(function(){
-                window.location.href = "{{url('/wongelek/karir')}}"
+                window.location.href = "{{url('/admin/karir')}}"
             })
 
             $("#btnClear").click(function(){
-                window.location.href = "{{url('/wongelek/karir/add')}}"
+                window.location.href = "{{url('/admin/karir/add')}}"
             })
 
             $("#btnSave").click(function(){
@@ -136,7 +136,7 @@
 
             $("#frmCareer")
                 .prop("method", "post")
-                .prop("action", "{{url('/wongelek/karir/save')}}")
+                .prop("action", "{{url('/admin/karir/save')}}")
                .submit()
         }
     </script>

@@ -445,7 +445,7 @@
                     return;
                 }
 
-                $.get("{{ url('/wongelek/feedback/karir/approveApp') }}/" + selected, function(r) {
+                $.get("{{ url('/admin/feedback/karir/approveApp') }}/" + selected, function(r) {
                     window.location.reload()
                 }).fail(function() {
                     AdminSubmit.stop("#btnApprove");
@@ -483,7 +483,7 @@
                 form.append('reason', reason.val());
 
                 $.ajax({
-                    url: "{{ url('/wongelek/feedback/karir/rejectApp') }}",
+                    url: "{{ url('/admin/feedback/karir/rejectApp') }}",
                     type: "POST",
                     data: form,
                     contentType: false,
@@ -602,7 +602,7 @@
 
         function show(id) {
             selected = id;
-            $.get("{{ url('/wongelek/feedback/karir/getApplicant') }}/" + id, function(r) {
+            $.get("{{ url('/admin/feedback/karir/getApplicant') }}/" + id, function(r) {
                 if(r.code == 200)
                 {
                     const {firstname, lastname, email, phone, bod, lasteducation, major, currentsalary, expectationsalary, isexperience, experiencelist, isapprove, rejectreason, cvid  } = r.data

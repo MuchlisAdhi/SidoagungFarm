@@ -18,7 +18,7 @@ class EmailConfigController extends Controller
 
     public function add()
     {
-        return redirect('/wongelek/email-config/form');
+        return redirect('/admin/email-config/form');
     }
 
     public function edit($id)
@@ -26,10 +26,10 @@ class EmailConfigController extends Controller
         try {
             $id = decrypt($id);
         } catch (\Throwable $th) {
-            return redirect('/wongelek/email-config')->with('error', 'Data tidak valid.');
+            return redirect('/admin/email-config')->with('error', 'Data tidak valid.');
         }
 
-        return redirect('/wongelek/email-config/form?id=' . encrypt($id));
+        return redirect('/admin/email-config/form?id=' . encrypt($id));
     }
 
     public function form()
@@ -41,7 +41,7 @@ class EmailConfigController extends Controller
             try {
                 $row = EmailConfig::findOrFail(decrypt($id));
             } catch (\Throwable $th) {
-                return redirect('/wongelek/email-config')->with('error', 'Data tidak ditemukan.');
+                return redirect('/admin/email-config')->with('error', 'Data tidak ditemukan.');
             }
         }
 
@@ -86,11 +86,11 @@ class EmailConfigController extends Controller
                 }
             });
 
-            return redirect('/wongelek/email-config')->with('success', 'Konfigurasi email berhasil disimpan.');
+            return redirect('/admin/email-config')->with('success', 'Konfigurasi email berhasil disimpan.');
         } catch (\Throwable $th) {
             report($th);
 
-            return redirect('/wongelek/email-config')->with('error', 'Gagal menyimpan konfigurasi email.');
+            return redirect('/admin/email-config')->with('error', 'Gagal menyimpan konfigurasi email.');
         }
     }
 
@@ -100,9 +100,9 @@ class EmailConfigController extends Controller
             $id = decrypt($id);
             EmailConfig::where('id', $id)->delete();
 
-            return redirect('/wongelek/email-config')->with('success', 'Konfigurasi email berhasil dihapus.');
+            return redirect('/admin/email-config')->with('success', 'Konfigurasi email berhasil dihapus.');
         } catch (\Throwable $th) {
-            return redirect('/wongelek/email-config')->with('error', 'Gagal menghapus konfigurasi email.');
+            return redirect('/admin/email-config')->with('error', 'Gagal menghapus konfigurasi email.');
         }
     }
 
@@ -116,9 +116,9 @@ class EmailConfigController extends Controller
                 EmailConfig::where('id', $id)->update(['is_active' => true]);
             });
 
-            return redirect('/wongelek/email-config')->with('success', 'Konfigurasi email aktif berhasil diubah.');
+            return redirect('/admin/email-config')->with('success', 'Konfigurasi email aktif berhasil diubah.');
         } catch (\Throwable $th) {
-            return redirect('/wongelek/email-config')->with('error', 'Gagal mengaktifkan konfigurasi email.');
+            return redirect('/admin/email-config')->with('error', 'Gagal mengaktifkan konfigurasi email.');
         }
     }
 }

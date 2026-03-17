@@ -36,7 +36,7 @@
 
     <div class="box">
         <div class="box-header">
-            <form method="get" action="{{ url('/wongelek/ticket') }}" class="row" style="margin: 0;">
+            <form method="get" action="{{ url('/admin/ticket') }}" class="row" style="margin: 0;">
                 <div class="col-lg-2 col-md-3 col-sm-6" style="padding-top: 8px;">
                     <label>Status</label>
                     <select class="form-control" name="status">
@@ -62,7 +62,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fa fa-filter"></i> Filter
                     </button>
-                    <a href="{{ url('/wongelek/ticket') }}" class="btn btn-default">Reset</a>
+                    <a href="{{ url('/admin/ticket') }}" class="btn btn-default">Reset</a>
                 </div>
             </form>
         </div>
@@ -111,7 +111,7 @@
                             <td>{{ strtoupper($ticket->channel) }}</td>
                             <td>{{ $ticket->created_at }}</td>
                             <td style="text-align: center;">
-                                <a href="{{ url('/wongelek/ticket/show/' . encrypt($ticket->id)) }}" class="text-info">
+                                <a href="{{ url('/admin/ticket/show/' . encrypt($ticket->id)) }}" class="text-info">
                                     <i class="fa fa-eye" style="font-size: 18px;"></i>
                                 </a>
                             </td>

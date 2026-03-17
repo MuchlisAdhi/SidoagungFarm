@@ -96,8 +96,8 @@
         <h1>Unauthorized Access</h1>
         <p>{{ $message ?? 'Anda tidak memiliki izin untuk mengakses halaman ini.' }}</p>
         <div class="actions">
-            <a class="btn btn-primary" href="{{ url('/wongelek/main') }}">Kembali ke Dashboard</a>
-            <a class="btn btn-light" href="{{ url('/wongelek/logout') }}">Logout</a>
+            <a class="btn btn-primary" href="{{ url('/admin/main') }}">Kembali ke Dashboard</a>
+            <a class="btn btn-light" href="{{ url('/admin/logout') }}">Logout</a>
         </div>
     </div>
 </body>

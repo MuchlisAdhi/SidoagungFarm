@@ -6,7 +6,7 @@
 @section('content')
     <div class="box">
         <div class="box-body">
-            <form id="frmEmailConfig" class="form-horizontal" method="post" action="{{ url('/wongelek/email-config/save') }}">
+            <form id="frmEmailConfig" class="form-horizontal" method="post" action="{{ url('/admin/email-config/save') }}">
                 {{ csrf_field() }}
                 @if ($rs->id)
                     <input type="hidden" name="formId" value="{{ encrypt($rs->id) }}">
@@ -120,7 +120,7 @@
     <script>
         $(function() {
             $("#btnBack").click(function() {
-                window.location.href = "{{ url('/wongelek/email-config') }}";
+                window.location.href = "{{ url('/admin/email-config') }}";
             });
         });
     </script>

@@ -19,7 +19,7 @@ Landing page company profile + panel admin berbasis Laravel.
   - Products
   - CSR
   - Talk To Us (pertanyaan, kemitraan, karir)
-- Panel admin (prefix `/wongelek`):
+- Panel admin (prefix `/admin`):
   - Login/logout admin
   - Manajemen user
   - Home banner & banner menu
@@ -129,7 +129,7 @@ if (!AdminSubmit.start("#btnSaveForm", "Menyimpan...")) {
     return;
 }
 
-$.post("/wongelek/example/save", payload)
+$.post("/admin/example/save", payload)
     .done(function(res) {
         if (res.code === 200) {
             window.location.reload();
@@ -152,7 +152,7 @@ if (!AdminSubmit.start("#btnSave", "Menyimpan...")) {
 
 $("#frmExample")
     .prop("method", "post")
-    .prop("action", "/wongelek/example/save")
+    .prop("action", "/admin/example/save")
     .submit();
 ```
 
@@ -267,17 +267,17 @@ Catatan:
 
 - Route `GET /sanctum/csrf-cookie` otomatis disediakan oleh Sanctum.
 
-### 3) Admin Auth Routes (`/wongelek`)
+### 3) Admin Auth Routes (`/admin`)
 
 | Method | URI | Name | Keterangan |
 | --- | --- | --- | --- |
-| GET | `/wongelek` | - | Redirect ke login |
-| GET\|POST | `/wongelek/login` | `login` | Form + proses login |
-| GET | `/wongelek/logout` | `logout` | Logout |
+| GET | `/admin` | - | Redirect ke login |
+| GET\|POST | `/admin/login` | `login` | Form + proses login |
+| GET | `/admin/logout` | `logout` | Logout |
 
 ### 4) Admin Protected Routes (`middleware: auth`, name prefix `admin`)
 
-Semua route berikut berada di bawah prefix `/wongelek`.
+Semua route berikut berada di bawah prefix `/admin`.
 
 #### Dashboard & User
 
@@ -422,7 +422,7 @@ Untuk melihat route terbaru langsung dari aplikasi:
 
 ```bash
 php artisan route:list
-php artisan route:list --path=wongelek
+php artisan route:list --path=admin
 php artisan route:list --path=api
 ```
 
