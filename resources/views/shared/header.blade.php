@@ -5,7 +5,7 @@
                 <i class="fas fa-align-left"></i>
             </button>
             <a class="navbar-brand" href="{{url("")}}">
-                <img class="img-fluid" src="{{ asset('images/saf/logo-text-small.png') }}" alt="PT. Sidoagung Farm" title="PT. Sidoagung Farm">
+                <img class="img-fluid" src="{{ asset('images/saf/logo-vertikal.png') }}" alt="PT. Sidoagung Farm" title="PT. Sidoagung Farm">
             </a>
             <div class="navbar-collapse collapse" id="navbar_main">
                 <ul class="nav navbar-nav ml-auto mr-5">

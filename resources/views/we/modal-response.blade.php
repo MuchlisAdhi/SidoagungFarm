@@ -17,7 +17,7 @@
                    </h5>
                    <p class="mb-4 text-primary" id="teks_2">Let’s create many great stories!</p>
                    <p class="mb-4 text-primary" id="teks_3">Sincerely,</p>
-                   <img class="img-fluid" src="{{ asset('images/saf/logo-text.png') }}" alt="">
+                   <img class="img-fluid" src="{{ asset('images/saf/logo-horizontal.png') }}" alt="">
                 </div>
                 <div class="col-sm-3 align-self-start align-self-lg-center ">
                    <img class="img-fluid " src="{{ asset('images/ai/telur.png') }}" alt="" style="position: absolute; top:10px; right: 10px;">

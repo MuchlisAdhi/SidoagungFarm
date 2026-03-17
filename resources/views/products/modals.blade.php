@@ -16,7 +16,7 @@
                     </div>
                     <div class="col-md-6 align-self-start align-self-lg-center ">
                         <div class="p-4 p-md-5 bg-white border-radius">
-                            <img class="img-fluid pb-3" src="{{ asset('images/saf/logo-text.png') }}" alt="logo" style="width: 250px;">
+                            <img class="img-fluid pb-3" src="{{ asset('images/saf/logo-horizontal.png') }}" alt="logo" style="width: 250px;">
                             <h3>Ada pertanyaan?</h3>
                             <form class="mt-4" id="formInquiryProduct" action="!#" method="POST">
                                 {{ csrf_field() }}
@@ -67,7 +67,7 @@
                         </p>
                         <p class="mb-4 text-primary" id="teks_2">Let’s create many great stories!</p>
                         <p class="mb-4 text-primary" id="teks_3">Sincerely,</p>
-                        <img class="img-fluid" src="{{ asset('images/saf/logo-text.png') }}" alt="" style="width: 250px;">
+                        <img class="img-fluid" src="{{ asset('images/saf/logo-horizontal.png') }}" alt="" style="width: 250px;">
                     </div>
                     <div class="col-sm-3 align-self-start align-self-lg-center ">
                         <img class="img-fluid " src="{{ asset('images/ai/telur.png') }}" alt=""
