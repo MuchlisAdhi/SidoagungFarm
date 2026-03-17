@@ -75,7 +75,7 @@
                     <h4 class="modal-title">Remove Confirm</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure to remove Education ?</p>
+                    <p>Are you sure to remove News ?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

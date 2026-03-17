@@ -1,5 +1,24 @@
 @extends('shared.master')
 
+@section('css')
+    <style>
+        #frmQuestion .form-control {
+            background: rgb(246, 246, 246) !important;
+            border: 1px solid #f6f6f6 !important;
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+        }
+        
+        #frmQuestion .form-control:focus {
+            background: rgb(246, 246, 246) !important;
+            border-color: #ffffff !important;
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+            outline: 0 !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <x-banner-summary mode="contact"></x-banner-summary>
     <section class="space-ptb background-sidoagung">
