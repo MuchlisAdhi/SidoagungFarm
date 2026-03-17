@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Validator;
-use App\Jobs\TicketingJob;
+use App\Http\Requests\Web\SubmitProductFaqRequest;
 use App\Models\{
-    Product,
-    ClientQuestion
+    Product
 };
-use App\Enums\TicketStatus;
+use App\Services\WebsiteInquiryService;
 
 class ProductController extends Controller
 {
+    public function __construct(
+        protected WebsiteInquiryService $websiteInquiryService
+    ) {}
+
     public function index() {
         $category = request()->query('category');
         $find = request()->query('keyword');
@@ -53,43 +55,9 @@ class ProductController extends Controller
         return response()->json($find);
     }
 
-    public function faq()
+    public function faq(SubmitProductFaqRequest $request)
     {
-        $validator = Validator::make(request()->all(), [
-            'name'  => "required|string|max:255",
-            'email' => "required|email|max:255",
-            'phone' => "required|string|max:30",
-            'desc'  => "required|string|max:10000"
-        ]);
-
-        if($validator->fails())
-            return response()->json([
-                'code'  => 0,
-                'msg'   => $validator->errors()->first(),
-                'data'  => []
-            ]);
-
-        try {
-            $productId = decrypt(request()->input("productId"));
-        } catch (\Throwable $th) {
-            return response()->json([
-                'code'  => 0,
-                'msg'   => "Produk tidak valid.",
-                'data'  => []
-            ]);
-        }
-
-        $question = ClientQuestion::create([
-            'productid' => $productId,
-            'name' => request()->input("name"),
-            'email' => request()->input("email"),
-            'phone' => request()->input("phone"),
-            'description' => request()->input("desc"),
-            'ticket_status' => TicketStatus::New->value,
-        ]);
-
-        TicketingJob::dispatchSync('q1', (string) $question->id);
-        $question->refresh();
+        $question = $this->websiteInquiryService->submitProductQuestion($request->toPayload());
         $ticketNo = (string) ($question->ticket_no ?: '-');
 
         return response()->json([

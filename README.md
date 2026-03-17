@@ -34,6 +34,62 @@ Landing page company profile + panel admin berbasis Laravel.
   - Testimoni
   - Resep
 
+## Refactor Arsitektur (Controller Tipis)
+
+Project ini sekarang memakai pola pemisahan tanggung jawab agar controller hanya mengatur alur request -> response.
+
+### 1) Form Request
+
+Validasi dipindahkan dari controller ke Form Request:
+
+- Public:
+  - `app/Http/Requests/Web/SubmitQuestionRequest.php`
+  - `app/Http/Requests/Web/JoinAsPartnerRequest.php`
+  - `app/Http/Requests/Web/CareerApplyRequest.php`
+  - `app/Http/Requests/Web/SubmitProductFaqRequest.php`
+- Admin:
+  - `app/Http/Requests/Admin/FaqGetRequest.php`
+  - `app/Http/Requests/Admin/ListTicketRequest.php`
+  - `app/Http/Requests/Admin/ListEmailLogRequest.php`
+
+### 2) Service Layer
+
+Business logic dipindahkan ke service:
+
+- Public:
+  - `app/Services/WebsiteInquiryService.php`
+  - `app/Services/PartnerApplicationService.php`
+  - `app/Services/CareerApplicationService.php`
+- Admin:
+  - `app/Services/Admin/FaqFeedbackService.php`
+  - `app/Services/Admin/CareerFeedbackService.php`
+  - `app/Services/Admin/PartnerFeedbackService.php`
+  - `app/Services/Admin/TicketManagementService.php`
+  - `app/Services/Admin/EmailLogService.php`
+
+Controller yang sudah direfaktor:
+
+- `app/Http/Controllers/WeController.php`
+- `app/Http/Controllers/ProductController.php`
+- `app/Http/Controllers/Admin/FeedbackController.php`
+- `app/Http/Controllers/Admin/TicketController.php`
+- `app/Http/Controllers/Admin/EmailLogController.php`
+
+### 3) Observer
+
+Observer dipakai untuk logic lintas alur yang harus selalu sinkron:
+
+- `app/Observers/ClientQuestionObserver.php`
+  - saat `ClientQuestion` dibuat, otomatis trigger `TicketingJob` mode `q1`
+- `app/Observers/ClientQuestion2Observer.php`
+  - saat `ClientQuestion2` dibuat, otomatis trigger `TicketingJob` mode `q2`
+- `app/Observers/TicketObserver.php`
+  - setiap ticket dibuat/diupdate, status ticket disinkronkan ke tabel pertanyaan (`clientquestion` / `clientquestion2`)
+
+Registrasi observer ada di:
+
+- `app/Providers/EventServiceProvider.php`
+
 ## Admin Global Loader & Submit Utility
 
 Panel admin sekarang memakai loader global + helper submit untuk mencegah double click saat proses simpan/update.
