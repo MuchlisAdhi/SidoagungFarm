@@ -4,7 +4,7 @@
             <div class="col-lg-4 col-md-12">
                 <div class="footer-contact-info">
                     <a href="{{ url('') }}">
-                        <img class="img-fluid mb-3 footer-logo" src="{{ asset('images/saf/logo-text-big.png') }}" alt="logo">
+                        <img class="img-fluid mb-3 footer-logo" src="{{ asset('images/saf/logo-horizontal.png') }}" alt="logo">
                     </a>
                     <p class="mb-0 footer-address">Jl. Magelang - Purworejo KM 10,5 <br>Desa Sidoagung, Kec. Tempuran, <br>Kab. Magelang, Jawa Tengah, <br>Indonesia</p>
                     <a href="{{ route('we.summary') }}" class="btn btn-primary mt-3 mb-0" id="btnHubungiKami">

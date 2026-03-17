@@ -1,5 +1,5 @@
 @extends('shared.master')
-@section('body_class', 'force-sticky-header')
+@section('body_class', '')
 
 @section('content')
 <x-banner-summary mode="career"></x-banner-summary>
