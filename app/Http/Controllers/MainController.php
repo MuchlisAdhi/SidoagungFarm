@@ -89,7 +89,7 @@ class MainController extends Controller
             [
                 'title' => 'Karir',
                 'links' => [
-                    ['label' => 'Karir', 'url' => route('we.career')],
+                    // ['label' => 'Karir', 'url' => route('we.career')],
                     ['label' => 'Lihat Lowongan', 'url' => route('we.career')],
                 ],
             ],
