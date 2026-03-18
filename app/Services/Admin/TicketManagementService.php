@@ -75,10 +75,8 @@ class TicketManagementService
     {
         $response = trim((string) ($validated['formResponse'] ?? ''));
         $newStatus = (string) $validated['formStatus'];
-
-        if ($response !== '' && $newStatus !== TicketStatus::Responded->value) {
-            $newStatus = TicketStatus::Responded->value;
-        }
+        $oldStatus = $ticket->status?->value ?? '';
+        $oldResponse = trim((string) ($ticket->response_message ?? ''));
 
         $payload = [
             'status' => $newStatus,
@@ -95,11 +93,15 @@ class TicketManagementService
         $ticket->refresh();
 
         $warning = '';
-        if (
-            ($ticket->status?->value ?? '') === TicketStatus::Responded->value &&
-            $ticket->response_message &&
-            $ticket->requester_email
-        ) {
+        $currentStatus = $ticket->status?->value ?? '';
+        $currentResponse = trim((string) ($ticket->response_message ?? ''));
+        $shouldSendResponseEmail =
+            in_array($currentStatus, [TicketStatus::Open->value, TicketStatus::Responded->value], true) &&
+            $currentResponse !== '' &&
+            $ticket->requester_email &&
+            ($currentStatus !== $oldStatus || $currentResponse !== $oldResponse);
+
+        if ($shouldSendResponseEmail) {
             try {
                 NotificationJob::dispatch(
                     notificationType: 'ticket-responded',
