@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\DB;
 class CsrController extends Controller
 {
     public function summary() {
-        return view("csr.summary", []);
+        return view("csr.summary", [
+            'list'  => News::where("mode", "news")->where("publish", 1)->get()
+        ]);
     }
 
     public function news() {

@@ -2,69 +2,144 @@
 
 @section('content')
 <x-banner-summary mode="csr"></x-banner-summary>
-<section class="space-ptb background-sidoagung">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-12 mb-4 mb-lg-0">
-        <div class="section-title pt-5">
-          <h2 class="mb-3 text-white">Corporate Social Responsibility</h2>
-          <p class="text-white">
-            {!! Str::headline("Sebagai Bagian Dari Usaha Group Untuk Menciptakan Lingkungan Usaha Yang Berkelanjutan, Sido Agung Group secara berkelanjutan Menyelenggarakan Berbagai Program Corporate Social Responsibility.") !!}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<section class="space-pt ">
-   <div class="container">
-      <div class="row align-items-center">
-         <div class="col-lg-6 mb-4 mb-lg-0">
-            <div class="container image-text-left-container">
-               <h3 class="mb-4">Pendidikan</h3>
-               <p class="mb-4">
-                  {!! Str::headline("Dalam Hal Pendidikan, Sido Agung Group Berkomitmen Untuk Terus Berperan Aktif Melalui Beragam Program Kerjasama Dengan Banyak Institusi Pendidikan. Di Lain Itu Sido Agung Group Juga Berinisiatif Untuk Ikut Mencetak Tenaga-Tenaga Ahli Peternakan Melaui Pembukaan Fakultas Peternakan Di Universitas Nahdlatul Ulama, Cirebon.") !!}</p>
-               <a href="{{route('csr.education')}}" class="btn btn-primary ">Selengkapnya</a>
+
+<section>
+    {{-- NEW  --}}
+    <section class="space-ptb ">
+        <div class="container">
+            <div class="row justify-content-center background-sidoagung" style="border-radius: 25px;">
+                <div class="col-lg-12 pb-lg-0">
+                    <div class="section-title mb-3 pt-3 text-center">
+                        <h2 class="text-white">Berita & CSR Seputar PT. Sidoagung Farm</h2>
+                    </div>
+                </div>
             </div>
-         </div>
-         <div class="col-lg-6">
-            <img class="img-fluid img-shadow-left" src="{{asset('images/sag/csr/education.jpg')}}" alt="">
-         </div>
-      </div>
-   </div>
+        </div>
+    </section>
+
+    <section id="container-list">
+        <section id="listBlock"></section>
+    </section>
+    <section id="container-detail"></section>
+
+    {{-- CSR --}}
+    {{-- <section class="space-ptb ">
+        <div class="container">
+            <div class="row justify-content-center background-sidoagung" style="border-radius: 25px;">
+                <div class="col-lg-12 pb-lg-0">
+                    <div class="section-title mb-3 pt-3 text-center">
+                        <h2 class="text-white">Corporate Social Responsibility</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> --}}
 </section>
 
-<section class="space-pt  ">
-   <div class="container ">
-      <div class="row align-items-center">
-         <div class="col-lg-6">
-            <img class="img-fluid img-shadow-right" src="{{asset('images/sag/csr/safety.jpg')}}" alt="">
-         </div>
-         <div class="col-lg-6 mb-4 mb-lg-0">
-            <div class="container image-text-right-container">
-               <h3 class="mb-4">Kesehatan dan Keselamatan Kerja</h3>
-               <p class="mb-4">
-                  {!! Str::headline("Sido Agung Group Memandang Karyawan Sebagai Aset Inti Dalam Setiap Usahanya. Sido Agung Group Mengedepankan Prinsip Kesetaraan Dalam Kesempatan, Pemeliharan Lingkungan Kerja Yang Sehat Kondusif Dan Kompetitif, Sambil Terus Berkomitmen Dalam Penerapan Keselamatan Kerja Yang Excellence.") !!}</p>
-               <a href="{{route('csr.safety')}}" class="btn btn-primary ">Selengkapnya</a>
+{{-- <section id="container-detail"></section> --}}
+
+{{-- <section class="bg-light">
+    <div class="container mobile-desk-container-event">
+        <div id="blog-item">
+            <div class="row ">
+                <div class="col-lg-5">
+                    <h2 class="pt-3 mobile-text-event">&nbsp;</h2>
+                </div>
+                <div class="col-lg-2 mr-3" id="box_year">
+                </div>
+                <div class="col-lg-4 ml-5">
+                    <form class="mt-3 mb-3 ml-3" method="get">
+                        <input type="hidden" name="year" value="">
+                        <input type="text" class="not-click form-control-ntc form-control" name="keyword"
+                            placeholder="Search.." value="">
+                        <button class="button-search" type="submit" onclick="search()"> <i
+                                class="fa fa-search not-click"></i></button>
+                    </form>
+                </div>
             </div>
-         </div>
-      </div>
-   </div>
-</section>
-<section class="space-pt ">
-   <div class="container">
-      <div class="row align-items-center">
-         <div class="col-lg-6 mb-4 mb-lg-0">
-            <div class="container image-text-left-container">
-               <h3 class="mb-4">Sosial</h3>
-               <p class="mb-4">
-                  {!! Str::headline('Sido Agung Group Terus Berupaya Meningkatkan Martabat Hidup Masyarakat Di Sekitar Wilayah Kerjanya. Dengan Prinsip "Bisnis Yang Baik dapat Menciptakan Komunitas Yang Baik". Kami Mencoba Terlibat Aktif Dalam Setiap Upaya Pengembangan Masyarakat Atau Komunitas.') !!}</p>
-               <a href="{{route('csr.sosial')}}" class="btn btn-primary ">Selengkapnya</a>
-            </div>
-         </div>
-         <div class="col-lg-6">
-            <img class="img-fluid img-shadow-left" src="{{asset('images/sag/csr/sosial.jpg')}}" alt="">
-         </div>
-      </div>
-   </div>
-</section>
+            <div class="row" id="listBlock"></div>
+
+            <div class="row" id="detailBlock"></div>
+        </div>
+    </div>
+</section> --}}
+@endsection
+
+@section('script')
+<script>
+    
+    var keyword = "";
+    var page = 1;
+    $(function(){
+
+        getList();
+        
+        $("#formKeyword").on("change", function(){
+            keyword = $(this).val();
+            page = 1;
+            getList();
+        })
+
+        $("#btnSearch").on("click", function(){
+            keyword = $("#formKeyword").val();
+            page = 1;
+            getList();
+        });
+
+        $('#formKeyword').keypress(function (e) {
+            if (e.which == 13) {
+                keyword = $("#formKeyword").val();
+                page = 1;
+                getList();
+                return;
+            }
+        });
+    });
+
+    function getList(){
+        $.get("{{route('csr.getList')}}?mode=news&keyword=" + keyword + "&page=" + page)
+        .done(function(r){
+            $(document).find("#listBlock").eq(0).html(r)
+        })
+        .fail(function(e){
+            console.log(e)
+        })
+    }
+
+    function pageClicked(p)
+    {
+        keyword = $("#formKeyword").val();
+        page = p;
+        getList();
+        return;
+    }
+
+    function showDetail(slug, mode)
+    {
+        console.log(mode)
+        let listBlock = $(document).find("#container-list").eq(0);
+        let detailBlock = $(document).find("#container-detail").eq(0);
+
+        $.get(`{{route('csr.getDetail')}}?mode=${mode}&slug=` + slug)
+            .done(function(r){
+                detailBlock.html(r);
+
+                listBlock.hide();
+                detailBlock.show();
+            })
+            .fail(function(e){
+                console.log(e)
+            })
+    }
+
+    function hideDetail()
+    {
+        let listBlock = $(document).find("#container-list").eq(0);
+        let detailBlock = $(document).find("#container-detail").eq(0);
+
+        listBlock.show();
+        detailBlock.hide();
+    }
+    
+</script>
 @endsection
