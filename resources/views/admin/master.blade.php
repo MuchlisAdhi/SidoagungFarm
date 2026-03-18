@@ -68,8 +68,8 @@
       <div class="wrapper">
          <header class="main-header">
             <a href="{{ route('admin.main') }}" class="logo">
-            <span class="logo-mini"><b>SSAP</b></span>
-            <span class="logo-lg"><b>Sido</b>Agung</span>
+            <span class="logo-mini"><b>SAF</b></span>
+            <span class="logo-lg"><b>Sidoagung</span>
             </a>
             <nav class="navbar navbar-static-top" role="navigation">
                <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
@@ -289,6 +289,18 @@
         })(window, jQuery);
 
         $(document).ready(function(){ 
+            @if ($errors->any())
+               @foreach ($errors->all() as $errorMessage)
+                  $.toast({
+                     heading: 'Error',
+                     text: @json($errorMessage),
+                     showHideTransition: 'fade',
+                     position: 'bottom-right',
+                     icon: 'error'
+                  })
+               @endforeach
+            @endif
+
             @if (session()->has("error"))
                $.toast({
                   heading: 'Error',

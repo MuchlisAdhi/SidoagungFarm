@@ -25,8 +25,6 @@ class TicketObserver
             'ticket_no' => (string) ($ticket->ticket_number ?: ''),
             'ticket_status' => $status,
             'replied' => $status === TicketStatus::Responded->value ? 1 : 0,
-            'response_message' => $ticket->response_message,
-            'responded_at' => $ticket->responded_at,
         ];
 
         if ($ticket->question_mode === 'q1') {

@@ -15,7 +15,6 @@ class ClientQuestion2 extends BaseModel
 
     protected $casts = [
         'replied' => 'boolean',
-        'responded_at' => 'datetime',
         'ticket_status' => TicketStatus::class,
     ];
 }

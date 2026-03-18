@@ -133,8 +133,8 @@ Schedule::call(function (): void {
                 ->where('l.status', '=', 'sent');
         })
         ->where('q.replied', 1)
-        ->whereNotNull('q.response_message')
-        ->where('q.response_message', '!=', '')
+        ->whereNotNull('t.response_message')
+        ->where('t.response_message', '!=', '')
         ->whereNull('l.id')
         ->orderBy('q.created_at')
         ->limit(20)
@@ -161,8 +161,8 @@ Schedule::call(function (): void {
                 ->where('l.status', '=', 'sent');
         })
         ->where('q.replied', 1)
-        ->whereNotNull('q.response_message')
-        ->where('q.response_message', '!=', '')
+        ->whereNotNull('t.response_message')
+        ->where('t.response_message', '!=', '')
         ->whereNull('l.id')
         ->orderBy('q.created_at')
         ->limit(20)

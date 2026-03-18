@@ -32,5 +32,23 @@ class SaveNewsRequest extends FormRequest
             }
         });
     }
+
+    public function messages(): array
+    {
+        return [
+            'formTitle.required' => 'Title wajib diisi.',
+            'formTitle.max' => 'Title maksimal 255 karakter.',
+            'formAuthor.required' => 'Author wajib diisi.',
+            'formAuthor.max' => 'Author maksimal 255 karakter.',
+            'formPostedOn.required' => 'Posting Date wajib diisi.',
+            'formPostedOn.date' => 'Posting Date tidak valid.',
+            'formThumbnail.file' => 'Thumbnail tidak valid.',
+            'formThumbnail.image' => 'Thumbnail harus berupa gambar.',
+            'formThumbnail.mimes' => 'Ekstensi thumbnail harus jpg, jpeg, atau png.',
+            'formThumbnail.max' => 'Ukuran thumbnail maksimal 5 MB.',
+            'formContent.string' => 'Content tidak valid.',
+            'formPublish.in' => 'Nilai publish tidak valid.',
+        ];
+    }
 }
 

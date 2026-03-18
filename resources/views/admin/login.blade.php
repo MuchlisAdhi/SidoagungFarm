@@ -33,7 +33,7 @@
             <form action="{{ route('login') }}" method="post">
                 @csrf
                 <div class="form-group has-feedback">
-                    <input type="email" class="form-control" placeholder="Email" maxlength="25" name="email">
+                    <input type="email" class="form-control" placeholder="Email" maxlength="50" name="email">
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback">

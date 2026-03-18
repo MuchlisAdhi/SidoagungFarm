@@ -97,47 +97,59 @@
 
         function submitForm(){
             const tmb = $("#formThumbnail").prop('files');
-            const allowExt = ["image/png", "image/jpg", "image/jpeg"];
+            const allowMime = ["image/png", "image/jpg", "image/jpeg"];
+            const allowExt = ["png", "jpg", "jpeg"];
+            const maxFileSize = 5 * 1024 * 1024;
+            const isEdit = @json(!empty($rs->id));
 
-            let mandatories = ["formTitle", "formPostedOn"];
-            for(let i in mandatories)
-                if($("#" + mandatories).val() == "")
-                {
-                    $.toast({
-                        heading: 'Error',
-                        text: `Require's empty`,
-                        showHideTransition: 'fade',
-                        position: 'bottom-right',
-                        icon: 'error'
-                    })
+            const requiredFields = [
+                { id: "formTitle", label: "Title" },
+                { id: "formPostedOn", label: "Posting Date" }
+            ];
+
+            for (let i = 0; i < requiredFields.length; i++) {
+                const field = requiredFields[i];
+                const value = ($("#" + field.id).val() || "").trim();
+                if (!value) {
+                    showValidationError(field.label + " wajib diisi.");
+                    $("#" + field.id).focus();
                     return;
                 }
+            }
+
+            const postedOn = ($("#formPostedOn").val() || "").trim();
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(postedOn)) {
+                showValidationError("Format Posting Date harus yyyy-mm-dd.");
+                $("#formPostedOn").focus();
+                return;
+            }
             
-            if (tmb.length < 1) {
-                $.toast({
-                    heading: 'Error',
-                    text: `Require's empty`,
-                    showHideTransition: 'fade',
-                    position: 'bottom-right',
-                    icon: 'error'
-                })
+            if (!isEdit && tmb.length < 1) {
+                showValidationError("Thumbnail wajib diisi.");
                 return;
             }
 
-            const file = tmb[0];
+            if (tmb.length > 0) {
+                const file = tmb[0];
+                const mimeType = (file.type || "").toLowerCase();
+                const ext = ((file.name || "").split(".").pop() || "").toLowerCase();
 
-            if (!allowExt.includes(file.type)) {
-                $.toast({
-                    heading: 'Error',
-                    text: `Extention file not allowed. (png, jpg, jpeg)`,
-                    showHideTransition: 'fade',
-                    position: 'bottom-right',
-                    icon: 'error'
-                })
-                return;
+                if (file.size > maxFileSize) {
+                    showValidationError("Ukuran thumbnail maksimal 5 MB.");
+                    return;
+                }
+
+                if (!allowMime.includes(mimeType) && !allowExt.includes(ext)) {
+                    showValidationError("Ekstensi thumbnail harus jpg, jpeg, atau png.");
+                    return;
+                }
             }
 
-            let inputs = mandatories.concat(["formContent", "formPublish", "formThumbnail"]);
+            if (CKEDITOR.instances.formContent) {
+                CKEDITOR.instances.formContent.updateElement();
+            }
+
+            let inputs = requiredFields.map(function(field){ return field.id; }).concat(["formContent", "formPublish", "formThumbnail"]);
             inputs.map(function(e){
                 $("#" + e).prop("name", e)
             })
@@ -148,8 +160,18 @@
 
             $("#frmEnv")
                 .prop("method", "post")
-                .prop("action", "{{url('/admin/csr/env/save')}}")
+                .prop("action", "/admin/csr/env/save")
                .submit()
+        }
+
+        function showValidationError(message) {
+            $.toast({
+                heading: 'Error',
+                text: message,
+                showHideTransition: 'fade',
+                position: 'bottom-right',
+                icon: 'error'
+            });
         }
     </script>
 @endsection

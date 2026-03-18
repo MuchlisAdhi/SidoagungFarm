@@ -82,7 +82,7 @@ class NotificationJob implements ShouldQueue
             return;
         }
 
-        $responseMessage = trim((string) ($ticket?->response_message ?: $question->response_message ?: ''));
+        $responseMessage = trim((string) ($ticket?->response_message ?: ''));
         if ($responseMessage === '') {
             return;
         }

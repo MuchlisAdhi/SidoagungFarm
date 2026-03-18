@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Web;
 
+use App\Enums\QuestionType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SubmitQuestionRequest extends FormRequest
 {
@@ -17,7 +19,7 @@ class SubmitQuestionRequest extends FormRequest
             'formName' => ['required', 'string', 'max:255'],
             'formEmail' => ['required', 'email', 'max:255'],
             'formPhone' => ['required', 'string', 'max:30'],
-            'formType' => ['required', 'in:Produk,Kemitraan,Karir'],
+            'formType' => ['required', Rule::in(QuestionType::values())],
             'formDescription' => ['required', 'string', 'max:10000'],
         ];
     }

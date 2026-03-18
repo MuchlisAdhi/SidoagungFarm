@@ -98,11 +98,11 @@
         $(function(){
             $("#tblNews").DataTable();
             $("#btnAddNews").click(function(){
-                window.location.href = "{{url('/admin/news/add')}}"
+                window.location.href = "/admin/news/add";
             })
 
             $("#btnRemoveYes").click(function() {
-                $.get("{{ url('/admin/news/delete') }}/" + selected, function() {
+                $.get("/admin/news/delete/" + selected, function() {
                     $("#modalRemoveConfirm").modal("hide");
                     window.location.reload();
                 })
@@ -116,19 +116,19 @@
         }
 
         function editSelected(id) {
-            window.location.href = "{{url('/admin/news/edit')}}/" + id;
+            window.location.href = "/admin/news/edit/" + id;
         }
 
         function unPublish(id)
         {
-            $.get("{{ url('/admin/news/publish')}}/" + id + "?publish=0", function() {
+            $.get("/admin/news/publish/" + id + "?publish=0", function() {
                 window.location.reload();
             });
         }
 
         function publish(id)
         {
-            $.get("{{ url('/admin/news/publish')}}/" + id + "?publish=1", function() {
+            $.get("/admin/news/publish/" + id + "?publish=1", function() {
                 window.location.reload();
             });
         }

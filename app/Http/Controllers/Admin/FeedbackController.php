@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\QuestionType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\FaqGetRequest;
 use App\Http\Requests\Admin\RejectApplicantRequest;
@@ -123,7 +124,7 @@ class FeedbackController extends Controller
 
     public function faqList()
     {
-        $list = $this->faqFeedbackService->getFaqList();
+        $list = $this->faqFeedbackService->getFaqList($this->allowedQuestionTypes());
 
         return view('admin.feedback.faq', ['list' => $list]);
     }
@@ -135,7 +136,8 @@ class FeedbackController extends Controller
         try {
             $find = $this->faqFeedbackService->getFaqDetail(
                 encryptedId: (string) $validated['id'],
-                mode: (string) $validated['mode']
+                mode: (string) $validated['mode'],
+                allowedQuestionTypes: $this->allowedQuestionTypes()
             );
         } catch (InvalidArgumentException $th) {
             return response()->json([
@@ -158,30 +160,11 @@ class FeedbackController extends Controller
 
     public function faqReplied(ReplyFaqRequest $request)
     {
-        $validated = $request->validated();
-        try {
-            $warning = $this->faqFeedbackService->reply(
-                encryptedId: (string) $validated['id'],
-                mode: (string) $validated['mode'],
-                response: trim((string) $validated['response'])
-            );
-        } catch (InvalidArgumentException $th) {
-            return response()->json([
-                'code' => 422,
-                'msg' => 'Request tidak valid.',
-            ], 422);
-        } catch (ModelNotFoundException $th) {
-            return response()->json([
-                'code' => 404,
-                'msg' => 'Data tidak ditemukan.',
-            ], 404);
-        }
-
         return response()->json([
-            'code' => 200,
-            'msg' => "Jawaban berhasil dikirim." . $warning,
+            'code' => 403,
+            'msg' => 'Balasan pertanyaan hanya tersedia melalui menu Ticket.',
             'data' => [],
-        ]);
+        ], 403);
     }
 
     public function mitraList()
@@ -214,5 +197,15 @@ class FeedbackController extends Controller
         $this->partnerFeedbackService->markAsReplied((string) $id);
 
         return response()->json([]);
+    }
+
+    protected function allowedQuestionTypes(): array
+    {
+        $user = auth()->user();
+        if (! $user || ! method_exists($user, 'getRoleNames')) {
+            return QuestionType::values();
+        }
+
+        return QuestionType::allowedForRoleNames($user->getRoleNames()->all());
     }
 }

@@ -35,7 +35,9 @@
                         @php
                             $cat = $categories[$u->category] ?? null;
                             $category = $cat ? ' (' . $categories[$u->category] . ')' : $u->category;
-                            $status = $u->ticket_status ?? ($u->replied ? 'responded' : 'new');
+                            $status = $u->ticket_status instanceof \App\Enums\TicketStatus
+                                ? $u->ticket_status->value
+                                : ($u->ticket_status ?? ($u->replied ? 'responded' : 'new'));
                         @endphp
                         <tr>
                             <td></td>
@@ -81,49 +83,42 @@
                             <div class="form-group">
                                 <label for="formName" class="col-sm-3 control-label">Name</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control input-sm" id="formName" >
+                                    <input type="text" class="form-control input-sm" id="formName" readonly>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="formEmail" class="col-sm-3 control-label">Email</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control input-sm" id="formEmail" >
+                                    <input type="text" class="form-control input-sm" id="formEmail" readonly>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="formPhone" class="col-sm-3 control-label">Phone</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control input-sm" id="formPhone" >
+                                    <input type="text" class="form-control input-sm" id="formPhone" readonly>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="formTicketNo" class="col-sm-3 control-label">Ticket</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control input-sm" id="formTicketNo" >
+                                    <input type="text" class="form-control input-sm" id="formTicketNo" readonly>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="formProduct" class="col-sm-3 control-label">Product</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control input-sm" id="formProduct" >
+                                    <input type="text" class="form-control input-sm" id="formProduct" readonly>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="formDescription" class="col-sm-3 control-label">Description</label>
                                 <div class="col-sm-9">
-                                    <textarea class="form-control input-sm" id="formDescription"></textarea>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="formResponse" class="col-sm-3 control-label">Response</label>
-                                <div class="col-sm-9">
-                                    <textarea class="form-control input-sm" id="formResponse" placeholder="Tulis jawaban untuk customer..."></textarea>
+                                    <textarea class="form-control input-sm" id="formDescription" readonly></textarea>
                                 </div>
                             </div>
 
@@ -132,7 +127,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
-                    <button type="button" id="btnReplied" class="btn btn-success btn-sm">Send Response</button>
                 </div>
             </div>
         </div>
@@ -155,9 +149,6 @@
                 $(this).find("td").eq(0).html(i + 1)
             });
             $("#tblFaq").DataTable();
-            $("#btnReplied").click(function(){
-                replied();
-            });
         });
 
         function clearForm() {
@@ -166,69 +157,21 @@
             $('#formPublish').prop('checked', false);
         }
 
-        function replied() {
-            const id = selected;
-            const md = mode;
-            const response = $("#formResponse").val().trim();
-
-            if (response === "") {
-                $.toast({
-                    heading: 'Error',
-                    text: 'Response wajib diisi.',
-                    showHideTransition: 'fade',
-                    position: 'bottom-right',
-                    icon: 'error'
-                });
-                return;
-            }
-
-            if (!AdminSubmit.start("#btnReplied", "Menyimpan...")) {
-                return;
-            }
-
-            $.post(`{{ url('/admin/feedback/pertanyaan/replied') }}`, {id, mode: md, response}, function(res) {
-                $("#modalFormFaq").modal("hide");
-                if (res.msg) {
-                    $.toast({
-                        heading: 'Success',
-                        text: res.msg,
-                        showHideTransition: 'slide',
-                        position: 'bottom-right',
-                        icon: 'success'
-                    });
-                }
-                setTimeout(function(){
-                    window.location.reload();
-                }, 500);
-            }).fail(function(xhr) {
-                AdminSubmit.stop("#btnReplied");
-                const msg = xhr.responseJSON?.msg || 'Gagal mengirim jawaban.';
-                $.toast({
-                    heading: 'Error',
-                    text: msg,
-                    showHideTransition: 'fade',
-                    position: 'bottom-right',
-                    icon: 'error'
-                });
-            });
-        }
-
         function viewSelected(id, md)
         {
             selected = id;
             mode = md;
             $.get(`{{ url('/admin/feedback/pertanyaan/get') }}?id=${selected}&mode=${mode}` , function(res) {
                 const {code, msg, data} = res;
-                const {id, name, email, phone, ticket_no, replied, description, response_message, title, category} = data;
+                const {id, name, email, phone, ticket_no, replied, description, title, category} = data;
                 const cat = categories[category] ?? null;
-                const product = cat ? `${title} (${cat})` : category;
+                const product = title ? (cat ? `${title} (${cat})` : title) : (category || "-");
                 $("#formName").val(name);
                 $("#formEmail").val(email);
                 $("#formPhone").val(phone);
                 $("#formTicketNo").val(ticket_no || "-");
                 $("#formProduct").val(product);
                 $("#formDescription").val(description);
-                $("#formResponse").val(response_message || "");
                 $("#modalFormFaq").modal("show")
             });
         }

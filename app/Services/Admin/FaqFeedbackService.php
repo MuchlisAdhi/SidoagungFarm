@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin;
 
+use App\Enums\QuestionType;
 use App\Enums\TicketStatus;
 use App\Jobs\NotificationJob;
 use App\Jobs\TicketingJob;
@@ -22,8 +23,10 @@ class FaqFeedbackService
         protected TicketNumberService $ticketNumberService
     ) {}
 
-    public function getFaqList(): Collection
+    public function getFaqList(array $allowedQuestionTypes = []): Collection
     {
+        $allowedQuestionTypes = QuestionType::normalize($allowedQuestionTypes);
+
         $q1 = ClientQuestion::select(
             DB::raw('clientquestion.id'),
             DB::raw('clientquestion.name'),
@@ -33,14 +36,22 @@ class FaqFeedbackService
             DB::raw('clientquestion.replied'),
             DB::raw('clientquestion.ticket_status'),
             DB::raw('clientquestion.description'),
-            DB::raw('clientquestion.response_message'),
             DB::raw('clientquestion.created_at'),
-            DB::raw('product.title'),
+            DB::raw('COALESCE(product.title, tq1.subject) as title'),
             DB::raw('product.category'),
             DB::raw("'q1' as mode")
         )->leftJoin('product', function ($join) {
             $join->on('clientquestion.productid', '=', 'product.id');
+        })->leftJoin('tickets as tq1', function ($join) {
+            $join->on('tq1.question_id', '=', 'clientquestion.id')
+                ->where('tq1.question_mode', '=', 'q1');
         });
+
+        if (! QuestionType::isAll($allowedQuestionTypes)) {
+            if (! in_array(QuestionType::Produk->value, $allowedQuestionTypes, true)) {
+                $q1->whereRaw('1 = 0');
+            }
+        }
 
         $q2 = ClientQuestion2::select(
             'id',
@@ -51,12 +62,15 @@ class FaqFeedbackService
             'replied',
             'ticket_status',
             'description',
-            'response_message',
             'created_at',
             DB::raw("'' as title"),
             DB::raw('qtype as category'),
             DB::raw("'q2' as mode")
         );
+
+        if (! QuestionType::isAll($allowedQuestionTypes)) {
+            $q2->whereIn('qtype', $allowedQuestionTypes);
+        }
 
         return $q2->union($q1)
             ->orderBy('created_at', 'desc')
@@ -64,7 +78,7 @@ class FaqFeedbackService
             ->get();
     }
 
-    public function getFaqDetail(string $encryptedId, string $mode): object
+    public function getFaqDetail(string $encryptedId, string $mode, array $allowedQuestionTypes = []): object
     {
         $id = $this->decryptId($encryptedId);
         if (! $id) {
@@ -72,11 +86,11 @@ class FaqFeedbackService
         }
 
         $row = $this->findFaqRow($id, $mode);
-        if (! $row) {
+        if (! $row || ! $this->canAccessFaqRow($row, $mode, $allowedQuestionTypes)) {
             throw new ModelNotFoundException('Data tidak ditemukan.');
         }
 
-        $status = (string) ($row->ticket_status ?? TicketStatus::New->value);
+        $status = $this->resolveTicketStatus($row->ticket_status ?? null);
         if ($status === TicketStatus::New->value) {
             $ticket = $this->ensureTicketExists($mode, (string) $row->id);
             if (($ticket->status?->value ?? '') === TicketStatus::New->value) {
@@ -86,7 +100,7 @@ class FaqFeedbackService
             }
 
             $row = $this->findFaqRow($id, $mode);
-            if (! $row) {
+            if (! $row || ! $this->canAccessFaqRow($row, $mode, $allowedQuestionTypes)) {
                 throw new ModelNotFoundException('Data tidak ditemukan.');
             }
         }
@@ -94,7 +108,12 @@ class FaqFeedbackService
         return $row;
     }
 
-    public function reply(string $encryptedId, string $mode, string $response): string
+    public function reply(
+        string $encryptedId,
+        string $mode,
+        string $response,
+        array $allowedQuestionTypes = []
+    ): string
     {
         $id = $this->decryptId($encryptedId);
         if (! $id) {
@@ -104,6 +123,13 @@ class FaqFeedbackService
         $questionModel = $mode === 'q1' ? ClientQuestion::class : ClientQuestion2::class;
         $question = $questionModel::find($id);
         if (! $question) {
+            throw new ModelNotFoundException('Data tidak ditemukan.');
+        }
+
+        if (! $this->hasQuestionTypeAccess(
+            $this->resolveQuestionType($mode, $question),
+            $allowedQuestionTypes
+        )) {
             throw new ModelNotFoundException('Data tidak ditemukan.');
         }
 
@@ -153,7 +179,6 @@ class FaqFeedbackService
                 'replied',
                 'ticket_status',
                 'description',
-                'response_message',
                 DB::raw("'' as title"),
                 DB::raw('qtype as category')
             )->where('id', $id)->first();
@@ -168,11 +193,13 @@ class FaqFeedbackService
             DB::raw('clientquestion.replied'),
             DB::raw('clientquestion.ticket_status'),
             DB::raw('clientquestion.description'),
-            DB::raw('clientquestion.response_message'),
-            DB::raw('product.title'),
+            DB::raw('COALESCE(product.title, tq1.subject) as title'),
             DB::raw('product.category')
         )->leftJoin('product', function ($join) {
             $join->on('clientquestion.productid', '=', 'product.id');
+        })->leftJoin('tickets as tq1', function ($join) {
+            $join->on('tq1.question_id', '=', 'clientquestion.id')
+                ->where('tq1.question_mode', '=', 'q1');
         })->where('clientquestion.id', $id)->first();
     }
 
@@ -237,5 +264,48 @@ class FaqFeedbackService
         } catch (Throwable) {
             return null;
         }
+    }
+
+    protected function canAccessFaqRow(object $row, string $mode, array $allowedQuestionTypes): bool
+    {
+        if ($mode === 'q1') {
+            return $this->hasQuestionTypeAccess(QuestionType::Produk->value, $allowedQuestionTypes);
+        }
+
+        return $this->hasQuestionTypeAccess((string) ($row->category ?? ''), $allowedQuestionTypes);
+    }
+
+    protected function resolveQuestionType(string $mode, object $question): ?string
+    {
+        if ($mode === 'q1') {
+            return QuestionType::Produk->value;
+        }
+
+        $questionType = trim((string) ($question->qtype ?? ''));
+        return $questionType !== '' ? $questionType : null;
+    }
+
+    protected function hasQuestionTypeAccess(?string $questionType, array $allowedQuestionTypes): bool
+    {
+        $allowedQuestionTypes = QuestionType::normalize($allowedQuestionTypes);
+        if (QuestionType::isAll($allowedQuestionTypes)) {
+            return true;
+        }
+
+        if (! $questionType) {
+            return false;
+        }
+
+        return in_array($questionType, $allowedQuestionTypes, true);
+    }
+
+    protected function resolveTicketStatus(mixed $ticketStatus): string
+    {
+        if ($ticketStatus instanceof TicketStatus) {
+            return $ticketStatus->value;
+        }
+
+        $status = trim((string) $ticketStatus);
+        return $status !== '' ? $status : TicketStatus::New->value;
     }
 }

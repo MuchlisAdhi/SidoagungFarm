@@ -39,9 +39,9 @@
                             <div class="form-group mb-3">
                                 <select class="form-control" id="formType" name="formType" required>
                                     <option value="">-- Pilih Topik --</option>
-                                    <option value="Produk">Produk</option>
-                                    <option value="Kemitraan">Kemitraan</option>
-                                    <option value="Karir">Karir</option>
+                                    @foreach ($questionTypes as $questionType)
+                                        <option value="{{ $questionType }}">{{ $questionType }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="form-group mb-4">

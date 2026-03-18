@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\QuestionType;
 use App\Http\Requests\Web\CareerApplyRequest;
 use App\Http\Requests\Web\JoinAsPartnerRequest;
 use App\Http\Requests\Web\SubmitQuestionRequest;
@@ -24,7 +25,9 @@ class WeController extends Controller
     ) {}
 
     public function summary() {
-        return view("we.summary", []);
+        return view("we.summary", [
+            'questionTypes' => QuestionType::values(),
+        ]);
     }
 
     public function question(SubmitQuestionRequest $request)
