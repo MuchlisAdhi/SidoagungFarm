@@ -124,8 +124,7 @@ class PhpMailerService
         ?string $questionId = null,
         ?string $ticketId = null
     ): void {
-        $activeConfig = EmailConfig::where('is_active', true)->first();
-        $toEmail = $this->resolveAdminNotificationEmail($activeConfig);
+        $toEmail = $this->getAdminNotificationRecipientEmail();
         if (! $toEmail) {
             logger()->warning('Admin notification email belum dikonfigurasi.', [
                 'ticket_no' => $ticketNo,
@@ -158,6 +157,13 @@ class PhpMailerService
             logoPath: $mailTemplate->logoPath(),
             logoCid: $mailTemplate->logoCid
         );
+    }
+
+    public function getAdminNotificationRecipientEmail(): ?string
+    {
+        $activeConfig = EmailConfig::where('is_active', true)->first();
+
+        return $this->resolveAdminNotificationEmail($activeConfig);
     }
 
     /**
