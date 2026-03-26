@@ -74,7 +74,7 @@ class AdminController extends Controller
         {
             session()->flash("error", "User tidak terdaftar.");
         }else{
-            if(strtolower($user->email) == "admin@admin.com")
+            if(strtolower($user->email) == "admin@sidoagungfarm.com")
             {
                 session()->flash("error", "User tidak dapat dihapus.");
             }else{
