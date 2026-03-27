@@ -9,13 +9,14 @@ use App\Models\Product;
 use App\Models\Ticket;
 use App\Services\PhpMailerService;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Queue\SerializesModels;
 
-class NotificationJob implements ShouldQueue
+class NotificationJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -26,6 +27,7 @@ class NotificationJob implements ShouldQueue
     protected const TEMPLATE_AUTO_RESPONSE_CUSTOMER = 'auto-response-customer';
     protected const TEMPLATE_REPLY_CUSTOMER = 'reply-customer';
     protected const TEMPLATE_NOTIFICATION_ADMIN = 'notification-admin';
+    public int $uniqueFor = 10800;
 
     public function __construct(
         public string $notificationType,
@@ -39,6 +41,11 @@ class NotificationJob implements ShouldQueue
     public function middleware(): array
     {
         return [new RateLimited('notification-emails-global')];
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->notificationType.':'.$this->questionMode.':'.$this->questionId;
     }
 
     public function handle(PhpMailerService $phpMailerService): void
