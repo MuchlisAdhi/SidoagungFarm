@@ -180,3 +180,10 @@ Schedule::call(function (): void {
     ->name('ticketing-and-notification-dispatcher')
     ->withoutOverlapping()
     ->everyMinute();
+
+if ((string) config('queue.default') === 'database') {
+    Schedule::command('queue:work database --queue=tickets,emails,default --sleep=1 --tries=3 --timeout=120 --stop-when-empty')
+        ->name('database-queue-worker')
+        ->withoutOverlapping()
+        ->everyMinute();
+}
