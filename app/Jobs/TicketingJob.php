@@ -9,19 +9,27 @@ use App\Models\Product;
 use App\Models\Ticket;
 use App\Services\TicketNumberService;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 
-class TicketingJob implements ShouldQueue
+class TicketingJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public int $uniqueFor = 600;
 
     public function __construct(public string $questionMode, public string $questionId)
     {
         $this->onQueue('tickets');
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->questionMode.':'.$this->questionId;
     }
 
     public function handle(TicketNumberService $ticketNumberService): void
