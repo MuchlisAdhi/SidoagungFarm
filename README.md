@@ -595,7 +595,7 @@ php artisan migrate --force
 4. Pasang cron scheduler:
 
 ```bash
-php -q /home/sidoagu1/sidoagungfarm/artisan schedule:run >> /home/sidoagu1/sidoagungfarm/storage/logs/log-schedule.log 2>&1
+/bin/bash -lc 'cd /home/sidoagu1/sidoagungfarm && /usr/local/bin/php artisan schedule:run --no-interaction >> storage/logs/log-schedule.log 2>&1'
 ```
 
 5. Tidak perlu terminal interaktif. Cukup pastikan cron scheduler aktif setiap menit.
@@ -609,14 +609,14 @@ php artisan queue:work database --queue=tickets,emails,default --sleep=1 --tries
 Jika ingin worker dipisah dari scheduler, Anda bisa menambahkan cron worker terpisah:
 
 ```bash
-php -q /home/sidoagu1/sidoagungfarm/artisan queue:work --queue=tickets --sleep=1 --tries=3 --stop-when-empty >> /home/sidoagu1/sidoagungfarm/storage/logs/log-queue-tickets.log 2>&1
-php -q /home/sidoagu1/sidoagungfarm/artisan queue:work --queue=emails --sleep=1 --tries=3 --stop-when-empty >> /home/sidoagu1/sidoagungfarm/storage/logs/log-queue-emails.log 2>&1
+/bin/bash -lc 'cd /home/sidoagu1/sidoagungfarm && /usr/local/bin/php artisan queue:work database --queue=tickets --sleep=1 --tries=3 --stop-when-empty --no-interaction >> storage/logs/log-queue-tickets.log 2>&1'
+/bin/bash -lc 'cd /home/sidoagu1/sidoagungfarm && /usr/local/bin/php artisan queue:work database --queue=emails --sleep=1 --tries=3 --stop-when-empty --no-interaction >> storage/logs/log-queue-emails.log 2>&1'
 ```
 
 Alternatif path PHP bawaan cPanel:
 
 ```bash
-/usr/local/bin/php /home/sidoagu1/sidoagungfarm/artisan schedule:run >> /home/sidoagu1/sidoagungfarm/storage/logs/log-schedule.log 2>&1
+/usr/local/bin/php /home/sidoagu1/sidoagungfarm/artisan schedule:run --no-interaction >> /home/sidoagu1/sidoagungfarm/storage/logs/log-schedule.log 2>&1
 ```
 
 Catatan:
