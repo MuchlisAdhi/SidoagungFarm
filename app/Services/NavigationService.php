@@ -178,9 +178,25 @@ class NavigationService implements INavigationService
             foreach ($permissionNames as $permissionName) {
                 $permissions[] = Permission::findOrCreate($permissionName, 'web');
             }
+            $permissions = collect($permissions)
+                ->unique(fn (Permission $permission): int|string => $permission->getKey())
+                ->values();
 
             $adminRole = Role::findOrCreate('Admin Access', 'web');
-            $adminRole->syncPermissions($permissions);
+            $expectedPermissionIds = $permissions->pluck('id')
+                ->map(fn ($id): int => (int) $id)
+                ->sort()
+                ->values()
+                ->all();
+            $currentPermissionIds = $adminRole->permissions()
+                ->pluck('permissions.id')
+                ->map(fn ($id): int => (int) $id)
+                ->sort()
+                ->values()
+                ->all();
+            if ($expectedPermissionIds !== $currentPermissionIds) {
+                $adminRole->syncPermissions($expectedPermissionIds);
+            }
 
             if (Schema::hasTable('users')) {
                 $adminUser = User::query()

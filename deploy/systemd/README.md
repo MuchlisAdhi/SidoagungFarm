@@ -38,15 +38,47 @@ sudo systemctl reload laravel-queue-worker.service
 
 `systemd` tidak tersedia untuk user shared hosting biasa. Gunakan Cron Jobs via UI cPanel:
 
-1. Cron tiap menit untuk scheduler:
+Path final hosting yang dipakai:
+
+- Project root: `/home/sidoagu1/sidoagungfarm`
+- Artisan: `/home/sidoagu1/sidoagungfarm/artisan`
+- Log dir: `/home/sidoagu1/sidoagungfarm/storage/logs`
+
+1. Buat Cron Job scheduler (wajib, tiap menit)
+
+- Minute: `*`
+- Hour: `*`
+- Day: `*`
+- Month: `*`
+- Weekday: `*`
+- Command (disarankan, paling aman di cPanel):
 
 ```bash
-php -q /home/<cpanel_user>/<app_dir>/artisan schedule:run >> /home/<cpanel_user>/<app_dir>/storage/logs/log-schedule.log 2>&1
+/bin/bash -lc 'cd /home/sidoagu1/sidoagungfarm && /usr/local/bin/php artisan schedule:run --no-interaction >> storage/logs/log-schedule.log 2>&1'
 ```
 
-2. Jika tidak ingin worker dipicu dari scheduler, tambahkan cron worker:
+2. Alternatif command lebih singkat:
 
 ```bash
-php -q /home/<cpanel_user>/<app_dir>/artisan queue:work database --queue=tickets,emails,default --sleep=1 --tries=3 --timeout=120 --stop-when-empty >> /home/<cpanel_user>/<app_dir>/storage/logs/log-queue-worker.log 2>&1
+/usr/local/bin/php /home/sidoagu1/sidoagungfarm/artisan schedule:run --no-interaction >> /home/sidoagu1/sidoagungfarm/storage/logs/log-schedule.log 2>&1
+```
+
+3. Opsional: jika ingin worker dipisah dari scheduler, tambahkan Cron Job worker (tiap menit):
+
+- Minute: `*`
+- Hour: `*`
+- Day: `*`
+- Month: `*`
+- Weekday: `*`
+- Command (disarankan):
+
+```bash
+/bin/bash -lc 'cd /home/sidoagu1/sidoagungfarm && /usr/local/bin/php artisan queue:work database --queue=tickets,emails,default --sleep=1 --tries=3 --timeout=120 --stop-when-empty --no-interaction >> storage/logs/log-queue-worker.log 2>&1'
+```
+
+4. Pastikan folder log ada:
+
+```bash
+mkdir -p /home/sidoagu1/sidoagungfarm/storage/logs
 ```
 
