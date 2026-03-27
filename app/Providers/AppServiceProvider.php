@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Services\Contracts\INavigationService;
 use App\Services\NavigationService;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        RateLimiter::for('notification-emails-global', function (): Limit {
+            return Limit::perHour(1)->by('notification-emails-global');
+        });
+
         if (app()->runningInConsole()) {
             return;
         }

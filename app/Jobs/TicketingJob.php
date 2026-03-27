@@ -81,12 +81,12 @@ class TicketingJob implements ShouldQueue
 
         if ($isNewTicket && $ticket) {
             try {
-                NotificationJob::dispatchSync(
+                NotificationJob::dispatch(
                     notificationType: 'ticket-created',
                     questionMode: $this->questionMode,
                     questionId: (string) $question->id,
                     ticketId: (string) $ticket->id
-                );
+                )->onQueue('emails');
             } catch (\Throwable $th) {
                 report($th);
             }

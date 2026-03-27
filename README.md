@@ -529,40 +529,38 @@ Project ini memakai job:
 
 ### Menjalankan Job di Lokal
 
-Secara default `.env.example` masih menggunakan:
-
-```env
-QUEUE_CONNECTION=sync
-```
-
-Mode `sync` artinya job langsung dieksekusi saat request berjalan, jadi tidak perlu worker terpisah.
-
-Jika ingin simulasi async queue di lokal:
-
-1. Ubah `.env`:
+Secara default `.env.example` menggunakan:
 
 ```env
 QUEUE_CONNECTION=database
 ```
 
-2. Pastikan tabel queue sudah ada (migration `2026_03_10_014221_create_jobs_table.php`):
+Karena mode async dipakai, worker perlu dijalankan terpisah.
+
+1. Pastikan tabel queue sudah ada (migration `2026_03_10_014221_create_jobs_table.php`):
 
 ```bash
 php artisan migrate
 ```
 
-3. Jalankan worker di terminal terpisah:
+2. Jalankan worker di terminal terpisah:
 
 ```bash
-php artisan queue:work --queue=default --tries=3 --timeout=120
+php artisan queue:work database --queue=tickets,emails,default --sleep=1 --tries=3 --timeout=120
 ```
 
-4. Cek job gagal:
+3. Cek job gagal:
 
 ```bash
 php artisan queue:failed
 php artisan queue:retry all
 ```
+
+Catatan throttling email:
+
+- `NotificationJob` memakai Job Middleware `RateLimiter` dengan limit global `1 job/jam`.
+- Limit ini berlaku untuk seluruh jenis email di `NotificationJob` (termasuk `auto-reply` dan `notification-admin`) tanpa pengecualian.
+- Untuk event `ticket-created`, email admin dijadwalkan sebagai job terpisah dengan delay `1 jam` setelah auto-reply customer.
 
 ### Menjalankan Job di cPanel Shared Hosting
 
@@ -585,7 +583,7 @@ Catatan:
 APP_ENV=production
 APP_DEBUG=false
 APP_TIMEZONE=Asia/Jakarta
-QUEUE_CONNECTION=sync
+QUEUE_CONNECTION=database
 ```
 
 3. Jalankan migration di server (sekali saat deploy/ubah schema):
@@ -594,13 +592,21 @@ QUEUE_CONNECTION=sync
 php artisan migrate --force
 ```
 
-4. Jika `QUEUE_CONNECTION=sync` (sesuai project saat ini), cukup pasang cron scheduler:
+4. Pasang cron scheduler:
 
 ```bash
 php -q /home/sidoagu1/sidoagungfarm/artisan schedule:run >> /home/sidoagu1/sidoagungfarm/storage/logs/log-schedule.log 2>&1
 ```
 
-5. Jika suatu saat Anda ganti ke async queue (`QUEUE_CONNECTION=database`), tambahkan worker cron terpisah:
+5. Tidak perlu terminal interaktif. Cukup pastikan cron scheduler aktif setiap menit.
+
+Pada project ini, saat `QUEUE_CONNECTION=database`, worker queue sudah dijalankan oleh scheduler lewat `routes/console.php` dengan command:
+
+```bash
+php artisan queue:work database --queue=tickets,emails,default --sleep=1 --tries=3 --timeout=120 --stop-when-empty
+```
+
+Jika ingin worker dipisah dari scheduler, Anda bisa menambahkan cron worker terpisah:
 
 ```bash
 php -q /home/sidoagu1/sidoagungfarm/artisan queue:work --queue=tickets --sleep=1 --tries=3 --stop-when-empty >> /home/sidoagu1/sidoagungfarm/storage/logs/log-queue-tickets.log 2>&1
@@ -620,6 +626,17 @@ Catatan:
 mkdir -p /home/sidoagu1/sidoagungfarm/storage/logs
 ```
 - Path project harus menunjuk folder root Laravel (folder yang berisi file `artisan`), bukan folder `public`.
-- Saat `QUEUE_CONNECTION=sync`, command `queue:work` tidak wajib dan boleh tidak dijalankan.
 - Saat mode async, gunakan queue name `tickets` dan `emails` sesuai job pada project ini.
 - Untuk melihat error queue, cek `storage/logs/laravel.log`, `storage/logs/log-schedule.log`, `storage/logs/log-queue-tickets.log`, dan `storage/logs/log-queue-emails.log`.
+
+## Systemd Service Template
+
+Template service untuk auto-start dan auto-restart worker ada di:
+
+- `deploy/systemd/laravel-queue-worker.service`
+- `deploy/systemd/README.md`
+
+Catatan penting:
+
+- `systemd` hanya bisa dipakai di VPS/dedicated server (butuh akses root).
+- Pada shared hosting cPanel tanpa terminal/root, gunakan Cron Jobs via UI cPanel (lihat `deploy/systemd/README.md`).

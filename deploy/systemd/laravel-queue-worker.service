@@ -1,0 +1,22 @@
+[Unit]
+Description=Laravel Queue Worker (database queue)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/home/youruser/yourapp
+ExecStart=/usr/bin/php artisan queue:work database --queue=tickets,emails,default --sleep=1 --tries=3 --timeout=120 --max-time=3600
+ExecReload=/usr/bin/php artisan queue:restart
+Restart=always
+RestartSec=5
+KillSignal=SIGTERM
+TimeoutStopSec=3600
+Environment=APP_ENV=production
+Environment=APP_DEBUG=false
+StandardOutput=append:/home/youruser/yourapp/storage/logs/systemd-queue-worker.log
+StandardError=append:/home/youruser/yourapp/storage/logs/systemd-queue-worker.log
+
+[Install]
+WantedBy=multi-user.target
