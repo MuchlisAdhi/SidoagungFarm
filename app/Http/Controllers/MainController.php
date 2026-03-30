@@ -75,7 +75,7 @@ class MainController extends Controller
                 'links' => [
                     // ['label' => 'Produk Kami', 'url' => 'https://www.product.sidoagungfarm.com/', 'external' => true],
                     ['label' => 'Produk Pakan', 'url' => route('products')],
-                    ['label' => 'Kemitraan', 'url' => route('we.join-us')],
+                    // ['label' => 'Bergabung Menjadi Mitra', 'url' => route('we.join-us')],
                 ],
             ],
             [
@@ -97,7 +97,6 @@ class MainController extends Controller
                 'title' => 'Hubungi Kami',
                 'links' => [
                     ['label' => 'Talk To Us', 'url' => route('we.summary')],
-                    ['label' => 'Bergabung Menjadi Mitra', 'url' => route('we.join-us')],
                 ],
             ],
         ];
@@ -116,8 +115,6 @@ class MainController extends Controller
             ['loc' => route('csr.news'), 'changefreq' => 'daily', 'priority' => '0.8', 'lastmod' => $now],
             ['loc' => route('csr.resep'), 'changefreq' => 'weekly', 'priority' => '0.8', 'lastmod' => $now],
             ['loc' => route('we.summary'), 'changefreq' => 'weekly', 'priority' => '0.8', 'lastmod' => $now],
-            ['loc' => route('we.join-us'), 'changefreq' => 'weekly', 'priority' => '0.7', 'lastmod' => $now],
-            ['loc' => route('we.be-our-partner'), 'changefreq' => 'weekly', 'priority' => '0.7', 'lastmod' => $now],
             ['loc' => route('we.career'), 'changefreq' => 'weekly', 'priority' => '0.7', 'lastmod' => $now],
             ['loc' => route('sitemap'), 'changefreq' => 'monthly', 'priority' => '0.6', 'lastmod' => $now],
         ];

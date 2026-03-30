@@ -25,8 +25,13 @@ class WeController extends Controller
     ) {}
 
     public function summary() {
+        $questionTypes = array_values(array_filter(
+            QuestionType::values(),
+            static fn (string $questionType) => $questionType !== QuestionType::Kemitraan->value
+        ));
+
         return view("we.summary", [
-            'questionTypes' => QuestionType::values(),
+            'questionTypes' => $questionTypes,
         ]);
     }
 
