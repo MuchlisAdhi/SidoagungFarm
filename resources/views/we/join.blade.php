@@ -1,4 +1,6 @@
 @extends('shared.master')
+@section('meta_title', 'Menjadi Mitra | PT. Sidoagung Farm')
+@section('canonical_url', route('we.join-us'))
 
 @section('css')
     <style>
@@ -69,7 +71,7 @@
                                 </div>
                                 <div class="form-group col-md-6 mb-3">
                                     <input type="text" class="form-control" id="formCategory" name="formCategory"
-                                        value="Kemitraan" readonly required>
+                                        value="{{ \App\Enums\QuestionType::Kemitraan->value }}" readonly required>
                                 </div>
                             </div>
                             <div class="form-group mb-3">

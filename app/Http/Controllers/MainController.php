@@ -75,7 +75,7 @@ class MainController extends Controller
                 'links' => [
                     // ['label' => 'Produk Kami', 'url' => 'https://www.product.sidoagungfarm.com/', 'external' => true],
                     ['label' => 'Produk Pakan', 'url' => route('products')],
-                    // ['label' => 'Bergabung Menjadi Mitra', 'url' => route('we.join-us')],
+                    ['label' => 'Menjadi Mitra', 'url' => route('we.join-us')],
                 ],
             ],
             [
@@ -106,17 +106,21 @@ class MainController extends Controller
 
     public function sitemapXml()
     {
+        $baseUrl = rtrim((string) config('app.url'), '/');
         $now = now()->toAtomString();
+        $absolute = static fn (string $path): string => $baseUrl . $path;
+
         $urls = [
-            ['loc' => url('/'), 'changefreq' => 'weekly', 'priority' => '1.0', 'lastmod' => $now],
-            ['loc' => route('about-us'), 'changefreq' => 'monthly', 'priority' => '0.9', 'lastmod' => $now],
-            ['loc' => route('products'), 'changefreq' => 'weekly', 'priority' => '0.9', 'lastmod' => $now],
-            ['loc' => route('csr.summary'), 'changefreq' => 'weekly', 'priority' => '0.8', 'lastmod' => $now],
-            ['loc' => route('csr.news'), 'changefreq' => 'daily', 'priority' => '0.8', 'lastmod' => $now],
-            ['loc' => route('csr.resep'), 'changefreq' => 'weekly', 'priority' => '0.8', 'lastmod' => $now],
-            ['loc' => route('we.summary'), 'changefreq' => 'weekly', 'priority' => '0.8', 'lastmod' => $now],
-            ['loc' => route('we.career'), 'changefreq' => 'weekly', 'priority' => '0.7', 'lastmod' => $now],
-            ['loc' => route('sitemap'), 'changefreq' => 'monthly', 'priority' => '0.6', 'lastmod' => $now],
+            ['loc' => $absolute('/'), 'changefreq' => 'weekly', 'priority' => '1.0', 'lastmod' => $now],
+            ['loc' => $absolute(route('about-us', [], false)), 'changefreq' => 'monthly', 'priority' => '0.9', 'lastmod' => $now],
+            ['loc' => $absolute(route('products', [], false)), 'changefreq' => 'weekly', 'priority' => '0.9', 'lastmod' => $now],
+            ['loc' => $absolute(route('csr.summary', [], false)), 'changefreq' => 'weekly', 'priority' => '0.8', 'lastmod' => $now],
+            ['loc' => $absolute(route('csr.news', [], false)), 'changefreq' => 'daily', 'priority' => '0.8', 'lastmod' => $now],
+            ['loc' => $absolute(route('csr.resep', [], false)), 'changefreq' => 'weekly', 'priority' => '0.8', 'lastmod' => $now],
+            ['loc' => $absolute(route('we.summary', [], false)), 'changefreq' => 'weekly', 'priority' => '0.8', 'lastmod' => $now],
+            ['loc' => $absolute(route('we.join-us', [], false)), 'changefreq' => 'weekly', 'priority' => '0.7', 'lastmod' => $now],
+            ['loc' => $absolute(route('we.career', [], false)), 'changefreq' => 'weekly', 'priority' => '0.7', 'lastmod' => $now],
+            ['loc' => $absolute(route('sitemap', [], false)), 'changefreq' => 'monthly', 'priority' => '0.6', 'lastmod' => $now],
         ];
 
         return response()

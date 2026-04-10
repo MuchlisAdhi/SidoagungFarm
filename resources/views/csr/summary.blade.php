@@ -1,4 +1,6 @@
 @extends('shared.master')
+@section('meta_title', 'CSR Summary | PT. Sidoagung Farm')
+@section('canonical_url', route('csr.summary'))
 
 @section('content')
 <x-banner-summary mode="csr"></x-banner-summary>

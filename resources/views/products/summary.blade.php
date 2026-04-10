@@ -1,4 +1,6 @@
 @extends('shared.master')
+@section('meta_title', 'Produk Pakan | PT. Sidoagung Farm')
+@section('canonical_url', route('products'))
 
 @section('content')
     @php

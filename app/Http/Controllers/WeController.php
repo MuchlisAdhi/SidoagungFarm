@@ -25,13 +25,8 @@ class WeController extends Controller
     ) {}
 
     public function summary() {
-        $questionTypes = array_values(array_filter(
-            QuestionType::values(),
-            static fn (string $questionType) => $questionType !== QuestionType::Kemitraan->value
-        ));
-
         return view("we.summary", [
-            'questionTypes' => $questionTypes,
+            'questionTypes' => QuestionType::values(),
         ]);
     }
 
@@ -58,7 +53,7 @@ class WeController extends Controller
     }
 
     public function beOurPartner() {
-        return redirect()->route("we.join-us");
+        return redirect()->route("we.join-us", [], 301);
     }
 
     public function career($id = "") { 

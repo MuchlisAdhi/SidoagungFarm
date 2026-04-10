@@ -5,7 +5,7 @@ namespace App\Enums;
 enum QuestionType: string
 {
     case Produk = 'Produk';
-    case Kemitraan = 'Kemitraan';
+    case Kemitraan = 'Menjadi Mitra';
     case Karir = 'Karir';
     case VendorPenawaran = 'Vendor / Penawaran';
 

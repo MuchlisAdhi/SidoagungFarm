@@ -1,4 +1,6 @@
 @extends('shared.master')
+@section('meta_title', 'Detail Karir | PT. Sidoagung Farm')
+@section('canonical_url', route('we.career'))
 @section('body_class', 'force-sticky-header')
 
 @section('content')

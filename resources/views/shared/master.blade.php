@@ -6,19 +6,25 @@
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-		<meta name="author" content="Sido Agung Group"/>
+      <meta name="author" content="Sido Agung Group"/>
 		<meta name="description" content="@yield('meta_description', 'PT. Sidoagung Farm adalah perusahaan pakan ternak berkualitas di Indonesia, bagian dari Sido Agung Group.')"/>
 		<meta name="keywords" content="Sido Agung Group, Sidoagung Farm, Sidoagung Foods Processing, Sido Agung Farm, Sidosari Multi Farm, Asia Pangan Utama">
+      <meta name="robots" content="index,follow,max-image-preview:large">
+      @php
+         $canonicalPath = request()->path();
+         $canonicalPath = $canonicalPath === '/' ? '' : '/' . ltrim($canonicalPath, '/');
+         $canonicalDefault = rtrim((string) config('app.url'), '/') . $canonicalPath;
+      @endphp
       <meta property="og:type" content="website">
       <meta property="og:title" content="@yield('meta_title', 'PT. Sidoagung Farm - Menjadi tuan rumah di negeri sendiri')">
       <meta property="og:description" content="@yield('meta_description', 'PT. Sidoagung Farm adalah perusahaan pakan ternak berkualitas di Indonesia, bagian dari Sido Agung Group.')">
-      <meta property="og:url" content="@yield('canonical_url', request()->url())">
+      <meta property="og:url" content="@yield('canonical_url', $canonicalDefault)">
       <meta property="og:image" content="{{ asset('images/saf/logo.png') }}">
       <meta name="twitter:card" content="summary_large_image">
 
       <meta name="csrf-token" content="{{ csrf_token() }}" />
       <title>@yield('meta_title', 'PT. Sidoagung Farm - Menjadi tuan rumah di negeri sendiri')</title>
-      <link rel="canonical" href="@yield('canonical_url', request()->url())" />
+      <link rel="canonical" href="@yield('canonical_url', $canonicalDefault)" />
       <link rel="shortcut icon" href="{{ asset('images/saf/favicon.png')}}" />
 
       @php

@@ -11,6 +11,8 @@
         'broiler'    => "Ayam Potong",
         'Kemitraan' => "Kemitraan",
         'kemitraan' => "Kemitraan",
+        'Menjadi Mitra' => "Menjadi Mitra",
+        'menjadi mitra' => "Menjadi Mitra",
     ];
 @endphp
 

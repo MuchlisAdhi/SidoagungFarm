@@ -6,6 +6,7 @@ use App\Services\Contracts\INavigationService;
 use App\Services\NavigationService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,6 +31,15 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('notification-emails-global', function (): Limit {
             return Limit::perHour(1)->by('notification-emails-global');
         });
+
+        $appUrl = (string) config('app.url');
+        if ($appUrl !== '') {
+            URL::forceRootUrl(rtrim($appUrl, '/'));
+
+            if (str_starts_with(strtolower($appUrl), 'https://')) {
+                URL::forceScheme('https');
+            }
+        }
 
         if (app()->runningInConsole()) {
             return;

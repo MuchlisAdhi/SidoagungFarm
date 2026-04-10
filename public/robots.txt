@@ -1,3 +1,3 @@
 User-agent: *
 Disallow:
-Sitemap: https://sidoagungfarm.com/sitemap.xml
+Sitemap: https://www.sidoagungfarm.com/sitemap.xml

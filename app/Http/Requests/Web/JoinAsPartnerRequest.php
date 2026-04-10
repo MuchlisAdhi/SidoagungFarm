@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Web;
 
+use App\Enums\QuestionType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class JoinAsPartnerRequest extends FormRequest
 {
@@ -19,7 +21,7 @@ class JoinAsPartnerRequest extends FormRequest
             'formBod' => ['required', 'date'],
             'formPhone' => ['required', 'string', 'max:30'],
             'formEmail' => ['required', 'email', 'max:255'],
-            'formCategory' => ['required', 'in:Kemitraan'],
+            'formCategory' => ['required', Rule::in([QuestionType::Kemitraan->value])],
             'formCompanyName' => ['required', 'string', 'max:255'],
             'formCompanyLocation' => ['required', 'string', 'max:255'],
             'formCompanyDescription' => ['required', 'string', 'max:10000'],

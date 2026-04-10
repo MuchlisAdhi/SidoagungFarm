@@ -19,7 +19,10 @@ class SubmitQuestionRequest extends FormRequest
             'formName' => ['required', 'string', 'max:255'],
             'formEmail' => ['required', 'email', 'max:255'],
             'formPhone' => ['required', 'string', 'max:30'],
-            'formType' => ['required', Rule::in(QuestionType::values())],
+            'formType' => ['required', Rule::in(array_values(array_unique([
+                ...QuestionType::values(),
+                'Kemitraan',
+            ])))],
             'formDescription' => ['required', 'string', 'max:10000'],
         ];
     }
@@ -30,7 +33,9 @@ class SubmitQuestionRequest extends FormRequest
             'name' => (string) $this->input('formName'),
             'email' => (string) $this->input('formEmail'),
             'phone' => (string) $this->input('formPhone'),
-            'qtype' => (string) $this->input('formType'),
+            'qtype' => (string) ($this->input('formType') === 'Kemitraan'
+                ? QuestionType::Kemitraan->value
+                : $this->input('formType')),
             'description' => (string) $this->input('formDescription'),
         ];
     }

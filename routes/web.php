@@ -53,7 +53,7 @@ Route::controller(ProductController::class)->name("products")->prefix("products"
 });
 
 Route::controller(CsrController::class)->name("csr")->prefix("csr")->group(function(){
-    Route::redirect('/', '/summary');
+    Route::redirect('/', '/csr/summary', 301);
     Route::get('/summary', 'summary')->name(".summary");
     Route::get('/news', 'news')->name(".news");
     Route::get('/resep', 'resep')->name(".resep");
@@ -63,7 +63,7 @@ Route::controller(CsrController::class)->name("csr")->prefix("csr")->group(funct
 });
 
 Route::controller(WeController::class)->name("we")->prefix("talk-us")->group(function(){
-    Route::redirect('/', '/summary');
+    Route::redirect('/', '/talk-us/summary', 301);
     Route::get('/summary', 'summary')->name(".summary");
     Route::post('/sent-question', 'question')->name(".question");
     Route::get('/join-us', 'joinUs')->name(".join-us");

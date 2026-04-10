@@ -1,4 +1,6 @@
 @extends('shared.master')
+@section('meta_title', 'Hubungi Kami | PT. Sidoagung Farm')
+@section('canonical_url', route('we.summary'))
 
 @section('css')
     <style>
@@ -56,9 +58,22 @@
                                     placeholder="Nomor Telepon" required>
                             </div>
                             <div class="form-group mb-3">
+                                @php
+                                    $questionTypeOptions = $questionTypes ?? \App\Enums\QuestionType::values();
+                                    $questionTypeOptions = array_values(array_filter(array_map(
+                                        static fn ($questionType) => trim((string) $questionType),
+                                        $questionTypeOptions
+                                    )));
+
+                                    if (! in_array(\App\Enums\QuestionType::Kemitraan->value, $questionTypeOptions, true)) {
+                                        $questionTypeOptions[] = \App\Enums\QuestionType::Kemitraan->value;
+                                    }
+
+                                    $questionTypeOptions = array_values(array_unique($questionTypeOptions));
+                                @endphp
                                 <select class="form-control" id="formType" name="formType" required>
                                     <option value="">-- Pilih Topik --</option>
-                                    @foreach ($questionTypes as $questionType)
+                                    @foreach ($questionTypeOptions as $questionType)
                                         <option value="{{ $questionType }}">{{ $questionType }}</option>
                                     @endforeach
                                 </select>

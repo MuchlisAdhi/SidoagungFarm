@@ -1,4 +1,6 @@
 @extends('shared.master')
+@section('meta_title', 'Resep | PT. Sidoagung Farm')
+@section('canonical_url', route('csr.resep'))
 
 @section('content')
     <x-banner-summary mode="resep"></x-banner-summary>
