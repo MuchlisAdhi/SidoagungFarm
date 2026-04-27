@@ -33,7 +33,9 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $appUrl = (string) config('app.url');
-        if ($appUrl !== '') {
+        $shouldForceRootUrl = $appUrl !== '' && ! app()->environment(['local', 'testing']);
+
+        if ($shouldForceRootUrl) {
             URL::forceRootUrl(rtrim($appUrl, '/'));
 
             if (str_starts_with(strtolower($appUrl), 'https://')) {

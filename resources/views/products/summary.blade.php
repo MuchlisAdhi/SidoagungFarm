@@ -105,9 +105,17 @@
                     </div>
                 </div>
             </div>
+            @php
+                $productMoreUrl = app()->environment('local') ? route('products') : 'https://www.product.sidoagungfarm.com/';
+                $productMoreExternal = ! app()->environment('local');
+            @endphp
             <div class="row">
                 <div class="col-md-12 d-flex justify-content-end align-items-center mt-3">
-                    <a href="https://www.product.sidoagungfarm.com/" class="btn btn-primary mr-2" target="_blank" rel="noopener noreferrer">Selengkapnya</a>
+                    <a
+                        href="{{ $productMoreUrl }}"
+                        class="btn btn-primary mr-2"
+                        @if ($productMoreExternal) target="_blank" rel="noopener noreferrer" @endif
+                    >Selengkapnya</a>
                     <span class="feed-tooltip">
                         <i class="fas fa-question-circle feed-tooltip-icon" aria-hidden="true"></i>
                         <span class="feed-tooltiptext" style="width: 150px;">Untuk keterangan produk pakan PT. Sidoagung Farm selengkapnya klik disini </span>

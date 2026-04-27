@@ -350,6 +350,12 @@
         height: 230px!important;
     }
 
+    main .form-group label,
+    main .custom-control-label {
+        white-space: normal;
+        overflow-wrap: break-word;
+    }
+
 }
 
 

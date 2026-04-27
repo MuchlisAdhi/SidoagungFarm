@@ -66,6 +66,89 @@
         .feed-tooltip:hover .feed-tooltiptext {
             visibility: visible;
         }
+
+        .apply-file-wrapper {
+            width: 100%;
+        }
+
+        .apply-file-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .apply-file-row .custom-file {
+            flex: 1 1 auto;
+            min-width: 0;
+            margin-bottom: 0;
+        }
+
+        .apply-file-tooltip {
+            flex: 0 0 auto;
+            width: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #formApply .apply-file-input .custom-file-label {
+            padding-right: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: rgb(246, 246, 246);
+        }
+
+        #formApply .apply-file-input .custom-file-label::after {
+            min-width: 112px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            background: #bcbfc4;
+            color: #495057;
+        }
+
+        #formApply .apply-file-help {
+            display: block;
+            margin-top: 6px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        @media (max-width: 767.98px) {
+            #formApply .apply-file-row {
+                flex-wrap: nowrap;
+                align-items: center;
+                gap: 6px;
+            }
+
+            #formApply .apply-file-row .custom-file {
+                flex: 1 1 auto;
+            }
+
+            #formApply .apply-file-tooltip {
+                width: 20px;
+            }
+
+            #formApply .apply-file-input .custom-file-label {
+                font-size: 13px;
+                padding-right: 108px;
+            }
+
+            #formApply .apply-file-input .custom-file-label::after {
+                min-width: 88px;
+                font-size: 12px;
+                padding: 0 12px;
+            }
+
+            #formApply .form-group label,
+            #formApply .custom-control-label {
+                white-space: normal;
+                overflow-wrap: break-word;
+            }
+        }
     </style>
 @endsection
 
@@ -101,18 +184,22 @@
                             <div class="col-lg-12">
                                 <form class="mt-4 row" id="formApply" enctype="multipart/form-data">
                                     {{ csrf_field() }}
-                                    <div class="form-group col-12 input-group mb-5">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Dokumen</span>
+                                    <div class="form-group col-12 mb-3">
+                                        <div class="apply-file-wrapper">
+                                            <div class="apply-file-row">
+                                                <div class="custom-file apply-file-input">
+                                                    <input type="file" class="custom-file-input" id="formCV" name="formCV" accept=".pdf,application/pdf">
+                                                    <label class="custom-file-label" id="formCVLabel" for="formCV">Upload CV</label>
+                                                </div>
+                                                <div class="apply-file-tooltip">
+                                                    <span class="feed-tooltip">
+                                                        <i class="fas fa-question-circle feed-tooltip-icon" aria-hidden="true"></i>
+                                                        <span class="feed-tooltiptext">Maksimal 5 MB. PDF akan dioptimasi otomatis saat dikirim.</span>
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="formCV" name="formCV" accept=".pdf,application/pdf">
-                                            <label class="custom-file-label" for="formCV">Upload CV / Portofolio-mu ( PDF )</label>
-                                        </div>
-                                        <span class="feed-tooltip ml-2 align-self-center">
-                                            <i class="fas fa-question-circle feed-tooltip-icon" aria-hidden="true"></i>
-                                            <span class="feed-tooltiptext">Maksimal 5 MB. PDF akan dioptimasi otomatis saat dikirim.</span>
-                                        </span>
+                                        <small class="apply-file-help">Maksimal 5 MB.</small>
                                         <div id="cvInvalid" class="invalid-feedback"></div>
                                     </div>
                                     <div class="form-group col-md-12 mb-3">
@@ -124,12 +211,12 @@
                                         <input type="text" class="form-control" placeholder="Nama Belakang"
                                             name="formLastName" id="formLastName" required>
                                     </div>
-                                    <div class="form-group col-6 mb-3">
+                                    <div class="form-group col-12 col-md-6 mb-3">
                                         <input type="email" class="form-control" placeholder="Email" name="formEmail"
                                             id="formEmail" required>
                                         <div id="emailInvalid" class="invalid-feedback"></div>
                                     </div>
-                                    <div class="form-group col-6 mb-3">
+                                    <div class="form-group col-12 col-md-6 mb-3">
                                         <input type="text" class="form-control" placeholder="Telp" name="formPhone"
                                             id="formPhone" required inputmode="numeric" maxlength="12" pattern="[0-9]{10,12}">
                                         <div id="phoneInvalid" class="invalid-feedback"></div>
@@ -138,7 +225,7 @@
                                         <label>Tgl. Lahir</label>
                                         <input type="date" class="form-control" name="formBod" id="formBod" required>
                                     </div>
-                                    <div class="form-group col-6 mb-3">
+                                    <div class="form-group col-12 col-md-6 mb-3">
                                         <label for="formLastEducation">Pendidikan Terakhir</label>
                                         <select class="form-control" id="formLastEducation" name="formLastEducation"
                                             required>
@@ -150,7 +237,7 @@
                                             <option value="s3">S3</option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-6 mb-3">
+                                    <div class="form-group col-12 col-md-6 mb-3">
                                         <label for="formMajor">Jurusan</label>
                                         <input placeholder="Jurusan" class="form-control" name="formMajor" id="formMajor"
                                             required>
@@ -176,11 +263,11 @@
                                                     class="fas fa-plus pl-3"></i></button>
                                         </div>
                                     </div>
-                                    <div class="form-group col-6 mb-3">
+                                    <div class="form-group col-12 col-md-6 mb-3">
                                        <label>Gaji Sekarang</label>
                                        <input placeholder="Rp. XXX" class="form-control" name="formCurrentSalary" id="formCurrentSalary" maxlength="8">
                                    </div>
-                                    <div class="form-group col-6 mb-3">
+                                    <div class="form-group col-12 col-md-6 mb-3">
                                         <label>Gaji yang diharapkan</label>
                                         <input placeholder="Rp. XXX" class="form-control" name="formExpectSalary" id="formExpectSalary" maxlength="8">
                                     </div>
@@ -200,24 +287,24 @@
 
                                 <div id="exprience-list" style="display:none">
                                     <div class="row">
-                                        <div class="form-group col-6 mb-3">
+                                        <div class="form-group col-12 col-md-6 mb-3">
                                             <label>Nama Perusahaan</label>
                                             <input placeholder="Nama Perusahaan" class="form-control companyName" required>
                                         </div>
-                                        <div class="form-group col-6 mb-3">
+                                        <div class="form-group col-12 col-md-6 mb-3">
                                             <label>Industri</label>
                                             <input placeholder="Industri" class="form-control industri" required>
                                         </div>
-                                        <div class="form-group col-6 mb-3">
+                                        <div class="form-group col-12 col-md-6 mb-3">
                                             <label>Jabatan</label>
                                             <input placeholder="Jabatan" class="form-control position" required>
                                         </div>
-                                        <div class="form-group col-4 mb-3">
+                                        <div class="form-group col-12 col-md-4 mb-3">
                                             <label>Lama bekerja (tahun)</label>
                                             <input placeholder="Lama bekerja (tahun)" class="form-control lengthOfWork"
                                                 required maxlength="2">
                                         </div>
-                                        <div class="form-group col-2 mb-3">
+                                        <div class="form-group col-12 col-md-2 mb-3">
                                             <label>Aksi</label>
                                             <button onclick="deleteRow(this)" type="button"
                                                 class="btn btn-danger">Hapus</button>
@@ -234,32 +321,8 @@
     </section>
 
     <div id="applyToastStack" aria-live="polite" aria-atomic="true"></div>
-    
-    <div class="modal fade" id="modalRespons" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-9 align-self-start align-self-lg-center ">
-                            <p class="d-flex align-items-center mb-4">
-                                <span class="font-weight-bold text-primary mr-2" id="teks_title">Thank you for your time, partner!</span>
-                            </p>
-                            <h5 class="mb-4 text-primary" id="teks_1">We will get back to you as soon as possible.
-                            </h5>
-                            <p class="mb-4 text-primary" id="teks_2">Let’s create many great stories!</p>
-                            <p class="mb-4 text-primary" id="teks_3">Sincerely,</p>
-                            <img class="img-fluid" src="{{ asset('images/saf/logo.png') }}" alt="">
-                        </div>
-                        <div class="col-sm-3 align-self-start align-self-lg-center ">
-                            <img class="img-fluid " src="{{ asset('images/ai/telur.png') }}" alt=""
-                                style="position: absolute; top:10px; right: 10px;">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
+    @include('we.modal-response')
 @endsection
 
 @section('script')
@@ -276,7 +339,7 @@
                $("#modalRespons").modal("show");
                setTimeout(() => {
                   $("#modalRespons").modal("hide");
-               }, 3000);
+               }, 7000);
             @endif
 
             $("#have-experience").on("click", "#btnAddExperience", function(){
@@ -315,11 +378,17 @@
             });
 
             const syncCvLabel = function(input){
-               const defaultLabel = "Upload CV / Portofolio-mu ( PDF )";
-               const label = $(input).next(".custom-file-label");
+               const defaultLabel = "Upload CV";
+               const label = $("#formCVLabel");
                const file = input.files && input.files.length ? input.files[0] : null;
 
-               label.text(file ? file.name : defaultLabel);
+               if (file) {
+                  const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+                  label.text(`${file.name} (${sizeMb} MB)`);
+                  return;
+               }
+
+               label.text(defaultLabel);
             };
 
             const showApplyToast = function(message, variant = "danger"){
@@ -505,3 +574,4 @@
         }
     </script>
 @endsection
+
