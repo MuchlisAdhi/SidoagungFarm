@@ -139,16 +139,17 @@ class TicketManagementService
         }
 
         $includeProduct = in_array(QuestionType::Produk->value, $allowedQuestionTypes, true);
+        $allowedQuestionTypesForFilter = QuestionType::expandForFiltering($allowedQuestionTypes);
 
-        $query->where(function (Builder $scopedQuery) use ($includeProduct, $allowedQuestionTypes) {
+        $query->where(function (Builder $scopedQuery) use ($includeProduct, $allowedQuestionTypesForFilter) {
             if ($includeProduct) {
                 $scopedQuery->where('question_mode', 'q1');
             }
 
             $method = $includeProduct ? 'orWhere' : 'where';
-            $scopedQuery->{$method}(function (Builder $q2Query) use ($allowedQuestionTypes) {
+            $scopedQuery->{$method}(function (Builder $q2Query) use ($allowedQuestionTypesForFilter) {
                 $q2Query->where('question_mode', 'q2')
-                    ->whereIn('subject', $allowedQuestionTypes);
+                    ->whereIn('subject', $allowedQuestionTypesForFilter);
             });
         });
     }
@@ -163,6 +164,6 @@ class TicketManagementService
             return in_array(QuestionType::Produk->value, $allowedQuestionTypes, true);
         }
 
-        return in_array((string) $ticket->subject, $allowedQuestionTypes, true);
+        return QuestionType::hasAccess((string) $ticket->subject, $allowedQuestionTypes);
     }
 }

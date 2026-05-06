@@ -69,7 +69,7 @@ class FaqFeedbackService
         );
 
         if (! QuestionType::isAll($allowedQuestionTypes)) {
-            $q2->whereIn('qtype', $allowedQuestionTypes);
+            $q2->whereIn('qtype', QuestionType::expandForFiltering($allowedQuestionTypes));
         }
 
         return $q2->union($q1)
@@ -296,7 +296,7 @@ class FaqFeedbackService
             return false;
         }
 
-        return in_array($questionType, $allowedQuestionTypes, true);
+        return QuestionType::hasAccess($questionType, $allowedQuestionTypes);
     }
 
     protected function resolveTicketStatus(mixed $ticketStatus): string

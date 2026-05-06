@@ -6,8 +6,12 @@ enum QuestionType: string
 {
     case Produk = 'Produk';
     case Kemitraan = 'Menjadi Mitra';
-    case Karir = 'Karir';
+    case Karir = 'Karir / Magang';
     case VendorPenawaran = 'Vendor / Penawaran';
+
+    private const LEGACY_ALIASES = [
+        'Karir' => self::Karir->value,
+    ];
 
     public static function values(): array
     {
@@ -18,7 +22,7 @@ enum QuestionType: string
     {
         $valid = self::values();
         $normalized = array_map(
-            static fn ($questionType) => trim((string) $questionType),
+            static fn ($questionType) => self::canonicalize((string) $questionType),
             $questionTypes
         );
 
@@ -26,6 +30,33 @@ enum QuestionType: string
             $normalized,
             static fn (string $questionType) => in_array($questionType, $valid, true)
         )));
+    }
+
+    public static function expandForFiltering(array $questionTypes): array
+    {
+        $normalized = self::normalize($questionTypes);
+        $expanded = $normalized;
+
+        foreach (self::LEGACY_ALIASES as $legacy => $canonical) {
+            if (in_array($canonical, $normalized, true)) {
+                $expanded[] = $legacy;
+            }
+        }
+
+        return array_values(array_unique($expanded));
+    }
+
+    public static function hasAccess(?string $questionType, array $allowedQuestionTypes): bool
+    {
+        if (! $questionType) {
+            return false;
+        }
+
+        return in_array(
+            self::canonicalize($questionType),
+            self::normalize($allowedQuestionTypes),
+            true
+        );
     }
 
     public static function isAll(array $questionTypes): bool
@@ -99,5 +130,11 @@ enum QuestionType: string
         }
 
         return false;
+    }
+
+    private static function canonicalize(string $questionType): string
+    {
+        $trimmed = trim($questionType);
+        return self::LEGACY_ALIASES[$trimmed] ?? $trimmed;
     }
 }
