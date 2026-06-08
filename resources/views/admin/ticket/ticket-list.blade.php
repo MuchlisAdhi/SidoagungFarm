@@ -63,6 +63,9 @@
                         <i class="fa fa-filter"></i> Filter
                     </button>
                     <a href="{{ url('/admin/ticket') }}" class="btn btn-default">Reset</a>
+                    <a href="{{ url('/admin/ticket/export') . '?' . http_build_query($filters) }}" class="btn btn-success" title="Export to Excel">
+                        <i class="fa fa-file-excel-o"></i> Export
+                    </a>
                 </div>
             </form>
         </div>
