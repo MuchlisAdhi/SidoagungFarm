@@ -2,8 +2,9 @@
 
 namespace App\Exports;
 
+use App\Enums\TicketStatus;
 use App\Models\Ticket;
-use Illuminate\Database\Eloquent\Builder;
+use App\Services\Admin\TicketManagementService;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -13,11 +14,16 @@ class TicketExport implements FromArray, ShouldAutoSize, WithStyles
 {
     protected array $filters;
     protected array $allowedQuestionTypes;
+    protected TicketManagementService $ticketManagementService;
 
-    public function __construct(array $filters = [], array $allowedQuestionTypes = [])
-    {
+    public function __construct(
+        array $filters = [],
+        array $allowedQuestionTypes = [],
+        ?TicketManagementService $ticketManagementService = null
+    ) {
         $this->filters = $filters;
         $this->allowedQuestionTypes = $allowedQuestionTypes;
+        $this->ticketManagementService = $ticketManagementService ?? app(TicketManagementService::class);
     }
 
     public function array(): array
@@ -38,13 +44,13 @@ class TicketExport implements FromArray, ShouldAutoSize, WithStyles
             'Created At',
         ]];
 
-        $tickets = $this->buildQuery()->orderByDesc('created_at')->get();
+        $tickets = $this->fetchTickets();
 
         $number = 0;
         foreach ($tickets as $ticket) {
             $number++;
 
-            $status = $ticket->status instanceof \App\Enums\TicketStatus
+            $status = $ticket->status instanceof TicketStatus
                 ? $ticket->status->value
                 : (string) $ticket->status;
 
@@ -53,12 +59,12 @@ class TicketExport implements FromArray, ShouldAutoSize, WithStyles
                 $ticket->ticket_number,
                 $ticket->requester_name,
                 $ticket->requester_email,
-                $ticket->requester_phone,
+                $this->formatPhone($ticket->requester_phone),
                 $ticket->subject,
                 $ticket->message,
                 strtoupper($status),
-                strtoupper($ticket->priority),
-                strtoupper($ticket->channel),
+                strtoupper((string) $ticket->priority),
+                strtoupper((string) $ticket->channel),
                 $ticket->response_message,
                 $ticket->responded_at ? $ticket->responded_at->format('Y-m-d H:i:s') : '',
                 $ticket->created_at ? $ticket->created_at->format('Y-m-d H:i:s') : '',
@@ -75,31 +81,29 @@ class TicketExport implements FromArray, ShouldAutoSize, WithStyles
         ];
     }
 
-    protected function buildQuery(): Builder
+    /**
+     * Fetch tickets using the same service used by the index page so the
+     * role-based question type filtering stays in sync.
+     */
+    protected function fetchTickets()
     {
-        $query = Ticket::query();
+        return $this->ticketManagementService
+            ->list($this->filters, $this->allowedQuestionTypes)['tickets'];
+    }
 
-        $status = (string) ($this->filters['status'] ?? '');
-        $dateFrom = (string) ($this->filters['date_from'] ?? '');
-        $dateTo = (string) ($this->filters['date_to'] ?? '');
-        $ticketNo = trim((string) ($this->filters['ticket_no'] ?? ''));
+    /**
+     * Prefix phone numbers with an apostrophe so Excel treats the cell as text
+     * and the leading "0" (or "+") is preserved instead of being interpreted
+     * as a number / scientific notation.
+     */
+    protected function formatPhone(?string $phone): string
+    {
+        $phone = trim((string) $phone);
 
-        if (in_array($status, ['new', 'open', 'responded'], true)) {
-            $query->where('status', $status);
+        if ($phone === '') {
+            return '';
         }
 
-        if ($ticketNo !== '') {
-            $query->where('ticket_number', 'like', '%' . $ticketNo . '%');
-        }
-
-        if ($dateFrom !== '') {
-            $query->whereDate('created_at', '>=', $dateFrom);
-        }
-
-        if ($dateTo !== '') {
-            $query->whereDate('created_at', '<=', $dateTo);
-        }
-
-        return $query;
+        return "'" . $phone;
     }
 }
