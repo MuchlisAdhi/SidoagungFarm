@@ -221,6 +221,7 @@ Route::prefix("admin")->group(function (){
 
         Route::controller(TicketController::class)->prefix("ticket")->name(".ticket")->group(function(){
             Route::get("/", "list")->middleware('permission:nav.feedback.ticket.read');
+            Route::get("/export", "export")->name(".export")->middleware('permission:nav.feedback.ticket.export');
             Route::get("/show/{id}", "show")->middleware('permission:nav.feedback.ticket.read');
             Route::post("/update/{id}", "update")->middleware('permission:nav.feedback.ticket.update');
         });
